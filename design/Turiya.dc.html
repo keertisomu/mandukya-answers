@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Karla:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDE9E1;font-family:Karla,system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 0}
+a{color:#8A6A52}a:hover{color:#6E5240}
+@keyframes breathe{0%,100%{transform:scale(.82);opacity:.45}50%{transform:scale(1.06);opacity:.9}}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes driftglow{0%,100%{opacity:.5}50%{opacity:.85}}
+</style>
+</helmet>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 402 }}" height="{{ 874 }}" hint-size="402px,874px">
+<div style="height:100%;display:flex;flex-direction:column;background:#F7F4EE;font-family:Karla,system-ui,sans-serif;color:#23201C;position:relative">
+
+<div style="position:absolute;top:-120px;left:-60px;width:420px;height:340px;border-radius:50%;background:radial-gradient(closest-side, rgba(168,131,104,.20), rgba(168,131,104,0));filter:blur(10px);animation:driftglow 14s ease-in-out infinite;pointer-events:none"></div>
+
+<div style="flex:1;overflow:auto;padding:58px 22px 12px;position:relative;z-index:1">
+
+<sc-if value="{{ isAsk }}" hint-placeholder-val="{{ true }}">
+<div>
+  <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9A9186">{{ greeting }}</span>
+  <h1 style="font-family:Newsreader,serif;font-weight:300;font-size:34px;line-height:1.18;margin:14px 0 6px;letter-spacing:-.01em;text-wrap:pretty">What's sitting<br>with you today?</h1>
+  <p style="font-size:13.5px;line-height:1.55;color:#7A7268;margin:0 0 18px;max-width:300px">Ask about anything. The answer looks at it through the four states of consciousness, with a verse from Gauḍapāda's commentary for each.</p>
+
+  <div style="background:#FFFDF9;border:1px solid rgba(35,32,28,.09);border-radius:20px;padding:16px 16px 12px;box-shadow:0 1px 2px rgba(35,32,28,.04),0 12px 30px -22px rgba(35,32,28,.4)">
+    <textarea rows="4" value="{{ question }}" onChange="{{ onQuestion }}" placeholder="My partner and I keep having the same fight and I can't let it go…" style="width:100%;border:none;outline:none;resize:none;background:transparent;font-family:Karla,system-ui,sans-serif;font-size:15.5px;line-height:1.5;color:#23201C"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(35,32,28,.07)">
+      <span style="font-size:11px;color:#A79D90">Saved only on this device</span>
+      <button onClick="{{ onAsk }}" style="border:none;cursor:pointer;background:#23201C;color:#F7F4EE;font-family:Karla,system-ui,sans-serif;font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:999px;min-height:44px">Look at it</button>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+    <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="5">
+      <button onClick="{{ chip.pick }}" style="border:1px solid rgba(35,32,28,.12);background:rgba(255,253,249,.7);cursor:pointer;font-family:Karla,system-ui,sans-serif;font-size:12.5px;color:#5C554C;padding:9px 13px;border-radius:999px">{{ chip.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(35,32,28,.08)">
+    <div style="font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:#A79D90">The four states</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px">
+      <sc-for list="{{ primer }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;gap:11px;align-items:baseline">
+          <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ p.tint }};transform:translateY(1px)"></span>
+          <span style="font-size:13.5px;line-height:1.5;color:#5C554C"><strong style="color:#23201C">{{ p.sanskrit }}</strong> — {{ p.gloss }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isThinking }}" hint-placeholder-val="{{ false }}">
+<div style="height:640px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px">
+  <div style="width:132px;height:132px;border-radius:50%;background:radial-gradient(closest-side,rgba(138,106,82,.28),rgba(138,106,82,.04));display:flex;align-items:center;justify-content:center;animation:breathe 6s ease-in-out infinite">
+    <span style="font-family:'Noto Serif Devanagari',serif;font-size:40px;color:#8A6A52">ॐ</span>
+  </div>
+  <p style="font-family:Newsreader,serif;font-style:italic;font-size:17px;color:#7A7268;margin:0">{{ thinkingLine }}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAnswer }}" hint-placeholder-val="{{ false }}">
+<div style="animation:fadeup .5s ease both">
+  <button onClick="{{ goAsk }}" style="border:none;background:transparent;cursor:pointer;font-family:Karla,system-ui,sans-serif;font-size:13px;color:#8A6A52;padding:6px 0;min-height:34px">← Ask something else</button>
+  <p style="font-family:Newsreader,serif;font-size:21px;line-height:1.35;margin:6px 0 4px;color:#23201C;text-wrap:pretty">{{ askedQuestion }}</p>
+  <p style="font-size:12px;color:#A79D90;margin:0 0 18px">Four levels, from the surface inward</p>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ levels }}" as="lv" hint-placeholder-count="4">
+      <div style="border-radius:18px;overflow:hidden;border:1px solid rgba(35,32,28,.09);background:#FFFDF9">
+        <button onClick="{{ lv.toggle }}" style="width:100%;border:none;cursor:pointer;background:transparent;text-align:left;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;min-height:44px">
+          <span style="width:8px;height:8px;border-radius:50%;margin-top:7px;flex:none;background:{{ lv.tint }}"></span>
+          <span style="flex:1">
+            <span style="display:block;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:#A79D90">{{ lv.sanskrit }} · {{ lv.name }}</span>
+            <span style="display:block;font-family:Newsreader,serif;font-size:17.5px;line-height:1.35;color:#23201C;margin-top:3px">{{ lv.heading }}</span>
+          </span>
+          <span style="font-size:13px;color:#A79D90;padding-top:4px">{{ lv.caret }}</span>
+        </button>
+        <sc-if value="{{ lv.open }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 16px 16px 36px">
+            <p style="margin:0;font-size:14.5px;line-height:1.65;color:#4A443D;text-wrap:pretty">{{ lv.body }}</p>
+            <div style="margin-top:12px;padding:12px 14px;border-radius:12px;background:#F2EEE6">
+              <div style="font-family:'Noto Serif Devanagari',serif;font-size:14.5px;line-height:1.7;color:#3A342D">{{ lv.verseDev }}</div>
+              <div style="font-family:Newsreader,serif;font-style:italic;font-size:13.5px;color:#7A7268;margin-top:4px">{{ lv.verseTranslation }}</div>
+              <div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#A79D90;margin-top:6px">{{ lv.verseRef }}</div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:16px;border-radius:18px;background:#2E3A3C;color:#EDE9E1;padding:18px">
+    <div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.6">One thing to try</div>
+    <p style="margin:8px 0 0;font-family:Newsreader,serif;font-size:18px;line-height:1.45">{{ practice }}</p>
+  </div>
+
+  <p style="text-align:center;font-size:12px;color:#A79D90;margin:16px 0 8px">Saved to your journal</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ isJournal }}" hint-placeholder-val="{{ false }}">
+<div>
+  <h1 style="font-family:Newsreader,serif;font-weight:300;font-size:30px;margin:4px 0 2px">Journal</h1>
+  <p style="font-size:12.5px;color:#9A9186;margin:0 0 18px">{{ journalCount }}</p>
+
+  <sc-if value="{{ journalEmpty }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:40px;text-align:center;color:#A79D90">
+      <div style="font-family:'Noto Serif Devanagari',serif;font-size:34px;color:#CBBFAF;opacity:.5">ॐ</div>
+      <p style="font-size:14px;line-height:1.6;max-width:240px;margin:14px auto 0">Nothing here yet. Whatever you ask will be kept here for you to return to.</p>
+    </div>
+  </sc-if>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ journal }}" as="j" hint-placeholder-count="3">
+      <div style="background:#FFFDF9;border:1px solid rgba(35,32,28,.09);border-radius:16px;overflow:hidden">
+        <button onClick="{{ j.toggle }}" style="width:100%;border:none;background:transparent;cursor:pointer;text-align:left;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;min-height:44px">
+          <span style="flex:1">
+            <span style="display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#A79D90">{{ j.when }}</span>
+            <span style="display:block;font-family:Newsreader,serif;font-size:17px;line-height:1.38;color:#23201C;margin-top:4px;text-wrap:pretty">{{ j.question }}</span>
+          </span>
+          <span style="font-size:13px;color:#A79D90;padding-top:2px">{{ j.caret }}</span>
+        </button>
+        <sc-if value="{{ j.open }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 16px 16px">
+            <sc-for list="{{ j.levels }}" as="lv" hint-placeholder-count="4">
+              <div style="padding:12px 0;border-top:1px solid rgba(35,32,28,.07)">
+                <div style="display:flex;gap:10px;align-items:baseline">
+                  <span style="width:7px;height:7px;border-radius:50%;flex:none;background:{{ lv.tint }};transform:translateY(1px)"></span>
+                  <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#A79D90">{{ lv.sanskrit }} · {{ lv.name }}</span>
+                </div>
+                <p style="font-family:Newsreader,serif;font-size:16px;line-height:1.35;margin:6px 0 4px;color:#23201C">{{ lv.heading }}</p>
+                <p style="margin:0;font-size:13.5px;line-height:1.6;color:#4A443D">{{ lv.body }}</p>
+                <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#BDB4A7;margin-top:6px">{{ lv.verseRef }}</div>
+              </div>
+            </sc-for>
+            <div style="margin-top:12px;padding:13px 15px;border-radius:12px;background:#2E3A3C;color:#EDE9E1">
+              <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;opacity:.6">One thing to try</div>
+              <p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:15.5px;line-height:1.45">{{ j.practice }}</p>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+<div style="flex:none;border-top:1px solid rgba(35,32,28,.08);background:rgba(247,244,238,.94);backdrop-filter:blur(12px);display:grid;grid-template-columns:repeat(2,1fr);padding:8px 6px 26px;position:relative;z-index:2">
+  <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="2">
+    <button onClick="{{ tab.go }}" style="border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;min-height:44px">
+      <span style="width:9px;height:9px;border-radius:50%;background:{{ tab.dot }}"></span>
+      <span style="font-family:Karla,system-ui,sans-serif;font-size:10.5px;letter-spacing:.04em;color:{{ tab.color }}">{{ tab.label }}</span>
+    </button>
+  </sc-for>
+</div>
+
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:940},&quot;liveAI&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const TINTS = ["#C7A87E","#A98BA8","#7E9AA8","#3F4F52"];
+// Four states, each fixed to a verse from Gauḍapāda's Māṇḍūkya Kārikā
+const LEVEL_META = [
+  {key:"jagrat", name:"Waking", sanskrit:"Jāgrat", gloss:"the waking self, meeting the solid world of facts",
+   verseRef:"Gauḍapāda · Kārikā 1.1",
+   verseDev:"विश्वो हि स्थूलभुङ् नित्यं तैजसः प्रविविक्तभुक् ।",
+   verseTranslation:"Vishva, the waking self, feeds on the gross; Taijasa on the subtle."},
+  {key:"svapna", name:"The story", sanskrit:"Svapna", gloss:"the inward dream-mind, building a world from memory",
+   verseRef:"Gauḍapāda · Kārikā 2.1",
+   verseDev:"वैतथ्यं सर्वभावानां स्वप्न आहुर्मनीषिणः ।",
+   verseTranslation:"The wise call everything seen in dream unreal — it lives only within."},
+  {key:"sushupti", name:"Underneath", sanskrit:"Suṣupti", gloss:"deep sleep, where all of it is gathered and quiet",
+   verseRef:"Gauḍapāda · Kārikā 1.2",
+   verseDev:"आनन्दभुक्तथा प्राज्ञस्त्रिधा भोगं निबोधत ।",
+   verseTranslation:"Prajna, in deep sleep, feeds on bliss. Know experience to be threefold."},
+  {key:"turiya", name:"The witness", sanskrit:"Turīya", gloss:"the fourth — aware of the other three, untouched by them",
+   verseRef:"Gauḍapāda · Kārikā 1.10",
+   verseDev:"निवृत्तेः सर्वदुःखानामीशानः प्रभुरव्ययः ।",
+   verseTranslation:"Turiya: the end of all sorrow, the lord, imperishable, non-dual, shining."}
+];
+const STORE = "turiya_journal_v1";
+
+class Component extends DCLogic {
+  state = { tab:"ask", phase:"idle", question:"", asked:"", answer:null, open:{0:true},
+    journal:[], jopen:{}, thinkIdx:0 };
+
+  THINKING = ["sitting with it…","looking at the surface…","listening underneath…","finding the verse…"];
+
+  componentDidMount(){
+    try{ const raw = localStorage.getItem(STORE); if(raw) this.setState({journal:JSON.parse(raw)||[]}); }catch(e){}
+  }
+  componentWillUnmount(){ clearInterval(this._t); }
+
+  cycleThinking(){
+    clearInterval(this._t);
+    this._t = setInterval(()=>this.setState(s=>({thinkIdx:(s.thinkIdx+1)%4})),1600);
+  }
+
+  persist(journal){ try{ localStorage.setItem(STORE, JSON.stringify(journal)); }catch(e){} }
+
+  fallback(q){
+    return { levels:[
+        {heading:"What actually happened, minus the adjectives",body:"Strip it back to what a camera would have caught: who said what, when, for how long. Most of the weight in "+(q?"this":"any problem")+" is not in the event — it is in everything you added to it. Write the bare version in one sentence."},
+        {heading:"The story you are running on top of it",body:"Notice the sentence that keeps repeating in your head. It usually starts with 'always', 'never', or 'they think'. The dream-mind builds a whole world out of old impressions. It feels like seeing; it is mostly remembering."},
+        {heading:"The part of you nothing has touched",body:"Last night in deep sleep this problem did not exist, and you still did. You were not diminished by its absence. That is evidence — not theory — that your existence and this problem are separable."},
+        {heading:"Who is aware of all three?",body:"Something watched the event, watched the story, and watched the silence. It did not get angry, and it did not go to sleep. Turiya is not a fifth mood to reach; it is the one already reading this line."}
+      ], practice:"Once today, say the bare fact out loud, then the story, and notice the gap between them." };
+  }
+
+  async ask(){
+    const q = (this.state.question||"").trim();
+    if(!q) return;
+    this.setState({phase:"thinking", asked:q, open:{0:true}});
+    this.cycleThinking();
+    let data = null;
+    try{
+      if(this.props.liveAI === false) throw new Error("scripted");
+      const sys = "You are a warm, plain-spoken friend grounded in Gauḍapāda's Māṇḍūkya Kārikā (the commentary on the Mandukya Upanishad). You never use jargon without explaining it, never moralize, never say 'as an AI'. Answer the person's everyday problem through the four states of consciousness: jagrat (waking — the bare observable facts), svapna (dream — the story/projection they are running on top of the facts), sushupti (deep sleep — the rest and wholeness that remains when the problem is absent), turiya (the witness that is aware of all three and is untouched). Be concrete about THEIR specific situation, never generic. 45-70 words per level. Reply with ONLY valid JSON: {\"levels\":[{\"heading\":string,\"body\":string} x4 in that order],\"practice\":string}. heading: a short plain-English line, max 8 words. practice: one small concrete thing to do today, max 25 words.";
+      const raw = await window.claude.complete({ system: sys, max_tokens: 1400, messages:[{role:"user",content:q}] });
+      const m = raw.match(/\{[\s\S]*\}/);
+      data = JSON.parse(m ? m[0] : raw);
+      if(!data || !Array.isArray(data.levels) || data.levels.length < 4) data = null;
+    }catch(e){ data = null; }
+    clearInterval(this._t);
+    const ans = data || this.fallback(q);
+    const entry = {
+      id: Date.now(), when: this.stamp(new Date()), question: q,
+      levels: LEVEL_META.map((m,i)=>({ name:m.name, sanskrit:m.sanskrit, tint:TINTS[i],
+        heading:(ans.levels[i]||{}).heading||"", body:(ans.levels[i]||{}).body||"", verseRef:m.verseRef })),
+      practice: ans.practice||""
+    };
+    const journal = [entry, ...this.state.journal];
+    this.persist(journal);
+    this.setState({ answer: ans, phase:"answer", journal });
+  }
+
+  stamp(d){
+    const now = new Date(), day = 864e5;
+    const a = new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    const b = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    const diff = Math.round((b-a)/day);
+    const t = d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+    if(diff<=0) return "Today · "+t;
+    if(diff===1) return "Yesterday · "+t;
+    if(diff<7) return diff+" days ago";
+    return d.toLocaleDateString([], {month:"short", day:"numeric"});
+  }
+
+  renderVals(){
+    const s = this.state;
+    const hour = new Date().getHours();
+    const greeting = hour<5?"Late night":hour<12?"Good morning":hour<17?"Good afternoon":"Good evening";
+    const ans = s.answer || this.fallback("");
+    const levels = LEVEL_META.map((m,i)=>({ ...m, tint:TINTS[i],
+      heading:(ans.levels[i]||{}).heading||"", body:(ans.levels[i]||{}).body||"",
+      open:!!s.open[i], caret:s.open[i]?"–":"+",
+      toggle:()=>this.setState(st=>({open:{...st.open,[i]:!st.open[i]}})) }));
+    const primer = LEVEL_META.map((m,i)=>({ sanskrit:m.sanskrit, gloss:m.gloss, tint:TINTS[i] }));
+    const chips = ["A relationship","Stress","Anger","A decision","Loneliness"].map(label=>({
+      label, pick:()=>this.setState({question:
+        label==="A relationship"?"Something with my partner keeps going wrong and I don't know my part in it.":
+        label==="A decision"?"I can't decide about a big change and I keep going in circles.":
+        "I've been carrying a lot of "+label.toLowerCase()+" lately and it's leaking into everything."})
+    }));
+    const tabs = [["ask","Ask"],["journal","Journal"]].map(([k,label])=>({
+      label, dot: s.tab===k?"#23201C":"rgba(35,32,28,.18)", color: s.tab===k?"#23201C":"#A79D90",
+      go:()=>this.setState({tab:k, phase: k==="ask" ? (s.answer?"answer":"idle") : s.phase})
+    }));
+    const journal = s.journal.map(e=>({ ...e, open:!!s.jopen[e.id], caret:s.jopen[e.id]?"–":"+",
+      toggle:()=>this.setState(st=>({jopen:{...st.jopen,[e.id]:!st.jopen[e.id]}})) }));
+
+    return {
+      greeting, tabs, chips, primer, levels,
+      isAsk: s.tab==="ask" && s.phase==="idle",
+      isThinking: s.tab==="ask" && s.phase==="thinking",
+      isAnswer: s.tab==="ask" && s.phase==="answer",
+      isJournal: s.tab==="journal",
+      thinkingLine: this.THINKING[s.thinkIdx],
+      question: s.question, askedQuestion: s.asked, practice: ans.practice||"",
+      journal, journalEmpty: s.journal.length===0,
+      journalCount: s.journal.length ? (s.journal.length+(s.journal.length===1?" entry":" entries")+" · yours only") : "Your history",
+      onQuestion: e=>this.setState({question:e.target.value}),
+      onAsk: ()=>this.ask(),
+      goAsk: ()=>this.setState({phase:"idle", tab:"ask", question:""}),
+    };
+  }
+}
+</script>
+</body>
+</html>
