@@ -32,6 +32,7 @@ plus one small practice to try today.
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, client/backend, data model, the answer pipeline |
 | [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) | Milestones M0–M7, critical path, risks |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | The key decisions (DEC-1…DEC-7) and what would change them |
+| [docs/MARKET_VALIDATION.md](docs/MARKET_VALIDATION.md) | Demand, competitors, audience, v2 feature ranking, risks |
 | [design/](design/) | The original high-fidelity design handoff (reference only) |
 
 ## Open questions (see DECISIONS.md → Open questions)
