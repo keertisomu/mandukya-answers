@@ -6,7 +6,11 @@
 
 **Status**: Draft
 
+**Updated**: 2026-10-24 — v1 launch region restricted to Australia
+
 **Input**: User description: "based on the design handoff README and Turiya.dc.html prototype, write the specifications for this product idea"
+
+**Update input**: "can we restrict the spec to just australia for v1 and then for v2 we can think about India followed by other countries"
 
 ## Overview
 
@@ -22,6 +26,11 @@ for them.
 This specification covers the complete v1 scope: **Ask** and **Journal**. Everything else
 (Śaṅkara's commentary, a browsable verse library, daily practice, streaks, community, accounts)
 is explicitly out of scope for v1.
+
+**Launch region**: v1 is offered **only in Australia**. Its crisis-support resources, privacy
+notices, language conventions and store availability are all Australian. India is planned as the
+next region (v2), followed by other countries; each new region will be specified separately,
+because it brings its own crisis services, privacy law and language needs.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -120,7 +129,8 @@ the device.
 **Acceptance Scenarios**:
 
 1. **Given** input that signals crisis or self-harm, **When** the person submits, **Then** the app
-   skips the reflective flow and presents real crisis-support resources.
+   skips the reflective flow and presents real Australian crisis-support resources, including
+   emergency services (000) and Lifeline.
 2. **Given** any reflection shown to the person, **When** it is read, **Then** it contains no
    verdict, diagnosis, or prescriptive advice, and nothing that endorses or implies harm to the
    person or others.
@@ -154,6 +164,12 @@ the device.
   shows the empty state, with no crash.
 - **Rapid repeated submissions**: only one reflection is prepared at a time; the in-progress state
   prevents duplicate concurrent requests.
+- **Person outside Australia**: the app is not offered in other countries' app stores. A person
+  who installed it in Australia and then travels keeps full use of it; the crisis-support screen
+  still lists the Australian resources, notes that 000 and the Australian phone lines work only
+  within Australia, and offers an international helpline directory.
+- **Device set to another language or region**: the app still uses Australian English and
+  Australian resources in v1; it does not switch regions based on device settings.
 
 ## Requirements *(mandatory)*
 
@@ -207,7 +223,8 @@ the device.
 - **FR-020**: Ambient motion MUST be subtle and MUST be minimized or disabled when the person's
   device indicates a reduced-motion preference.
 - **FR-021**: Relative timestamps MUST read as "Today · h:mm", "Yesterday · h:mm", "N days ago"
-  for the last week, and an abbreviated month-and-day date beyond that.
+  for the last week, and an abbreviated date in Australian day-month order beyond that
+  (e.g., "24 Oct").
 
 **Safety, tone & privacy (constitutional)**
 
@@ -228,6 +245,22 @@ the device.
   "Saved only on this device" assurance on the Ask input) and MUST NOT present itself as therapy,
   counseling, or treatment.
 
+**Launch region (v1: Australia)**
+
+- **FR-028**: v1 MUST be made available only through the Australian app storefronts. It MUST NOT
+  be offered in any other country.
+- **FR-029**: The crisis-support resources MUST be Australian and MUST include, at minimum,
+  emergency services (000) and Lifeline, plus a resource suited to young people and one for
+  ongoing anxiety and depression support. Each entry MUST show the service name, how to contact it
+  (call and, where offered, text or chat), and when it is available.
+- **FR-030**: Every crisis-support resource MUST be verified as current before release and
+  re-verified at least every 90 days while v1 is live.
+- **FR-031**: Before the person's first submission, the app MUST tell them, in plain language,
+  that their problem text is sent to a service that may be located outside Australia to prepare
+  the reflection, that it is not stored there, and that their Journal never leaves the device. The
+  same information MUST be available at any time from within the app.
+- **FR-032**: All app copy MUST use Australian English spelling and conventions.
+
 ### Key Entities *(include if feature involves data)*
 
 - **Problem (Question)**: the free-text everyday problem a person submits. Transient input;
@@ -241,8 +274,9 @@ the device.
 - **Journal Entry**: a persisted record combining the question, the timestamp, the four states as
   shown (label, heading, body, verse reference), and the practice line. Stored privately on the
   device, listed newest-first, read-only.
-- **Crisis-support resources**: the fixed set of real support resources shown in place of a
-  reflection when crisis/self-harm is detected.
+- **Crisis-support resources**: the fixed set of real Australian support resources shown in place
+  of a reflection when crisis/self-harm is detected. Each has a name, contact methods, availability
+  hours, and the date it was last verified.
 
 ## Success Criteria *(mandatory)*
 
@@ -267,11 +301,33 @@ the device.
   reflection on their first attempt without guidance.
 - **SC-009**: In first-use testing, a majority of people describe the app as calming/quieting when
   asked for a one-word impression.
+- **SC-010**: 100% of crisis-support screens show Australian resources, including 000 and Lifeline,
+  and every listed resource has been verified within the last 90 days.
+- **SC-011**: v1 cannot be found or installed from any app storefront outside Australia.
+- **SC-012**: 100% of people see the data-handling notice (FR-031) before their first submission.
 
 ## Assumptions
 
 - **Scope is v1 Ask + Journal only.** Śaṅkara's commentary, a browsable verse library, daily
   practice, streaks, community, and accounts are deferred and will not be built here.
+- **Australia only for v1; India next.** A single English-speaking market with one set of crisis
+  services and one privacy law keeps the first release's safety and compliance work manageable.
+  Australia's Indian community is one of its largest overseas-born communities, so the core
+  audience is present. India (v2) will need its own crisis resources, its own privacy-law review,
+  and possibly Indian languages; other countries follow after that. Each region will get its own
+  specification.
+- **Australian crisis resources (to be verified before release, FR-030)**: emergency services
+  000; Lifeline 13 11 14 (also text and online chat); Kids Helpline 1800 55 1800 (for young
+  people); Beyond Blue 1300 22 4636 (anxiety and depression support).
+- **Australian privacy law.** Problem text about feelings and relationships is treated as
+  sensitive, potentially health-related information under the Privacy Act 1988 and the Australian
+  Privacy Principles, including the rules on sending personal information overseas. The
+  data-handling notice (FR-031) supports this; the privacy approach will get a legal review before
+  release.
+- **Intended audience** is adults (18+). The app is not marketed to minors; a youth resource is
+  still listed because younger people may reach it.
+- **No therapeutic claims** (FR-027) also keep the app outside medical-device regulation in
+  Australia; store listings and copy must avoid treatment or diagnosis language.
 - **Platform.** v1 is a single cross-platform mobile app; a person uses it on one device, and the
   Journal is that device's local history (no cross-device sync in v1).
 - **Reflection generation uses an external language model reached only through the project's own

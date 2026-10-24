@@ -39,3 +39,9 @@
 - The spec notes *that* reflections are produced via the project's own backend and *that* device
   privacy is preserved (an assumption reconciling the design handoff with the constitution), but
   states no stack, API, or storage technology — kept at the WHAT/WHY level.
+- **Re-validated 2026-10-24** after restricting v1 to Australia (FR-028–FR-032, SC-010–SC-012,
+  updated FR-021, edge cases and assumptions). All items still pass: the new requirements are
+  testable (storefront availability, named resources, a 90-day verification cadence, notice shown
+  before the first submission), and region-specific details (phone numbers, Privacy Act) are kept
+  as content and compliance facts, not implementation. The phone numbers are listed in Assumptions
+  and must be verified before release (FR-030).

@@ -11,6 +11,11 @@ community are **explicitly deferred to v2** (see Non-goals). **Safety (§2.7) is
 part of v1 and blocks launch.** A small **v1.1 retention slice** (§7) ships soon
 after launch.
 
+**Launch region: Australia only** (DEC-10). India follows in v2, then other
+countries. The product spec is
+[specs/001-turiya-ask-journal/spec.md](../specs/001-turiya-ask-journal/spec.md)
+(FR-028–FR-032 cover the region).
+
 Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.md).
 
 ---
@@ -75,7 +80,7 @@ Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.
   expanded body shows the four saved levels (dot, eyebrow, heading, body,
   reference) and the practice card.
 - **FR-18** Timestamp formatting: "Today · h:mm", "Yesterday · h:mm", "N days ago"
-  (<7), else "Mon D".
+  (<7), else Australian day-month order, e.g. "24 Oct".
 
 ### 2.5 Navigation
 - **FR-19** Two bottom tabs: Ask and Journal. Switching to Ask lands on the last
@@ -101,9 +106,10 @@ Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.
   the backend returns an error; the client shows the fallback answer (FR-13) and
   the help link (FR-28).
 - **FR-26 Support screen.** On `crisis`, the client shows a calm support screen
-  instead of an Answer: a short, warm acknowledgement, helpline resources for the
-  user's region (chosen by device locale, with an international directory as the
-  fallback), and a way back to Ask. No verse, no practice, no four-states framing.
+  instead of an Answer: a short, warm acknowledgement, Australian helpline
+  resources (000, Lifeline and others; DEC-10), an international directory for
+  people travelling overseas, and a way back to Ask. No verse, no practice, no
+  four-states framing.
 - **FR-27 Crisis privacy.** Crisis-routed questions are not saved to the Journal,
   not logged server-side, and never get a follow-up notification (FR-31). The only
   server record is an anonymous daily count (DEC-5).

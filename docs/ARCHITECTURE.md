@@ -117,17 +117,23 @@ them. Gate `breathe` / `fadeup` / `driftglow` animations on reduce-motion (NFR-5
 ### 2.6 Support screen & helplines (DEC-8, FR-26/FR-28)
 - One screen, reached two ways: a `crisis` response, or the "Need to talk to
   someone?" link on Answer and Journal.
-- The helpline list is **bundled in the app** (works offline), chosen by device
-  locale, with an international directory as the fallback. Starting list — **every
-  entry must be verified before launch (CR-4):**
+- The helpline list is **bundled in the app** (works offline). v1 ships in
+  Australia only (DEC-10), so the list is fixed to Australian services, plus an
+  international directory for Australians travelling overseas. **Every entry must
+  be verified before launch and every 90 days after (CR-4):**
 
-  | Region | Resource |
+  | Resource | Contact |
   |---|---|
-  | United States, Canada | 988 Suicide & Crisis Lifeline — call or text 988 |
-  | United Kingdom, Ireland | Samaritans — 116 123 |
-  | India | Tele-MANAS — 14416 |
-  | Elsewhere | findahelpline.com (international directory) |
+  | Emergency services | 000 |
+  | Lifeline | 13 11 14 (also text and online chat) |
+  | Kids Helpline (young people) | 1800 55 1800 |
+  | Beyond Blue (anxiety, depression) | 1300 22 4636 |
+  | Overseas | findahelpline.com (international directory) |
 
+- Keep the list as data keyed by region (`AU` in v1) so India (v2) and later
+  regions add a list instead of changing the screen.
+- Problem text is processed by the LLM provider, which may be outside Australia;
+  the in-app data-handling notice says so before the first Ask (spec FR-031).
 - Tone matches the app: warm, brief, no verse, no four-states framing.
 
 ### 2.7 Follow-up notifications (v1.1, FR-31–FR-35)

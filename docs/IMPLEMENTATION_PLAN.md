@@ -85,6 +85,10 @@ first, the AI quality second.
 - App icons/splash, store metadata, privacy nutrition labels reflecting DEC-1/6.
 - Store listing review: attribution line present, no therapeutic, clinical or
   medical claims (NFR-10, acceptance criterion 10).
+- Release to the **Australian storefronts only** (DEC-10); confirm both stores
+  exclude every other country.
+- Australian privacy check: data-handling notice before the first Ask, privacy
+  policy covering processing outside Australia, legal review (spec FR-031).
 - Launch iOS first if store review capacity is limited (market research: iOS
   converts ~2× better and fits the first audience).
 - Backend deploy + health checks; secrets configured; basic non-PII request

@@ -228,6 +228,38 @@ Connect / Play Console before committing to v2 or a business model.
 
 ---
 
+## DEC-10 — v1 launches in Australia only; India next, then other countries
+
+**Status:** Accepted
+
+**Decision.** v1 is released only through the Australian App Store and Google
+Play storefronts. India is the v2 region; other countries follow.
+
+**Why.** One English-speaking market means one set of crisis services, one
+privacy law (Privacy Act 1988 / Australian Privacy Principles) and one language,
+which keeps the safety and compliance work for a first release manageable.
+Australia's Indian community is one of its largest overseas-born communities, so
+the core audience is there.
+
+**Trade-off.** The market research (MARKET_VALIDATION.md §3) pointed at the
+diaspora in the US, UK and Canada; Bible Chat, for example, earns over 95% of its
+revenue in the US. Australia is a smaller first market — a deliberate choice to
+launch carefully, not to maximise reach.
+
+**Consequences.**
+- Crisis resources are Australian (000, Lifeline, Kids Helpline, Beyond Blue),
+  verified before launch and every 90 days.
+- A data-handling notice before the first Ask says problem text is processed by a
+  service that may be outside Australia and is not stored.
+- Australian English and day-month dates.
+- Helplines are stored per region so later regions add data, not screens.
+
+**Revisit when** planning v2: India needs its own crisis resources, a review
+under the Digital Personal Data Protection Act 2023, and possibly Indian
+languages — each new region gets its own spec.
+
+---
+
 ## Open questions (not blocking; defaults noted)
 
 - **Exact LLM model** — default Claude Sonnet 5.5; confirm or override.
