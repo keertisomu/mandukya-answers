@@ -169,6 +169,65 @@ faithful and defensible for a sacred-text app.
 
 ---
 
+## DEC-8 — Crisis safety is part of v1 and blocks launch
+
+**Status:** Accepted
+
+**Context.** People bring stress, anger and loneliness, which sit close to mental
+health. Market research (MARKET_VALIDATION.md §6) found: Gita chatbots condoning
+violence; Illinois banning AI therapy (Aug 2025), with Nevada and Utah
+restricting it; and a reported App Store rejection of an AI chat app under
+Guideline 1.4.1 (medical advice).
+
+**Decision.**
+- A **crisis screen** runs before any reflection is generated. If it flags, the
+  user sees a calm support screen with regional helplines instead of an answer.
+- An **output safety check** runs on every reflection; failures fall back to the
+  built-in answer.
+- A **help link** is always visible on Answer and Journal, so a missed detection
+  still leads somewhere.
+- **Attribution** on every answer: a reflection drawing on Gauḍapāda, not
+  religious authority, therapy, or medical advice. No clinical claims anywhere.
+
+**Why in v1, not v1.1.** Shipping a problem-answering app without it is the
+largest liability and app-review risk we found, and it's cheap: two fast
+classifier calls and one screen.
+
+**Privacy.** Crisis-routed questions are never saved, never logged, and never
+followed up. The server keeps only an anonymous daily count.
+
+**Consequences.** Adds latency (mitigated by running the screen in parallel with
+retrieval) and a small cost per answer. Requires a maintained crisis test set and
+verified helpline numbers (CR-4).
+
+---
+
+## DEC-9 — Retention: attract with problems, keep with practice
+
+**Status:** Accepted
+
+**Context.** v1 is opened when something goes wrong, which is episodic.
+Meditation apps keep ~6–8% of users at 30 days. Research ranked daily practice
+with gentle reminders as the strongest retention lever and structured depth
+second.
+
+**Decision.** Ask stays the front door. Retention comes in two steps:
+- **v1.1 (soon after launch):** follow-up check-ins on past questions via
+  on-device local notifications, and story labels feeding an on-device "pattern
+  mirror" in the Journal. Both keep all personal data on the device.
+- **v2:** the daily four-states rhythm, which the text itself suggests — morning
+  (jāgrat: the facts), evening (svapna: the story I ran), bedtime (suṣupti:
+  letting go) — plus a finite "40 days with Gauḍapāda" path (the natural paid
+  tier) and a bedtime wind-down.
+
+**Avoid.** Loss-aversion streaks (they clash with the teaching), community (cost
+and privacy risk, no evidence), and open-ended chat (drifts toward a persona).
+
+**How we'll know.** Compare week-4 retention for v1 vs v1.1 cohorts in App Store
+Connect / Play Console before committing to v2 or a business model.
+
+---
+
 ## Open questions (not blocking; defaults noted)
 
 - **Exact LLM model** — default Claude Sonnet 5.5; confirm or override.

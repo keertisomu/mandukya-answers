@@ -12,7 +12,12 @@ attached per state. Every answer auto-saves to a private, device-only **Journal*
 
 Two screens — **Ask** and **Journal** — and nothing else. The core is a single
 request that returns a four-state reading (jāgrat → svapna → suṣupti → turīya)
-plus one small practice to try today.
+plus one small practice to try today. Crisis safety is built in from day one:
+crisis language gets helplines, not a reflection.
+
+**v1.1** follows soon after launch: follow-up check-ins on past questions and a
+"pattern mirror" of recurring stories in the Journal, both entirely on the
+device.
 
 ## Guiding choices
 
@@ -30,8 +35,8 @@ plus one small practice to try today.
 |---|---|
 | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | Functional + non-functional requirements, scope, acceptance criteria |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, client/backend, data model, the answer pipeline |
-| [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) | Milestones M0–M7, critical path, risks |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | The key decisions (DEC-1…DEC-7) and what would change them |
+| [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) | Milestones M0–M7 (v1) and M8 (v1.1), critical path, risks |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | The key decisions (DEC-1…DEC-9) and what would change them |
 | [docs/MARKET_VALIDATION.md](docs/MARKET_VALIDATION.md) | Demand, competitors, audience, v2 feature ranking, risks |
 | [design/](design/) | The original high-fidelity design handoff (reference only) |
 
