@@ -7,7 +7,9 @@ state.
 
 **v1 scope is deliberately minimal: two screens — Ask and Journal — and nothing
 else.** Śaṅkara's commentary, a verse library, daily practice, streaks, and
-community are **explicitly deferred to v2** (see Non-goals).
+community are **explicitly deferred to v2** (see Non-goals). **Safety (§2.7) is
+part of v1 and blocks launch.** A small **v1.1 retention slice** (§7) ships soon
+after launch.
 
 Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.md).
 
@@ -91,6 +93,33 @@ Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.
 - **FR-24** The client merges the returned text with the hard-coded state→verse
   map to build the displayed cards and the saved entry.
 
+### 2.7 Safety (v1, launch-blocking — DEC-8)
+- **FR-25 Crisis screen.** Before generating a reflection, the backend screens the
+  question for signs of crisis: self-harm or suicidal intent, intent to harm
+  others, abuse, or immediate danger. If any is detected, it returns
+  `{ kind: "crisis" }` and generates no reflection. If the screen itself fails,
+  the backend returns an error; the client shows the fallback answer (FR-13) and
+  the help link (FR-28).
+- **FR-26 Support screen.** On `crisis`, the client shows a calm support screen
+  instead of an Answer: a short, warm acknowledgement, helpline resources for the
+  user's region (chosen by device locale, with an international directory as the
+  fallback), and a way back to Ask. No verse, no practice, no four-states framing.
+- **FR-27 Crisis privacy.** Crisis-routed questions are not saved to the Journal,
+  not logged server-side, and never get a follow-up notification (FR-31). The only
+  server record is an anonymous daily count (DEC-5).
+- **FR-28 Help is always one tap away.** The Answer screen and the Journal carry a
+  small, persistent "Need to talk to someone?" link to the same resources, so a
+  missed detection still leaves a route to help. The resource list is bundled in
+  the app and works offline.
+- **FR-29 Output safety check.** Every generated reflection is checked before it
+  is returned. It fails if it endorses violence or self-harm, gives medical,
+  psychiatric or therapeutic directives, demeans any caste, gender or group, or
+  speaks as a deity or guru. On failure the backend returns an error and the
+  client shows the fallback answer (FR-13).
+- **FR-30 Attribution.** Every Answer shows: *"A reflection drawing on Gauḍapāda's
+  Kārikā — not religious authority, therapy, or medical advice."* The same line
+  appears in the app's About section and the store listings.
+
 ---
 
 ## 3. Non-functional requirements
@@ -114,6 +143,13 @@ Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.
   opens straight to a calm screen with no blocking network call on launch.
 - **NFR-9 (cost control)** `max_tokens` bounded (~1400 for the answer call); model
   ID configurable to trade cost/quality (DEC-6).
+- **NFR-10 (no clinical claims)** No therapeutic, clinical or medical claims in the
+  app, its copy or its store listings. The app is positioned as spiritual
+  reflection (App Store Guideline 1.4.1 risk; US state AI-therapy laws).
+- **NFR-11 (crisis recall over precision)** The crisis screen is tuned so that a
+  false alarm (showing resources unnecessarily) is acceptable and a miss is not.
+  It is tested against a fixed set of crisis and non-crisis examples before launch
+  and on every prompt or model change.
 
 ---
 
@@ -125,6 +161,10 @@ Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.
   RAG corpus; confirm copyright (DEC-7). Record the source in the repo.
 - **CR-3** Keep the four hard-coded verses and the state→verse map in one
   reviewed place (see architecture).
+- **CR-4** Verify every helpline number, its hours and its region before launch,
+  and re-check them periodically (starting list in ARCHITECTURE §2.6).
+- **CR-5** Review the story-label taxonomy (v1.1, FR-36) for tone before v1.1
+  ships.
 
 ---
 
@@ -132,10 +172,13 @@ Decisions referenced below (`DEC-n`) are recorded in [DECISIONS.md](./DECISIONS.
 
 Śaṅkara's commentary · a browsable verse library · daily practice / reminders ·
 streaks · community / sharing · user accounts · cross-device sync or cloud backup
-· editing or deleting individual journal entries from the UI · push
-notifications · analytics dashboards.
+· editing or deleting individual journal entries from the UI · server push
+notifications (v1.1 uses on-device local notifications only) · analytics
+dashboards.
 
-These are noted so v1 stays small; several are natural v2 candidates.
+These are noted so v1 stays small. Planned for v2 (DEC-9): the daily four-states
+rhythm (morning / evening / bedtime touchpoints), a finite "40 days with
+Gauḍapāda" path through the Kārikā, and a bedtime wind-down.
 
 ---
 
@@ -153,3 +196,62 @@ These are noted so v1 stays small; several are natural v2 candidates.
 6. Reduce-motion disables the halo/entry animations; all tap targets are ≥ 44px.
 7. The four states always render in the fixed order with the correct hard-coded
    verses, even when model text is missing.
+8. Every example in the crisis test set routes to the support screen; none is
+   saved to the Journal or logged with its text.
+9. A reflection that fails the output safety check is never shown; the fallback
+   appears instead.
+10. The attribution line appears on every Answer, the help link on every Answer
+    and on the Journal, and the store listings contain no clinical claims.
+
+---
+
+## 7. v1.1 — retention slice (ships soon after launch)
+
+**Goal.** Give people a reason to come back after the problem that brought them.
+v1 gets opened when something goes wrong; v1.1 turns single questions into
+ongoing threads and lets the Journal show patterns. Both features run entirely on
+the device, so the server learns nothing new (DEC-9).
+
+### 7.1 Follow-up check-ins
+- **FR-31** After an answer, the app schedules one **local notification** 3 days
+  later (scheduled on the device; no server push) inviting the user to look again
+  at that entry.
+- **FR-32** The notification never contains the question or any journal content,
+  because it can show on the lock screen. Example: *"Something you were sitting
+  with a few days ago — how does it look now?"*
+- **FR-33** Tapping it opens that Journal entry with a short input, "How does it
+  look now?". The reply is saved on the entry as a dated follow-up and shown in the
+  Journal under the original answer.
+- **FR-34** Notification permission is requested after the user's first answer,
+  with a one-line explanation, never at launch. Declining leaves everything else
+  working. A setting turns follow-ups off.
+- **FR-35** No follow-up for crisis-routed questions (FR-27). At most one pending
+  follow-up per entry; if the user adds a follow-up on their own first, the
+  scheduled one is cancelled.
+
+### 7.2 Story labels and the pattern mirror
+- **FR-36** Each reflection also returns a **story label**: a `key` from a fixed
+  taxonomy of common stories (for example "not respected", "must fix it alone",
+  "not good enough", "losing control", "left out", plus "other") and a short
+  first-person `phrase` in the user's own terms (≤ 8 words). Fixed keys make
+  grouping reliable; the phrase keeps it personal.
+- **FR-37** The label is saved on the entry, on the device only. The svapna card
+  can show the phrase ("The story: *I'm not being respected*").
+- **FR-38** Once the Journal has 5 or more labelled entries, a **Patterns** section
+  at the top of the Journal lists recurring stories by count, most frequent first;
+  each opens the entries behind it. Computed on the device.
+- **FR-39** Patterns are worded as noticing, never as diagnosis ("This story has
+  come up 4 times.").
+
+### 7.3 Measuring it
+- **FR-40** Compare week-4 retention for v1 vs v1.1 install cohorts using App
+  Store Connect and Play Console. No new in-app analytics; optionally an anonymous
+  daily count of follow-ups answered (DEC-5).
+
+### 7.4 v1.1 acceptance criteria
+1. A follow-up notification arrives about 3 days after an answer, contains no
+   question text, and opens the right entry; a reply saves and survives restarts.
+2. Denying notification permission leaves the app fully usable.
+3. Story labels persist across restarts; Patterns appears at 5+ labelled entries
+   and groups by taxonomy key.
+4. Entries saved by v1 (no label, no follow-ups) still render correctly.

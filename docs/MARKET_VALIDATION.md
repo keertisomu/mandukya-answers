@@ -133,7 +133,10 @@ is known.
 6. **Curiosity churn.** Many faith-AI users arrive out of curiosity [23].
    *Mitigation:* daily practice (v2 #1) and making the first answer excellent.
 
-## 7. Implications for v1 (proposed; not yet applied to the requirements)
+## 7. Implications for v1
+
+*Applied: see REQUIREMENTS §2.7 (safety) and §7 (v1.1 retention slice), and
+DECISIONS DEC-8 and DEC-9.*
 
 - **New requirement: crisis safety.** Detect self-harm or crisis language and
   show helpline resources instead of (or before) a reflection.
