@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Turiya — Ask & Journal (v1)
+# Specification Quality Checklist: Turiya — Learn, Ask & Journal (v1)
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-10-17
@@ -45,3 +45,15 @@
   before the first submission), and region-specific details (phone numbers, Privacy Act) are kept
   as content and compliance facts, not implementation. The phone numbers are listed in Assumptions
   and must be verified before release (FR-030).
+- **Re-validated 2026-11-06** after refocusing v1 on learning (new User Story 1 "Learn the
+  Upaniṣad one lesson a day" and User Story 5 "daily reminder"; FR-033–FR-045; SC-013–SC-017;
+  Journal, navigation, safety and privacy requirements extended to lessons). All items still pass:
+  - The Path's scope is bounded: Kārikā chapter 1, about 30 lessons, one new lesson a day.
+  - Unlock, offline, consent and reminder behaviour are testable.
+  - Success criteria are measurable and technology-agnostic: first-use completion, 3–5 minute
+    reading time, 100% content review, offline use, and store-reported day-30 retention ≥ 12%.
+  - No [NEEDS CLARIFICATION] markers. Reasonable defaults (chapter 1 first, daily pace, no
+    skipping ahead, free v1) are recorded in Assumptions.
+  - Dependencies are named: lesson content and review, and Learn designs.
+- Spec section of note: the spec keeps earlier requirement IDs stable and numbers new ones from
+  FR-033/SC-013, so the FR list is not in numeric order. This is intentional.

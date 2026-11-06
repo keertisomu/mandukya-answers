@@ -1,7 +1,13 @@
 # Architecture — v1
 
 Decisions referenced here (`DEC-n`) live in [DECISIONS.md](./DECISIONS.md);
-requirements (`FR-n`/`NFR-n`) in [REQUIREMENTS.md](./REQUIREMENTS.md).
+requirements (`FR-n`/`NFR-n`) in [REQUIREMENTS.md](./REQUIREMENTS.md). Three-digit
+IDs (`FR-033`, …) are from the product spec,
+[specs/001-turiya-ask-journal/spec.md](../specs/001-turiya-ask-journal/spec.md).
+
+v1 centres on **learning**: a daily lesson Path through chapter 1 of Gauḍapāda's
+Kārikā, with Ask kept for applying it (DEC-11). The Path needs no backend at all;
+only Ask does.
 
 ---
 
@@ -11,10 +17,12 @@ requirements (`FR-n`/`NFR-n`) in [REQUIREMENTS.md](./REQUIREMENTS.md).
 ┌───────────────────────────────────────────────────────────┐
 │  React Native app (iOS + Android, Expo)         DEC-2       │
 │                                                             │
-│   Ask / Thinking / Answer / Journal screens                 │
+│   Learn / Ask / Journal tabs (+ Thinking, Answer, Support)  │
 │                                                             │
-│   Journal → on-device only (MMKV, key turiya_journal_v1)    │
+│   Path lessons → bundled in the app, work offline  DEC-11   │
+│   Journal, progress, lesson notes → on-device only (MMKV)   │
 │             DEC-1, DEC-3 — never sent to the server         │
+│   Only an Ask question is sent, after consent (FR-041)      │
 └───────────────┬─────────────────────────────────────────────┘
                 │  POST /v1/answer  { question }   (HTTPS)
                 ▼
@@ -40,16 +48,19 @@ requirements (`FR-n`/`NFR-n`) in [REQUIREMENTS.md](./REQUIREMENTS.md).
 ```
 
 The user's problem text transits the backend to reach the LLM (so the key stays
-off the client) and is **processed once, not persisted** (DEC-1 / NFR-1).
+off the client) and is **processed once, not persisted** (DEC-1 / NFR-1). Lesson
+content ships inside the app, and lesson responses never leave the device.
 
 ---
 
 ## 2. Client (React Native)
 
 ### 2.1 Screens & state
-Mirror the prototype's state model:
+Three tabs — **Learn** (the screen the app opens to), **Ask** and **Journal**
+(spec FR-017). Ask and Journal mirror the prototype's state model; Learn is new
+and needs designs in the same visual language (CR-7):
 
-- `tab`: `"ask" | "journal"`
+- `tab`: `"learn" | "ask" | "journal"`
 - `phase` (Ask sub-state): `"idle" | "thinking" | "answer"`
 - `question` (current input), `asked` (submitted text), `answer` (parsed result
   or fallback)
@@ -58,24 +69,43 @@ Mirror the prototype's state model:
 
 ### 2.2 On-device persistence (DEC-3)
 - Store: `react-native-mmkv` (fallback: `AsyncStorage`).
-- Key: `turiya_journal_v1` — a JSON array, newest first.
-- Entry shape (frozen, versioned):
+- Keys (all JSON, all device-only):
+  - `turiya_journal_v1` — journal entries, newest first.
+  - `turiya_path_v1` — Path progress.
+  - `turiya_settings_v1` — reminder time, AI-consent choice, follow-up toggle.
+- Shapes (frozen, versioned):
   ```ts
   type Level = { name: string; sanskrit: string; tint: string;
                  heading: string; body: string; verseRef: string };
-  type Entry = { id: number;        // ms timestamp
-                 when: string;       // formatted at save time
-                 question: string;
-                 levels: Level[];    // length 4, fixed order
-                 practice: string;
-                 story?: Story;            // v1.1 (FR-36)
-                 followUps?: FollowUp[] }; // v1.1 (FR-33)
+  type AskEntry = { kind: "ask";
+                    id: number;        // ms timestamp
+                    when: string;      // formatted at save time
+                    question: string;
+                    levels: Level[];   // length 4, fixed order
+                    practice: string;
+                    story?: Story;            // v1.1 (FR-36)
+                    followUps?: FollowUp[] }; // v1.1 (FR-33)
+  type LessonEntry = { kind: "lesson";
+                       id: number;
+                       when: string;
+                       lessonId: string;    // e.g. "1-07"
+                       lessonTitle: string;
+                       verseRef: string;
+                       prompt: string;      // the "live it today" prompt
+                       response: string };  // what the person wrote
+  type Entry = AskEntry | LessonEntry;
   type Story = { key: string;      // taxonomy key, e.g. "not_respected"
                  phrase: string }; // first-person, ≤ 8 words
   type FollowUp = { at: number; text: string };
+
+  type PathProgress = { pathId: "karika-ch1";
+                        contentVersion: string;     // content release it was made with
+                        completed: { lessonId: string; at: number }[] };
   ```
-- The v1.1 fields are optional, so v1 entries stay valid and the storage key does
-  not change. Crisis-routed questions never become entries (FR-27).
+- A lesson response is one entry per lesson: changing the response from the lesson
+  screen updates that entry (spec FR-014).
+- The v1.1 fields are optional, so entries stay valid and the storage keys do not
+  change. Crisis-routed questions never become entries (FR-27).
 - All reads/writes wrapped in try/catch; the app renders correctly on empty or
   unavailable storage (NFR-4).
 
@@ -91,7 +121,10 @@ never fetched, never model-generated — so citations cannot hallucinate:
 | 4 | turiya | Turīya | The witness | `#3F4F52` | Kārikā 1.10 |
 
 Devanagari + translation for each come from the handoff; see [CR-1] — proofread
-before launch. Keep this map and the backend's state definitions in sync (a
+before launch. **Likely correction:** in standard editions, the Devanagari lines
+shown for Waking (ref. 1.1) and Underneath (ref. 1.2) look like the two halves of a
+single verse, Kārikā 1.3. Confirm against the chosen edition; it matters more now,
+because these references link to Path lessons. Keep this map and the backend's state definitions in sync (a
 shared `packages/shared` module if we use a monorepo).
 
 ### 2.4 Answer flow (FR-3, FR-7–FR-13)
@@ -115,8 +148,9 @@ Devanagari, radii, type scale, the input-card shadow) and build components from
 them. Gate `breathe` / `fadeup` / `driftglow` animations on reduce-motion (NFR-5).
 
 ### 2.6 Support screen & helplines (DEC-8, FR-26/FR-28)
-- One screen, reached two ways: a `crisis` response, or the "Need to talk to
-  someone?" link on Answer and Journal.
+- One screen, reached three ways: a `crisis` response from Ask, the on-device
+  check on a saved lesson response (§2.10), or the "Need to talk to someone?" link,
+  which is one tap away on Learn, Ask and Journal (spec FR-045).
 - The helpline list is **bundled in the app** (works offline). v1 ships in
   Australia only (DEC-10), so the list is fixed to Australian services, plus an
   international directory for Australians travelling overseas. **Every entry must
@@ -143,7 +177,8 @@ them. Gate `breathe` / `fadeup` / `driftglow` animations on reduce-motion (NFR-5
   includes journal content (FR-32).
 - Cancel the scheduled notification when the user adds a follow-up themselves, or
   when follow-ups are turned off in settings.
-- Permission is requested after the first answer, never at launch (FR-34).
+- Permission is requested after the first answer, never at launch (FR-34). If the
+  person already granted it for the daily reminder (§2.11), it is reused.
 
 ### 2.8 Pattern mirror (v1.1, FR-36–FR-39)
 - Group journal entries by `story.key`, count, sort descending; show the section
@@ -151,6 +186,53 @@ them. Gate `breathe` / `fadeup` / `driftglow` animations on reduce-motion (NFR-5
   journal.
 - The taxonomy (keys + display names) lives in `packages/shared`, so the backend
   schema and the client grouping always agree (CR-5).
+
+### 2.9 Learn — the Path (DEC-11, spec FR-033–FR-040)
+- **Content lives in the repo**, under `content/path/karika-ch1/`: one file per
+  lesson (about 30), each with the verse(s) — Devanagari, IAST transliteration,
+  translation, reference, translation source — the plain-language explanation, the
+  related state, and the "live it today" prompt. Every change goes through a pull
+  request reviewed for accuracy (CR-1, CR-6).
+- **Built into the app.** A build step validates the files against a schema in
+  `packages/shared` (required fields, references, order) and bundles them, so the
+  Path works fully offline (FR-040) and lessons are never generated (FR-036).
+- **Canonical vs explanation** stay separate fields, never mixed, per the
+  constitution's textual-integrity principle: verse text and translation are
+  canonical; the explanation and prompt are applied commentary.
+- **Unlock rule** (FR-038), computed on the device: the next lesson is available
+  when the previous one is completed *and* the device's calendar day is later than
+  the day it was completed. No streaks, no missed-day state.
+- **Content updates** ship with app updates. `contentVersion` in progress lets a
+  new release keep progress by `lessonId` even if lesson text is corrected.
+- **Ask ↔ Learn links** (FR-042): a static map from verse reference → `lessonId`.
+  An Ask card links to its lesson only if that lesson is completed or is today's.
+
+### 2.10 On-device crisis check for lesson responses (spec FR-044)
+- Lesson responses are never sent anywhere, so this check runs **on the device**:
+  a rule-based matcher (word and phrase lists, with negation and common-idiom
+  exceptions such as "this job is killing me") that favours showing resources
+  when unsure.
+- The rule lists live in `packages/shared` and the backend uses the same lists as
+  a fast first gate before its model-based screen (§3.3), so both paths stay
+  aligned. The crisis test set (NFR-11) covers both.
+- On a match: the response is still saved (it is the person's own journal) and
+  the support screen (§2.6) is shown.
+
+### 2.11 Daily reminder (spec FR-043)
+- Local notification via `expo-notifications`, scheduled on the device at the
+  time the person picks. Off by default; permission is requested only when they
+  turn it on.
+- Generic text only (e.g. "Today's lesson is ready."). Before it fires, skip it if
+  today's lesson was already opened or no new lesson is available; reschedule
+  daily.
+
+### 2.12 AI data-sharing consent (spec FR-031, FR-041)
+- Shown once, before the first Ask question is sent: names the AI provider, says
+  only the question text is sent, that it may be processed outside Australia and
+  is not stored, and that lessons and the Journal stay on the device. Meets Apple
+  Guideline 5.1.2(i).
+- The choice is stored in `turiya_settings_v1` and can be reviewed in settings.
+  Declining keeps Learn and Journal fully usable; Ask explains why it cannot run.
 
 ---
 
@@ -271,7 +353,9 @@ design (DEC-1).
 
 **Seeding.** A one-off script loads the corpus from the licensed source (CR-2),
 chunks and embeds it, and populates `state_verse` from the proofread verse map
-(CR-1). Embeddings are computed once at seed time.
+(CR-1). Embeddings are computed once at seed time. The chapter 1 verses are read
+from the same `content/path/` files the app bundles, so Learn and Ask's retrieval
+never disagree about the text.
 
 ---
 
@@ -284,8 +368,9 @@ chunks and embeds it, and populates `state_verse` from the proofread verse map
 - **Versioning:** API under `/v1`; storage key suffixed `_v1`; DB migrations
   tracked.
 - **Monorepo (suggested):** `apps/mobile` (RN), `apps/api` (backend),
-  `packages/shared` (the state/verse constants and the answer schema shared by
-  both), `db/` (migrations + seed).
+  `packages/shared` (the state/verse constants, the answer schema, the lesson
+  schema and the crisis rule lists shared by both), `content/` (the reviewed
+  lesson files), `db/` (migrations + seed).
 
 ---
 
@@ -293,6 +378,8 @@ chunks and embeds it, and populates `state_verse` from the proofread verse map
 
 - Swap the thin pipeline for a **Mastra workflow** (multi-step practice, Śaṅkara
   layer, evals, tracing) — additive because Mastra sits on the same AI SDK.
+- Add **further Paths** for Kārikā chapters 2–4 as new `content/path/` folders —
+  same lesson schema, no new screens.
 - Add a **verse library** screen backed by `karika_passage`.
 - **Local-first encrypted sync** for the journal if users ask for it (DEC-1),
   keeping plaintext off the server.

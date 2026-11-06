@@ -204,7 +204,9 @@ verified helpline numbers (CR-4).
 
 ## DEC-9 — Retention: attract with problems, keep with practice
 
-**Status:** Accepted
+**Status:** Accepted; partly superseded by DEC-11. The lesson path and the daily
+reminder moved into v1, and Ask is no longer the front door. The v1.1 slice and
+the "avoid" list below still stand.
 
 **Context.** v1 is opened when something goes wrong, which is episodic.
 Meditation apps keep ~6–8% of users at 30 days. Research ranked daily practice
@@ -260,11 +262,61 @@ languages — each new region gets its own spec.
 
 ---
 
+## DEC-11 — v1 centres on learning the Upaniṣad; Ask is kept for applying it
+
+**Status:** Accepted
+
+**Context.** As a problem-answering app, v1 would be opened mainly when something
+goes wrong, which is episodic. The market research found structured programs and
+daily practice drive retention and paid conversion, while excellent Māṇḍūkya
+teaching is already free online. A learning-only app would compete with that
+free teaching and lose the one thing it doesn't offer: applying the text to
+*my* situation.
+
+**Decision.** Combine the two, with learning at the centre:
+- **Learn (home tab):** a Path of about 30 daily lessons through chapter 1 of
+  Gauḍapāda's Kārikā (Āgama Prakaraṇa: the 12 mantras with 29 kārikās). Each
+  lesson has the verse, a plain-language explanation, the related state, and a
+  "live it today" prompt with an optional written response.
+- **Pace:** one new lesson per calendar day; no streaks, no missed-day messages.
+- **Lesson content is fixed and reviewed,** never generated. AI is used only in
+  Ask.
+- **Ask stays,** now secondary, and links to the lessons for its verses.
+- **Journal** holds lesson responses and Ask reflections.
+- **An optional daily reminder** (local, off by default) moves into v1.
+
+**Why chapter 1.** It contains all twelve mantras of the Upaniṣad with
+Gauḍapāda's commentary on them, so finishing it means having studied the whole
+Upaniṣad through Gauḍapāda. It's about a month at one lesson a day. Chapters 2–4
+(about 186 more kārikās) become follow-on Paths and the natural paid offering.
+
+**Consequences.**
+- **Content becomes the critical path:** a licensed translation of the chapter,
+  proofreading of ~41 verses rather than 4, ~30 explanations written for the app,
+  and review by someone grounded in the tradition (CR-6).
+- **New designs** are needed for Learn, the reminder setting and the consent
+  screen (CR-7).
+- **Lower risk:** the Path is fully offline and sends nothing anywhere. Fewer
+  raw-problem conversations means less overlap with mental-health topics.
+- **Safety still covers what people write:** lesson responses get an on-device
+  crisis check, and help is one tap away on every tab.
+- **The audience leans further** toward Western Advaita seekers and diaspora
+  learners, which fits the Australian launch (DEC-10).
+
+**Revisit if** first-use testing shows people come for Ask and ignore the Path,
+or the content cannot be reviewed in time. The fallback then is a shorter first
+Path, not dropping learning.
+
+---
+
 ## Open questions (not blocking; defaults noted)
 
 - **Exact LLM model** — default Claude Sonnet 5.5; confirm or override.
-- **Translation source** for the corpus — do we have a preferred text, or should
-  we research public-domain options (e.g. Nikhilananda) and confirm licensing?
+- **Translation source** for chapter 1 and the corpus — now on the critical path
+  (DEC-11). Do we have a preferred text, or should we research public-domain
+  options (e.g. Nikhilananda) and confirm licensing?
+- **Who writes and who reviews the lessons** (CR-6) — an author for the
+  explanations and a reviewer grounded in the tradition.
 - **Expo vs bare RN** — default Expo.
 - **Analytics** — default: none in v1 (privacy purity). If we want anonymous
   counts later, they go in Postgres with no PII (DEC-5).

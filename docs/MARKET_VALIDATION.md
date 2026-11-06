@@ -1,5 +1,14 @@
 # Market validation — Turiya
 
+> **Update (November 2026).** This research was done for the problem-answering
+> version of the app. Since then:
+> - v1 has been refocused on **learning the Upaniṣad** through a daily lesson Path,
+>   with Ask kept for applying it (DEC-11).
+> - v1 launches in Australia only (DEC-10).
+>
+> The findings below are unchanged. Two of the top-ranked features in §5 — daily
+> practice with reminders, and structured depth — are now part of v1.
+
 **Date:** October 2026 · **Method:** web research across five angles: market
 size, AI scripture competitors, audience, monetization and retention, and risks.
 
