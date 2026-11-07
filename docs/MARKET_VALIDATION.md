@@ -1,157 +1,100 @@
-# Market validation — Turiya
+# Market validation
 
-**Date:** October 2026 · **Method:** web research across five angles: market
-size, AI scripture competitors, audience, monetization and retention, and risks.
+Research done in October 2026, before two direction changes: v1 now centres on learning (DEC-11)
+and launches in Australia only (DEC-10). The findings still hold.
 
-> **Reliability note.** The research tool could not open the source pages, so
-> the planned claim-by-claim verification did not run. The findings below come
-> from search-result summaries of the cited sources. Several numbers are
-> third-party estimates (Appfigures, Sensor Tower) or self-reported by the
-> companies, and are marked as such. Treat them as directional, and check any
-> figure against its source before using it in a pitch.
-
----
+> **How reliable is this?** The research tool couldn't open the source pages, so claims weren't
+> checked one by one. Figures come from search summaries of the sources below, and several are
+> estimates or companies' own claims. Use them as a guide; check the source before quoting one.
 
 ## Verdict
 
-**There is real demand, but it is a niche, not a mass market. That is enough to
-build v1, provided the positioning and safety choices are right.**
+**Real demand, but a niche, not a mass market — enough to build v1 if positioning and safety are
+right.**
 
-- People already pay for AI answers grounded in scripture. Bible Chat is the
-  clearest proof.
-- People already pay for nondual depth. Waking Up is the clearest proof.
-- Turiya sits where those two meet, for an Advaita/Vedanta audience. No funded
-  competitor is visibly serving that spot.
-- The earliest Hindu-scripture chatbots (GitaGPT and its clones, 2023) drew a
-  lot of early use but damaged their reputations with unsafe answers. Turiya's
-  design choices answer exactly what went wrong for them: grounding in the
-  commentary, hard-coded verses, and no "voice of god" persona.
-- The hard part will be retention and monetization, not curiosity. Meditation
-  apps keep under 10% of users after 30 days.
-
----
+- People pay for AI answers grounded in scripture (Bible Chat) and for nondual depth (Waking Up).
+  Turiya sits where those meet, for Advaita/Vedanta. No funded competitor serves that spot.
+- The 2023 Gita chatbots got early use, then damaged their reputations with unsafe answers. Turiya's
+  design avoids what went wrong: grounded in the commentary, fixed verses, no "voice of god".
+- **The hard part is retention, not curiosity.** Meditation apps keep under 10% of users after 30
+  days.
 
 ## 1. Market size and demand
 
 | Signal | Figure | Source quality |
 |---|---|---|
-| Global spiritual-wellness apps | ~$2.5B (2025), ~14.6% CAGR. Two research firms broadly agree. Mostly meditation apps. | Vendor forecasts [1][2] |
-| Bible Chat (AI scripture Q&A) | ~$6.3M net revenue since its 2023 launch; peak ~$750K/month (Mar 2025); >95% from the US App Store | Third-party estimate [3] |
-| Bible Chat funding | $14M Series A (True Ventures); claims ~10M users | Secondary source [4] |
-| Crowding | 9,000+ Bible apps; only 46 earn more than $10K/month | Appfigures [3] |
-| GitaGPT and clones | ≥5 clones within ~3 months of Jan 2023; some report up to 50K queries/day | Self-reported [5][6] |
-| Sri Mandir (Hindu devotional) | 40M+ downloads; ~$8M FY25 revenue (3.8× growth); $20M Series C | Press [7][8] |
-| Sadhguru "Miracle of Mind" (free) | 1M downloads in 15 hours; trended in 20 countries | Self-reported [9][10] |
-| Insight Timer | 32M+ members, ~10K new members/day | Press release [11] |
+| Spiritual-wellness apps worldwide | ~$2.5B in 2025, growing ~14.6% a year (mostly meditation apps) | Vendor forecasts [1][2] |
+| Bible Chat (AI scripture Q&A) | ~$6.3M revenue since 2023; peak ~$750K/month; >95% from the US | Third-party estimate [3] |
+| Bible Chat funding | $14M Series A; claims ~10M users | Secondary source [4] |
+| Crowding | 9,000+ Bible apps; only 46 earn over $10K/month | Appfigures [3] |
+| GitaGPT and clones | 5+ clones within ~3 months of Jan 2023; up to 50K queries/day | Self-reported [5][6] |
+| Sri Mandir (Hindu devotional) | 40M+ downloads; ~$8M FY25 revenue; $20M Series C | Press [7][8] |
+| Sadhguru's free app | 1M downloads in 15 hours | Self-reported [9][10] |
+| Insight Timer | 32M+ members | Press release [11] |
 
-**Takeaways**
-- AI scripture Q&A clearly makes money, but a few winners take most of it.
-  Bible Chat grew mainly through **SEO and Google traffic** [3].
-- Hindu faith-tech is venture-backed and growing fast, but its revenue comes from
-  **commerce** (paid poojas, offerings), not content subscriptions [8]. That is
-  a different business model from Turiya's.
+- AI scripture apps make money, but a few winners take most of it. Bible Chat grew mainly through
+  **search traffic** [3].
+- Hindu faith apps earn from **commerce** (paid poojas), not content subscriptions [8] — a different
+  business from Turiya's.
 
 ## 2. Competitors and the gap
 
-| Competitor | What it does | Gap Turiya could fill |
+| Competitor | What it does | The gap |
 |---|---|---|
-| GitaGPT and Gita bots | Speak as Krishna; general LLM answers | Rest of World found 3 of 5 bots condoning violence, plus caste/political bias [5][12]. Turiya is grounded, cited, and has no persona. |
-| Bible Chat, Text With Jesus | AI scripture companions (Christian) | Nothing comparable for Vedanta. |
-| Waking Up (Sam Harris) | Paid audio for nondual meditation | ~$700K/month, ~20K downloads/month (Sensor Tower est.) at $119.99/year [13]. No text-grounded Q&A; not tied to a specific text. |
-| Insight Timer | Large free library, adding AI recommendations [11] | General purpose; could become a distribution channel rather than a rival. |
-| Sri Mandir / Astrotalk | Devotion and astrology commerce | Different job: ritual, not reflection. |
+| GitaGPT and Gita bots | Speak as Krishna, general AI answers | 3 of 5 tested bots condoned violence, with caste and political bias [5][12] |
+| Bible Chat, Text With Jesus | Christian AI companions | Nothing similar for Vedanta |
+| Waking Up (Sam Harris) | Paid nondual meditation audio; ~$700K/month (estimate) at $119.99/year [13] | Not tied to a text; no Q&A |
+| Insight Timer | Large free library, adding AI recommendations [11] | General; more a channel than a rival |
+| Sri Mandir, Astrotalk | Devotion and astrology commerce | Ritual, not reflection |
 
-**The gap:** an app that is Advaita-specific, grounded in one commentary,
-non-persona and privacy-first. No search result surfaced a direct equivalent.
-Western nonduality is largely built on Advaita Vedanta through teachers like
-Rupert Spira [14], so the philosophical audience exists.
+**The gap**: Advaita-specific, grounded in one commentary, no persona, private. Western nonduality
+largely draws on Advaita Vedanta [14], so the audience exists.
 
-## 3. Who to target first
+## 3. Audience
 
-| Segment | Evidence | Fit for v1 |
+| Segment | Evidence | Fit |
 |---|---|---|
-| **Diaspora (US/UK/Canada)** | Sri Mandir: ARPU abroad ~$81 vs $7–9 in India; ~20% of revenue from ~3% of users [7] | **High.** Pays well, English-speaking, on iOS. |
-| **Western nondual/Advaita seekers** | Waking Up pays well per user; deeper content may retain better (day-90 ~6% vs Calm ~2%, weak source) [13][15] | **High.** Values depth and authenticity. |
-| Indian urban millennials/Gen Z | Huge, quick adopters (Sadhguru app), but low ARPU and used to free apps [9] | Medium. Better served by a later free/freemium tier. |
-| Yoga practitioners | Not measured in this research | Unknown. |
+| Indian diaspora | Sri Mandir users abroad pay ~$81/year vs $7–9 in India [7] | High: pays well, English, iOS |
+| Western Advaita seekers | Waking Up earns well per user; deeper content may retain better (weak source) [13][15] | High: values depth |
+| Urban Indian millennials | Huge and quick to adopt, but expect free apps [9] | Medium: later free tier |
 
-**Recommendation:** launch for **English-speaking diaspora and Western Advaita
-seekers**, with iOS as the priority. Trial-to-paid conversion is about 2× higher
-on iOS than Android [16]. Indian-language support can come later.
+The research suggested the US, UK and Canada first, with iOS as the priority (iOS converts ~2×
+better [16]). v1 chose Australia as a more careful first step (DEC-10).
 
-## 4. Monetization and retention
+## 4. Retention and money
 
-- **Retention is the main risk.** Google Play 30-day retention: Calm 8.3%,
-  Headspace 7.7%, category average 6.3% [17].
-- **First session decides everything.** 55% of 3-day trial cancellations happen
-  on Day 0 [18]. The first Ask has to be excellent and free.
-- **Trial length matters.** Trials of 17–32 days convert at a 45.7% median, vs
-  26.8% for trials of 4 days or less. 30% of annual subscribers cancel in month
-  1 [16].
-- **Models seen in the field:** subscriptions (Waking Up, Bible Chat), free
-  (Sadhguru), commerce (Sri Mandir), and Waking Up's "free for anyone who can't
-  afford it" [19]. That last one fits Turiya's ethos well.
+- **30-day retention** on Google Play: Calm 8.3%, Headspace 7.7%, category average 6.3% [17].
+- **The first session decides it**: 55% of 3-day trial cancellations happen on day 0 [18].
+- **Longer trials convert better**: 17–32 days, 45.7% median; 4 days or less, 26.8% [16].
+- **Models in use**: subscription (Waking Up, Bible Chat), free (Sadhguru), commerce (Sri Mandir),
+  and Waking Up's "free if you can't afford it" [19], which fits Turiya.
 
-**Suggested path:** ship v1 **free**, to validate whether people come back. Add
-a freemium tier with a long trial or an annual plan only once week-4 retention
-is known.
+**Suggested path**: v1 free; decide on pricing once week-4 retention is known.
 
-## 5. v2 features, ranked by evidence
+## 5. Features ranked by evidence
 
-| Rank | Feature | Evidence | Verdict |
+| Rank | Feature | Evidence | Where it went |
 |---|---|---|---|
-| 1 | **Daily practice + gentle reminders** | Headspace onboarding and in-app messaging: +109% week-1 retention (vendor case study) [20] | Strongest. First v2 item. |
-| 2 | **Structured depth**: verse library, guided path through the Kārikā, Śaṅkara's commentary | Deeper nondual content appears to retain better [15]; paying users want structured programs [21] (both weak sources) | Strong fit with the audience. |
-| 3 | **Encrypted sync/backup** | Privacy is a trust differentiator (§6); paying users won't accept losing their journal | Needed before charging money. |
-| 4 | Audio (read verses, guided reflection) | Waking Up's paid value is audio [19] | Promising; not measured directly. |
-| 5 | Streaks | No evidence found; may clash with a calm, non-gamified feel | Low priority. |
-| 6 | Community | No evidence found; adds moderation cost and privacy risk | Defer. |
+| 1 | Daily practice + gentle reminders | +109% week-1 retention at Headspace (vendor case study) [20] | v1: daily Path + reminder |
+| 2 | Structured depth (a guided path through the text) | Deeper content retains better; payers want programs (weak sources) [15][21] | v1: chapter 1 Path; v2: chapters 2–4 |
+| 3 | Encrypted backup | Privacy builds trust; payers won't accept losing a journal | Later (ROADMAP) |
+| 4 | Audio | Waking Up's paid value is audio [19] | Later (ROADMAP) |
+| 5 | Streaks | No evidence; clashes with a calm feel | Not planned |
+| 6 | Community | No evidence; moderation and privacy cost | Not planned |
 
-## 6. Top risks and mitigations
+## 6. Risks
 
-1. **Harmful or distorted answers.** GitaGPT-style bots condoned violence and
-   showed bias [5][12]; "Father Justin" was stripped of its priest title after
-   backlash [22][23]. *Mitigation (mostly already in the design):* no persona,
-   RAG grounding, a safety/toxicity check on outputs, and copy that presents
-   each answer as "a reflection drawing on Gauḍapāda", not religious authority.
-2. **Misquoted scripture.** YouVersion's CEO estimates top models misquote the
-   Bible 15–60% of the time, and his company hasn't launched a chatbot for that
-   reason (his own figures) [24]. *Mitigation:* hard-coded verses (done) and
-   getting the Devanagari proofread (CR-1). The proofreading becomes
-   **launch-critical**.
-3. **Overlap with mental health.** Illinois HB 1806 (Aug 2025) bans AI therapy,
-   and Nevada and Utah restrict it [25]. Stress, anger and loneliness sit close
-   to that line. *Mitigation:* **add crisis/self-harm detection with a referral
-   to human help**, and never position the app as therapy.
-4. **App Store review.** One developer reports repeated Apple rejections under
-   Guideline 1.4.1 (medical advice) for an AI chat app [26]. This is a single
-   report. *Mitigation:* keep clinical claims out of the listing and the copy.
-5. **Privacy expectations.** 48% of 25 mental-health apps send data to
-   third-party AI, and some train on journals [27]. Turiya's design turns this
-   into a selling point. *But:* each Ask still sends text to the LLM provider,
-   so say so plainly to keep the promise honest.
-6. **Curiosity churn.** Many faith-AI users arrive out of curiosity [23].
-   *Mitigation:* daily practice (v2 #1) and making the first answer excellent.
+| Risk | Evidence | Answer in v1 |
+|---|---|---|
+| Harmful or distorted answers | Gita bots condoned violence [5][12]; "Father Justin" AI lost its priest title after backlash [22][23] | No persona, grounding, output safety check, attribution line (DEC-7, DEC-8) |
+| Misquoted scripture | YouVersion's CEO estimates AI misquotes the Bible 15–60% of the time (his figures) [24] | Fixed, proofread verses and lessons (DEC-11) |
+| Overlap with mental health | Illinois banned AI therapy (Aug 2025); Nevada and Utah restrict it [25] | Crisis checks, help on every tab, no therapy claims (DEC-8) |
+| App Store rejection | One report of repeated rejections under Guideline 1.4.1 (medical advice) [26] | No clinical claims in the app or listing |
+| Privacy distrust | 48% of 25 mental-health apps send data to third-party AI [27] | Device-only data; consent before Ask (DEC-1) |
+| Curiosity churn | Many faith-AI users arrive out of curiosity [23] | Daily Path; an excellent first lesson |
 
-## 7. Implications for v1
-
-*Applied: see REQUIREMENTS §2.7 (safety) and §7 (v1.1 retention slice), and
-DECISIONS DEC-8 and DEC-9.*
-
-- **New requirement: crisis safety.** Detect self-harm or crisis language and
-  show helpline resources instead of (or before) a reflection.
-- **New requirement: attribution copy.** "A reflection drawing on Gauḍapāda's
-  Kārikā — not religious authority, therapy, or medical advice."
-- **Output safety check** on generated text, beyond schema validation.
-- **Launch focus:** iOS first, English, diaspora and Western Advaita seekers.
-- **Measure retention without in-app analytics:** App Store Connect and Play
-  Console already report retention, and DEC-5 allows an anonymous daily answer
-  counter. The goal is to learn week-4 retention before choosing a business
-  model.
-- **Discovery:** Bible Chat grew through SEO. A web page per Kārikā verse could
-  be a cheap acquisition channel.
-
----
+**Growth idea**: Bible Chat grew through search. A public web page per Kārikā verse could be a
+cheap way to be found.
 
 ## Sources
 

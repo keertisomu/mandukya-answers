@@ -1,238 +1,190 @@
-# Decisions (v1)
+# Decisions
 
-Short records of the choices that shape v1, why they were made, and what would
-change them. Numbered like ADRs so we can reference them (`DEC-1`, etc.).
+Why v1 is the way it is. Each entry: the decision, why, what it costs, and when to revisit.
 
----
-
-## DEC-1 — Journal stays on the device; the server never stores user problems
-
-**Status:** Accepted
-
-**Context.** The product lets people type private, often emotionally loaded
-problems. The original design handoff stores the journal only on the device
-(browser `localStorage`, key `turiya_journal_v1`) with no accounts and no
-server. Separately, there was a wish for "a simple Postgres DB" and a stated
-worry about user data sitting on centralized servers.
-
-**Decision.** The journal (the user's questions + the generated answers) lives
-**only on the device**. Nothing personal is sent to, or stored on, our server.
-Postgres still exists, but it holds only **non-personal** content (see DEC-5).
-The request that produces an answer is processed in-flight and not persisted
-server-side.
-
-**Why.** It makes the privacy promise true by construction rather than by
-policy — there is no central store of user problems to leak, subpoena, or
-mishandle. It also removes accounts/auth from v1 scope entirely.
-
-**Consequences.**
-- No cross-device sync and no cloud backup in v1. If the app is uninstalled, the
-  journal is gone. The UI already sets this expectation ("Saved only on this
-  device").
-- The user's problem text *does* transit our backend to reach the LLM provider
-  (needed to keep the API key off the client — DEC-4). It is used for that one
-  request and not stored. This must be stated plainly in the privacy copy.
-
-**Revisit if** users ask for sync/backup across devices. The likely v2 answer is
-*local-first with opt-in, end-to-end-encrypted* backup, so the server still
-never sees plaintext.
+| # | Decision | Status |
+|---|---|---|
+| DEC-1 | Personal data stays on the phone | Accepted |
+| DEC-2 | React Native + Expo, one codebase | Accepted |
+| DEC-3 | MMKV for on-phone storage | Accepted |
+| DEC-4 | Server on the Vercel AI SDK; Mastra kept for later | Accepted |
+| DEC-5 | Postgres holds only shared content | Accepted |
+| DEC-6 | Anthropic Claude as the AI provider | Accepted |
+| DEC-7 | Ask answers grounded in the Kārikā (RAG) | Accepted |
+| DEC-8 | Crisis safety is in v1 and blocks launch | Accepted |
+| DEC-9 | Retention through daily practice, not gamification | Accepted (updated by DEC-11) |
+| DEC-10 | Launch in Australia only; India next | Accepted |
+| DEC-11 | v1 centres on learning; Ask applies it | Accepted |
 
 ---
 
-## DEC-2 — React Native (iOS + Android), one codebase
+## DEC-1 — Personal data stays on the phone
 
-**Status:** Accepted
+**Decision**: the Journal, lesson responses and progress live only on the phone. There are no
+accounts. The server never stores anything personal.
 
-**Decision.** Build the client as a single React Native app targeting iOS and
-Android. Use **Expo** unless a reason to go bare emerges.
+**Why**: people write their rawest problems here. With no central store, there is nothing to leak.
+That makes the privacy promise true by design, not just by policy.
 
-**Why.** The design is mobile-first. One TypeScript codebase covers both stores
-and pairs naturally with a TypeScript backend (DEC-4), so the whole project is
-one language. Expo gets us to a running app fastest and handles the build/release
-plumbing.
+**Trade-off**:
+- No sync, and no backup across devices. Losing the phone loses the Journal.
+- The Ask question does pass through the server to reach the AI. It is used once and not stored,
+  and the app says so.
 
-**Consequences.**
-- `localStorage` does not exist in React Native. On-device persistence uses an RN
-  store instead (see DEC-3).
-- Faithful recreation of the design tokens is our responsibility — the handoff is
-  a reference, not code to copy.
+**Revisit if** users ask for backup. The preferred answer is an opt-in encrypted backup to their own
+iCloud or Google Drive, which still needs no account with us.
 
-**Revisit if** we decide v1 is iOS-only (then native SwiftUI becomes an option)
-or if a web/PWA version is wanted first.
+## DEC-2 — React Native + Expo, one codebase
 
----
+**Decision**: one React Native app for iOS and Android, built with Expo.
 
-## DEC-3 — On-device storage: MMKV (fast KV), journal as a JSON array
+**Why**: the design is mobile-first. A single TypeScript codebase serves both stores and matches the
+TypeScript server. Expo is the fastest route to a running app.
 
-**Status:** Accepted (implementation detail of DEC-1)
+**Revisit if** v1 becomes iOS-only (SwiftUI is then an option) or a web version is wanted first.
 
-**Decision.** Persist the journal with **react-native-mmkv**, storing the same
-entry shape the prototype uses, under a versioned key (`turiya_journal_v1`).
+## DEC-3 — MMKV for on-phone storage
 
-**Why.** MMKV is fast, synchronous, and simple — a good match for a single
-growing JSON array read at startup and written on each new entry. `AsyncStorage`
-is an acceptable fallback; a device SQLite DB is more than v1 needs.
+**Decision**: store the Journal, progress and settings as JSON in `react-native-mmkv`, under
+versioned keys.
 
-**Consequences.** All reads/writes wrapped in try/catch; the app renders
-correctly when storage is empty or unavailable. Entry shape is frozen and
-versioned so a future migration is possible.
+**Why**: it's fast, simple and synchronous — a good fit for a few small JSON documents.
+`AsyncStorage` is an acceptable fallback.
 
----
+## DEC-4 — Server on the Vercel AI SDK; Mastra kept for later
 
-## DEC-4 — Backend: start on the Vercel AI SDK + Postgres/pgvector; keep Mastra open for v2
+**Decision**: a thin TypeScript server using the Vercel AI SDK with Anthropic, over Postgres with
+pgvector.
 
-**Status:** Accepted (with a documented alternative)
+**Why**:
+- **Small corpus**: the Kārikā is small and doesn't change, so a full agent framework isn't needed
+  yet.
+- **Shape is enforced**: `generateObject` with a schema guarantees the four-state answer format.
+- **One database**: pgvector keeps search inside the Postgres we already have.
 
-**Decision.** v1 backend is a thin **TypeScript** HTTP service built on the
-**Vercel AI SDK** (`ai` + `@ai-sdk/anthropic`), talking to **Postgres with the
-pgvector extension**. The LLM key lives only here. **Mastra** is explicitly kept
-as the v2 option for workflows/evals/tracing — it is built on the same AI SDK, so
-adopting it later is additive, not a rewrite.
+**Alternative**: Mastra, which is free, open source and self-hostable. It adds workflows, evals and
+tracing, and is built on the same SDK, so adopting it later doesn't mean a rewrite.
 
-**Why.**
-- The RAG corpus (Gauḍapāda's Kārikā) is small and static → it does not need a
-  heavy agent framework yet.
-- The riskiest part of the app is the structured-JSON contract. The AI SDK's
-  `generateObject` + a Zod schema *enforces* the `{levels[4], practice}` shape
-  with validation, which is strictly better than the prototype's "regex the first
-  `{…}` and hope" parsing.
-- pgvector keeps the vector store inside the one Postgres we already wanted — no
-  extra infra.
-- Mastra is young and fast-moving; a stable, minimal base is worth more for a
-  calm, long-lived app. The extend-later path is preserved.
+**Revisit when** v2 brings multi-step flows, or we want built-in tracing and evals.
 
-**Alternative considered — adopt Mastra now.** Reasonable if we want its
-opinionated scaffolding (agents, workflow steps, built-in evals, free-tier
-tracing UI) from day one, and are comfortable tracking a newer framework. The v2
-roadmap (Śaṅkara, verse library, multi-step practice) is workflow-shaped and is
-where Mastra would shine. Mastra's framework is free/open-source (Apache-2.0) and
-self-hostable; its Cloud has a free Starter tier (~100K observability events, 24
-CPU-hours, 15-day retention — confirm current limits at signup).
+## DEC-5 — Postgres holds only shared content
 
-**Revisit when** we start v2 workflows or want answer-quality evals/tracing —
-re-evaluate adopting Mastra at that point.
+**Holds**: the Kārikā corpus with its search indexes, and anonymous daily counts.
 
----
+**Never holds**: questions, reflections, journal entries, or anything that identifies a person.
 
-## DEC-5 — What Postgres holds in v1 (and what it never holds)
+## DEC-6 — Anthropic Claude as the AI provider
 
-**Status:** Accepted (follows from DEC-1 and DEC-4)
+**Decision**: Anthropic's API through `@ai-sdk/anthropic`.
 
-**Holds:** the Kārikā corpus + embeddings (pgvector) for RAG; the fixed
-state→verse map; app config. Optionally, anonymous aggregate counters with no
-PII and no problem text.
+| Use | Model | Price per 1M tokens (in / out) |
+|---|---|---|
+| Reflections | `claude-sonnet-5-5` | $2 / $10 |
+| Higher quality (option) | `claude-opus-5-5` | $4 / $20 |
+| Safety checks | `claude-haiku-5-5` | $0.10 / $0.50 |
 
-**Never holds:** user questions, generated answers, the journal, user identifiers,
-or anything that could re-identify a person.
+**Why**: Anthropic's API does not train on customer inputs, which is what "no model training"
+requires. Claude also follows the warm, non-advising tone well.
 
----
+**Note**: model IDs are config, so switching models needs no code change.
 
-## DEC-6 — LLM provider: Anthropic Claude (no training on inputs)
+## DEC-7 — Ask answers grounded in the Kārikā (RAG)
 
-**Status:** Accepted (recommended; swappable)
+**Decision**: every Ask reflection is grounded in passages retrieved from a vetted text of
+Gauḍapāda's Kārikā. Retrieval is hybrid: vector plus keyword, as the constitution requires. The
+four displayed verses are fixed in the app.
 
-**Decision.** Use the Anthropic API via `@ai-sdk/anthropic`. Default model
-**Claude Sonnet 5.5** (`claude-sonnet-5-5`) for the answer call — strong
-instruction-following and the warm, plain-spoken tone this app needs, at
-$2/$10 per 1M tokens in/out. **Claude Opus 5.5** (`claude-opus-5-5`, $4/$20) is
-the higher-quality option; **Claude Haiku 5.5** (`claude-haiku-5-5`, $0.10/$0.50)
-is the budget option. The model is a single config value, swappable without code
-changes.
+**Why**: the product's premise is Gauḍapāda's commentary, not the model's loose recall. Fixed verses
+mean citations can't be invented.
 
-**Why.** Anthropic's **API tier does not train on inputs or outputs by default**
-(unlike consumer chat apps), which is exactly what "no LLM model training" asks
-for. The AI SDK keeps the provider swappable if that ever changes.
+**Cost**: the text needs a licensed translation and proofreading. This is the same work as the
+lesson content (DEC-11).
 
-**Consequences.** State the no-training fact in the privacy copy. Keep the model
-ID in env/config, not hard-coded in call sites.
+## DEC-8 — Crisis safety is in v1 and blocks launch
 
----
+**Decision**:
+- A crisis check runs before any Ask reflection is written, and on lesson responses (on the phone).
+- If it flags, the person sees Australian support services instead of a reflection.
+- Every reflection gets an output safety check.
+- Help is one tap away on every tab.
+- The app makes no therapy claims, and states that it is not religious authority.
 
-## DEC-7 — Answer fidelity: RAG-grounded in a curated Kārikā corpus
+**Why**: people bring stress, anger and loneliness. Gita chatbots have been caught condoning
+violence. Illinois banned AI therapy in 2025, and Apple rejects apps that read as medical advice.
+Leaving safety out would be the biggest risk to the product, and adding it is cheap.
 
-**Status:** Accepted
+**Privacy**: crisis questions are never saved, logged or followed up. The server keeps only a
+count.
 
-**Decision.** Every answer is grounded in **retrieved passages from a vetted text
-of Gauḍapāda's Māṇḍūkya Kārikā** (plus a trusted translation), not the model's
-loose recall. The four displayed verses stay **hard-coded** per state (citations
-can't hallucinate); RAG shapes the *interpretation* in each level's body.
+## DEC-9 — Retention through daily practice, not gamification
 
-**Why.** The product's whole premise is answering through Gauḍapāda's commentary
-rather than the bare Upaniṣad. Grounding in real passages makes answers more
-faithful and defensible for a sacred-text app.
+**Decision**:
+- **v1**: the daily lesson Path is the main reason to return, with an optional reminder (DEC-11).
+- **v1.1**: follow-up check-ins and the pattern mirror deepen Ask (see ROADMAP).
+- **Not used**: streaks, community and open-ended chat.
 
-**Consequences.** Two non-code dependencies become real v1 work:
-1. **Proofread** the Devanagari and Kārikā references against a Sanskrit source
-   (the handoff itself flags them as "plausible but unverified").
-2. **Source and license** a translation/commentary text for the corpus
-   (public-domain options exist — verify copyright before shipping).
+**Why**: meditation apps keep only about 6–8% of users after 30 days. The research found daily
+practice with gentle reminders, and structured depth, work best. Streaks punish missed days, which
+clashes with the teaching.
 
----
+**Measure**: week-4 and day-30 retention from the app stores.
 
-## DEC-8 — Crisis safety is part of v1 and blocks launch
+## DEC-10 — Launch in Australia only; India next
 
-**Status:** Accepted
+**Decision**: v1 is offered only in Australian app stores. India comes in v2, then other countries,
+each with its own spec.
 
-**Context.** People bring stress, anger and loneliness, which sit close to mental
-health. Market research (MARKET_VALIDATION.md §6) found: Gita chatbots condoning
-violence; Illinois banning AI therapy (Aug 2025), with Nevada and Utah
-restricting it; and a reported App Store rejection of an AI chat app under
-Guideline 1.4.1 (medical advice).
+**Why**: one market means one set of crisis services, one privacy law (the Privacy Act 1988) and one
+language. That keeps the first release's safety and compliance work manageable. Australia's Indian
+community is one of its largest overseas-born communities.
 
-**Decision.**
-- A **crisis screen** runs before any reflection is generated. If it flags, the
-  user sees a calm support screen with regional helplines instead of an answer.
-- An **output safety check** runs on every reflection; failures fall back to the
-  built-in answer.
-- A **help link** is always visible on Answer and Journal, so a missed detection
-  still leads somewhere.
-- **Attribution** on every answer: a reflection drawing on Gauḍapāda, not
-  religious authority, therapy, or medical advice. No clinical claims anywhere.
+**Trade-off**: the research pointed to the US, UK and Canada as bigger markets; Bible Chat earns over
+95% of its revenue in the US. Australia is a deliberately careful first step.
 
-**Why in v1, not v1.1.** Shipping a problem-answering app without it is the
-largest liability and app-review risk we found, and it's cheap: two fast
-classifier calls and one screen.
+**Consequences**:
+- Australian support services, checked every 90 days.
+- A notice and consent before the first Ask, because questions are processed overseas.
+- Australian English.
+- Helplines stored per region.
 
-**Privacy.** Crisis-routed questions are never saved, never logged, and never
-followed up. The server keeps only an anonymous daily count.
+## DEC-11 — v1 centres on learning; Ask applies it
 
-**Consequences.** Adds latency (mitigated by running the screen in parallel with
-retrieval) and a small cost per answer. Requires a maintained crisis test set and
-verified helpline numbers (CR-4).
+**Decision**:
+- **Learn is the home tab**: a Path of about 30 daily lessons through chapter 1 of the Kārikā (the 12
+  mantras with 29 kārikās).
+- **Lesson content is fixed and reviewed**, never generated.
+- **Ask stays** as the second tab and links to the lessons.
+- **The Journal** holds both lesson responses and Ask reflections.
+
+**Why**:
+- As a problem-answering app alone, Turiya would be opened only on bad days.
+- Structured programs and daily practice drive retention and paid conversion.
+- A learning-only app would compete with excellent free teaching online. Applying the text to *my*
+  situation is what those don't offer.
+
+**Why chapter 1**: it holds the whole Upaniṣad with Gauḍapāda's commentary on it — about a month of
+lessons. Chapters 2–4 become later Paths.
+
+**Trade-offs**:
+- Content becomes the critical path: a translation, proofreading of about 41 verses, about 30
+  explanations, and review by someone grounded in the tradition.
+- Learn needs new designs.
+
+**Benefits**:
+- Lower risk. Learn is offline and sends nothing anywhere.
+- Fewer raw-problem conversations.
+
+**Revisit if** testing shows people ignore the Path and only use Ask, or the content can't be
+reviewed in time. The fallback is a shorter first Path, not dropping learning.
 
 ---
 
-## DEC-9 — Retention: attract with problems, keep with practice
+## Open questions
 
-**Status:** Accepted
-
-**Context.** v1 is opened when something goes wrong, which is episodic.
-Meditation apps keep ~6–8% of users at 30 days. Research ranked daily practice
-with gentle reminders as the strongest retention lever and structured depth
-second.
-
-**Decision.** Ask stays the front door. Retention comes in two steps:
-- **v1.1 (soon after launch):** follow-up check-ins on past questions via
-  on-device local notifications, and story labels feeding an on-device "pattern
-  mirror" in the Journal. Both keep all personal data on the device.
-- **v2:** the daily four-states rhythm, which the text itself suggests — morning
-  (jāgrat: the facts), evening (svapna: the story I ran), bedtime (suṣupti:
-  letting go) — plus a finite "40 days with Gauḍapāda" path (the natural paid
-  tier) and a bedtime wind-down.
-
-**Avoid.** Loss-aversion streaks (they clash with the teaching), community (cost
-and privacy risk, no evidence), and open-ended chat (drifts toward a persona).
-
-**How we'll know.** Compare week-4 retention for v1 vs v1.1 cohorts in App Store
-Connect / Play Console before committing to v2 or a business model.
-
----
-
-## Open questions (not blocking; defaults noted)
-
-- **Exact LLM model** — default Claude Sonnet 5.5; confirm or override.
-- **Translation source** for the corpus — do we have a preferred text, or should
-  we research public-domain options (e.g. Nikhilananda) and confirm licensing?
-- **Expo vs bare RN** — default Expo.
-- **Analytics** — default: none in v1 (privacy purity). If we want anonymous
-  counts later, they go in Postgres with no PII (DEC-5).
+| Question | Default if not decided |
+|---|---|
+| Which translation of chapter 1, and its licence? | Research public-domain options first. This is on the critical path. |
+| Who writes the lesson explanations, and who reviews them? | Needs a person. Blocks release. |
+| Which model for reflections? | `claude-sonnet-5-5` |
+| Expo or bare React Native? | Expo |
+| Any analytics in v1? | None. Only anonymous server counts. |

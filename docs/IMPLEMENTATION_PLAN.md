@@ -1,137 +1,74 @@
 # Implementation plan — v1
 
-A milestone-based plan. Each milestone is independently demoable. References:
-[REQUIREMENTS.md](./REQUIREMENTS.md), [ARCHITECTURE.md](./ARCHITECTURE.md),
-[DECISIONS.md](./DECISIONS.md).
+The order of work for v1. What to build is in the
+[spec](../specs/001-turiya-ask-journal/spec.md); how is in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
-Order is chosen so the client is usable end-to-end **early** via the built-in
-fallback (FR-13), before the backend/RAG exist — de-risking the product feel
-first, the AI quality second.
+## The approach in three lines
 
----
+1. **Content is the critical path, not code.** Writing and reviewing about 30 lessons takes longest,
+   so it starts on day one.
+2. **Build Learn first.** It needs no server and is the core of the product.
+3. **Then Ask**: first on the built-in fallback, then the real server, safety checks and RAG.
 
-## M0 — Project setup
-- Monorepo scaffold: `apps/mobile`, `apps/api`, `packages/shared`, `db/`.
-- TypeScript, lint/format, and a SessionStart-friendly test setup.
-- `packages/shared`: the state→verse constants (§2.3) and the Zod **answer
-  schema** (`{ levels[4]{heading,body}, practice }`), imported by both app and api.
-- **Exit:** `pnpm install` + typecheck + lint pass; shared schema importable.
+## Parallel tracks (start with M0)
 
-## M1 — Client shell & design system (NFR-6)
-- Expo app boots to a calm **Ask** screen.
-- Encode design tokens (colors, Newsreader/Karla/Noto Serif Devanagari, radii,
-  type scale, input-card shadow) and base components.
-- Bottom tab nav (Ask / Journal); reduce-motion plumbing (NFR-5).
-- **Exit:** both tabs navigable; Ask matches the handoff visually on a device.
+### Content — gates release
+| Step | Work |
+|---|---|
+| C1 Translation | Choose and license (or confirm public domain) an English translation of Kārikā chapter 1. Record the source. |
+| C2 Text | Devanagari and IAST for the 12 mantras and 29 kārikās, proofread against a Sanskrit source. Also correct the four Ask verse references (see ARCHITECTURE). |
+| C3 Lessons | Group about 41 verses into about 30 lessons. Write each explanation (3–5 minutes to read) and its "live it today" prompt, in the app's warm, non-advising voice. |
+| C4 Review | Someone grounded in the tradition reviews every lesson. Fixes go in as pull requests to `content/`. |
+| C5 Helplines | Verify the Australian support services. Repeat every 90 days. |
 
-## M2 — Ask + Answer + Journal with the built-in fallback (FR-1–FR-20)
-- Build Ask (greeting, input, "Look at it", chips, four-states primer),
-  Thinking (breathing halo + cycling status), Answer (four accordion cards with
-  hard-coded verses + practice card), Journal (list, empty state, accordions,
-  timestamps).
-- Wire the full flow using **only** the ported `fallback()` — no network yet.
-- On-device persistence via MMKV (DEC-3); frozen entry shape; try/catch around IO.
-- Safety UI (DEC-8): the support screen with bundled, locale-based helplines;
-  the "Need to talk to someone?" link on Answer and Journal; the attribution line.
-  Exercise the support screen with a stubbed `crisis` response.
-- **Exit:** a user can ask, get a (fallback) four-state answer, see it saved, and
-  reopen it from Journal across restarts; the support screen and help link work
-  offline. Acceptance criteria 1, 3, 4, 6, 7 pass.
+Finish 2–3 lessons end-to-end early. They become the real test content and set the tone.
 
-## M3 — Backend skeleton + `/v1/answer` (ungrounded) (FR-21–FR-24, NFR-3/7/9)
-- Thin TS service (Vercel AI SDK + `@ai-sdk/anthropic`), key in env only.
-- `POST /v1/answer` → `generateObject` with the system prompt and the shared Zod
-  schema (no RAG yet). `GET /v1/health`.
-- Safety pipeline (DEC-8): crisis screen before generation, output safety check
-  after, the `kind: "reflection" | "crisis"` response, anonymous counters.
-- Build the **crisis test set** (crisis and non-crisis examples, including
-  ambiguous everyday phrasing like "this job is killing me") and run it in CI.
-- Point the client at it; keep fallback on any failure.
-- **Exit:** real four-state answers for typed problems; invalid/failed responses
-  still fall back cleanly; the crisis test set passes. Acceptance criteria 2, 8, 9
-  pass.
+### Design — needed before M2 finishes
+Designs for Learn (today's lesson, progress, completed lessons, completion moment), the reminder
+setting, the consent screen and the three-tab bar, in the style of the existing handoff.
 
-## M4 — Postgres + pgvector + corpus seeding (DEC-5, CR-1/CR-2)
-- Provision Postgres with pgvector; migrations for `karika_passage`,
-  `state_verse`, `daily_counter`.
-- **Content work (can run in parallel from M0):** source + license the
-  translation/commentary (CR-2); proofread Devanagari + refs (CR-1).
-- Seed script: load corpus → chunk → embed → insert; populate `state_verse` from
-  the proofread map.
-- **Exit:** corpus queryable; nearest-neighbour retrieval returns sensible
-  passages for sample questions.
+## Milestones
 
-## M5 — RAG grounding in `/v1/answer` (DEC-7, FR-22)
-- Pipeline: embed question → retrieve top-k → pass passages as grounding context
-  → `generateObject`.
-- Light eval pass: run ~10–15 representative problems, read answers for fidelity
-  to the commentary and tone; tune prompt/k.
-- **Exit:** answers visibly reflect Gauḍapāda's commentary; schema always honored;
-  acceptance criteria 2 and 7 hold with real content.
+| # | Milestone | Done when |
+|---|---|---|
+| M0 | **Setup**: monorepo (`apps/mobile`, `apps/api`, `packages/shared`, `content/`, `db/`), TypeScript, lint, tests; shared schemas (answer, lesson) and crisis word lists; a CI check that every lesson file is valid | Install, typecheck, lint and content check pass |
+| M1 | **App shell**: Expo app opening to Learn; design tokens and base components; three tabs; reduced-motion support | All tabs navigable; Ask matches the handoff |
+| M2 | **Learn, offline** (FR-001–009): lessons bundled; lesson screen; progress and daily unlock; responses to the Journal; support screen and help link on every tab; on-device crisis check; daily reminder | Lessons work day by day offline; responses reach the Journal; help is one tap away (SC-003, SC-012) |
+| M3 | **Ask on the fallback** (FR-010–017, FR-033): Ask, thinking and answer screens; Ask entries in the Journal; Learn ↔ Ask links; consent screen (FR-036) | Ask works end-to-end with the built-in reflection; no question is sent without consent (SC-011, SC-014) |
+| M4 | **Server**: `/v1/answer` and `/v1/health`; crisis check (word lists, then model); output safety check; crisis test set in CI | Real reflections; failures fall back; crisis test set passes (SC-007, SC-010) |
+| M5 | **Database**: Postgres + pgvector; migrations; seed the corpus (chapter 1 from `content/`) with embeddings and keyword index | Hybrid search returns sensible passages for sample questions |
+| M6 | **Grounded answers**: hybrid retrieval in the pipeline; build the golden eval set (30–40 situations) and run it in CI | Answers reflect Gauḍapāda; golden eval passes (SC-008) |
+| M7 | **Privacy and polish**: confirm nothing leaves the phone except consented questions; no text in logs; swap in the reviewed lessons; accessibility pass | All success criteria in the spec pass (SC-001–SC-017) |
+| M8 | **Release**: see the checklist below | Builds submitted; server live |
 
-## M6 — Privacy hardening & polish (NFR-1/2/4/5)
-- Verify no question/answer text in logs or DB, and that crisis routing is only
-  ever a count (acceptance criteria 5, 8).
-- Verify every helpline number and region (CR-4).
-- Re-run the crisis test set against the final RAG prompt and models.
-- Privacy copy in-app: device-only storage + no-training provider statement
-  (DEC-6).
-- Offline behavior: Journal fully readable offline; submit without network →
-  fallback.
-- Accessibility pass: reduce-motion, 44px targets, contrast.
-- **Exit:** all acceptance criteria (1–7) pass.
+### Release checklist (M8)
+- **Store listing**:
+  - presented as learning the Upaniṣad;
+  - includes the attribution line;
+  - makes no therapy or medical claims.
+- **Apple App Store**:
+  - privacy label: question text collected, not linked to the person, not used for tracking;
+  - age questionnaire answered honestly, then 18+ chosen.
+- **Australian storefronts only**: check both stores exclude every other country (FR-038).
+- **Privacy policy**:
+  - names Anthropic as the AI provider;
+  - covers processing outside Australia;
+  - has had a legal review.
+- **Build**: with Expo SDK 54 or later (Xcode 26 / iOS 26 SDK), as Apple requires since April 2026.
+- **Server**: live during app review. Review notes explain the crisis flow.
+- **Order**: iOS first, if review capacity is limited.
 
-## M7 — Release prep
-- App icons/splash, store metadata, privacy nutrition labels reflecting DEC-1/6.
-- Store listing review: attribution line present, no therapeutic, clinical or
-  medical claims (NFR-10, acceptance criterion 10).
-- Launch iOS first if store review capacity is limited (market research: iOS
-  converts ~2× better and fits the first audience).
-- Backend deploy + health checks; secrets configured; basic non-PII request
-  logging/metrics.
-- Build and submit iOS + Android.
-- **Exit:** builds submitted; backend live.
+## Risks
 
-## M8 — v1.1 retention slice (REQUIREMENTS §7, DEC-9)
-- **Follow-ups:** `expo-notifications` local scheduling 3 days after an answer;
-  generic notification text; deep link to the entry; follow-up input saved on the
-  entry; permission asked after the first answer; settings toggle; never for
-  crisis-routed questions.
-- **Story labels:** taxonomy in `packages/shared` (reviewed, CR-5); backend schema
-  adds `story` with `key` constrained to the enum; client saves it on the entry
-  and shows the phrase on the svapna card.
-- **Pattern mirror:** on-device grouping by `story.key`; Patterns section at 5+
-  labelled entries.
-- Back-compat: v1 entries (no `story`, no `followUps`) render unchanged.
-- **Exit:** v1.1 acceptance criteria 1–4 pass. Start the week-4 retention
-  comparison (FR-40).
+| Risk | What we do |
+|---|---|
+| Lessons take longer than planned | Start on day one. If needed, launch a shorter first Path (the 12 mantras with key kārikās) rather than delay. |
+| No qualified reviewer | Line one up at M0, e.g. through Vedanta societies or teachers in Australia. |
+| Translation licensing | Start early and keep a public-domain fallback in mind. |
+| Sanskrit errors | Proofread before launch. Lessons are files, so fixes are quick. |
+| AI drifts into advice | Schema checks, the safety check, the golden eval set in CI, and the app's fallback. |
+| Missed crisis | Word lists on both paths, the model check for Ask, the test set in CI, and help on every tab. |
+| Too many false crisis alarms | Acceptable by design. Watch the anonymous count after prompt changes. |
+| Notification fatigue | Reminder off by default, at most one a day, skipped once the lesson is opened. |
 
----
-
-## Critical path & parallelism
-- **Content (CR-1/CR-2)** is the long-lead, non-code item — start it at M0; it
-  gates M4/M5, not the client. Helpline verification (CR-4) is short but gates
-  launch.
-- M1–M2 (client + fallback) can proceed fully in parallel with backend work.
-- M3 unblocks "real answers"; M4→M5 add fidelity.
-
-## Risks & mitigations
-- **Translation licensing** (CR-2) → start early; have a public-domain fallback
-  text identified.
-- **Sanskrit accuracy** (CR-1) → proofread with a qualified reader before launch;
-  verses are hard-coded so errors are correctable in one place.
-- **Model output drift** → schema validation + client fallback make bad output
-  non-fatal; the light eval in M5 catches tone/fidelity regressions.
-- **Framework churn** → staying on the AI SDK (not Mastra) in v1 keeps the surface
-  small; Mastra remains an additive v2 option (DEC-4).
-- **Missed crisis** → recall-tuned screen, maintained test set in CI, and the
-  always-visible help link as a backstop (DEC-8).
-- **False crisis alarms annoy users** → acceptable by design (NFR-11); watch the
-  anonymous `crisis_routed` count for sudden jumps after prompt changes.
-- **Notification fatigue (v1.1)** → one follow-up per entry, generic text, easy
-  off switch.
-
-## Explicitly out of scope for this plan
-Everything under Non-goals in REQUIREMENTS.md (Śaṅkara, verse library, the daily
-four-states rhythm, the 40-day path, bedtime wind-down, streaks, community,
-accounts, sync, server push, analytics dashboards).
+After launch: v1.1 and beyond are in [ROADMAP.md](./ROADMAP.md).

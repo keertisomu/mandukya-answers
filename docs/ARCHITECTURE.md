@@ -1,292 +1,281 @@
 # Architecture — v1
 
-Decisions referenced here (`DEC-n`) live in [DECISIONS.md](./DECISIONS.md);
-requirements (`FR-n`/`NFR-n`) in [REQUIREMENTS.md](./REQUIREMENTS.md).
+How v1 is built. **What** it does is in the
+[spec](../specs/001-turiya-ask-journal/spec.md) (`FR-`/`SC-` IDs); **why** each choice was made is
+in [DECISIONS.md](./DECISIONS.md) (`DEC-` IDs).
 
----
-
-## 1. System overview
+## 1. The big picture
 
 ```
-┌───────────────────────────────────────────────────────────┐
-│  React Native app (iOS + Android, Expo)         DEC-2       │
-│                                                             │
-│   Ask / Thinking / Answer / Journal screens                 │
-│                                                             │
-│   Journal → on-device only (MMKV, key turiya_journal_v1)    │
-│             DEC-1, DEC-3 — never sent to the server         │
-└───────────────┬─────────────────────────────────────────────┘
-                │  POST /v1/answer  { question }   (HTTPS)
-                ▼
-┌───────────────────────────────────────────────────────────┐
-│  Backend — thin TypeScript service              DEC-4       │
-│                                                             │
-│   1. crisis screen (fast model) → { kind: "crisis" }        │
-│   2. embed(question), retrieve top-k Kārikā passages        │
-│   3. generateObject(model, system+context, schema) ← Zod    │
-│   4. output safety check (fail → error → client fallback)   │
-│   5. return { kind: "reflection", levels[4], practice }     │
-│                                                             │
-│   Holds the LLM API key (NFR-3). Stores NO user data.       │
-└───────────────┬───────────────────────────────┬─────────────┘
-                │                                 │
-                ▼                                 ▼
-   ┌─────────────────────────┐        ┌──────────────────────┐
-   │ LLM provider (Anthropic)│        │ Postgres + pgvector   │
-   │ no training on inputs    │        │ Kārikā corpus+vectors │
-   │ DEC-6                    │        │ verse map, config     │
-   │                          │        │ NO user data  DEC-5   │
-   └─────────────────────────┘        └──────────────────────┘
+Phone (React Native app)
+  ├─ Learn ............ lessons are bundled in the app; works offline
+  ├─ Journal, progress  stored on the phone only; never sent anywhere
+  └─ Ask ──HTTPS──▶ Our server (TypeScript)
+                      1. crisis check
+                      2. find relevant Kārikā passages ──▶ Postgres + pgvector
+                      3. write the reflection ───────────▶ Anthropic (Claude)
+                      4. safety-check it, then reply
 ```
 
-The user's problem text transits the backend to reach the LLM (so the key stays
-off the client) and is **processed once, not persisted** (DEC-1 / NFR-1).
+Three rules shape everything:
 
----
+- **Only Ask needs the server.** Learn and Journal work with no network.
+- **Only the Ask question leaves the phone**, after the person agrees (FR-036). The server uses it
+  once and stores nothing (DEC-1).
+- **No AI-written scripture.** Verses and lessons are fixed, reviewed content. AI writes only the
+  Ask reflection text.
 
-## 2. Client (React Native)
+## 2. The app (React Native + Expo, DEC-2)
 
-### 2.1 Screens & state
-Mirror the prototype's state model:
+### Screens
+- **Tabs**: Learn (opens first), Ask, Journal.
+- **Ask** has three states: idle → thinking → answer.
+- **Shared**: the support screen and the consent screen.
+- **Designs**: Ask and Journal follow the design handoff (`design/`). Learn, the reminder setting and
+  the consent screen still need designs.
 
-- `tab`: `"ask" | "journal"`
-- `phase` (Ask sub-state): `"idle" | "thinking" | "answer"`
-- `question` (current input), `asked` (submitted text), `answer` (parsed result
-  or fallback)
-- `open` (answer card index → bool), `jopen` (journal entry id → bool)
-- `journal` (array of entries), `thinkIdx` (status-line cycle index)
+### Data on the phone (MMKV, DEC-3)
+All stored as JSON on the device only. Every read and write is wrapped so the app still works if
+storage fails.
 
-### 2.2 On-device persistence (DEC-3)
-- Store: `react-native-mmkv` (fallback: `AsyncStorage`).
-- Key: `turiya_journal_v1` — a JSON array, newest first.
-- Entry shape (frozen, versioned):
-  ```ts
-  type Level = { name: string; sanskrit: string; tint: string;
-                 heading: string; body: string; verseRef: string };
-  type Entry = { id: number;        // ms timestamp
-                 when: string;       // formatted at save time
-                 question: string;
-                 levels: Level[];    // length 4, fixed order
-                 practice: string;
-                 story?: Story;            // v1.1 (FR-36)
-                 followUps?: FollowUp[] }; // v1.1 (FR-33)
-  type Story = { key: string;      // taxonomy key, e.g. "not_respected"
-                 phrase: string }; // first-person, ≤ 8 words
-  type FollowUp = { at: number; text: string };
-  ```
-- The v1.1 fields are optional, so v1 entries stay valid and the storage key does
-  not change. Crisis-routed questions never become entries (FR-27).
-- All reads/writes wrapped in try/catch; the app renders correctly on empty or
-  unavailable storage (NFR-4).
+| Key | Holds |
+|---|---|
+| `turiya_journal_v1` | Journal entries, newest first |
+| `turiya_path_v1` | Path progress |
+| `turiya_settings_v1` | Reminder time, consent choice |
 
-### 2.3 Fixed state → verse map (hard-coded on the client, DEC-7 / FR-9)
-The four states, their tints, and their Kārikā verses are **client constants** —
-never fetched, never model-generated — so citations cannot hallucinate:
+```ts
+type Entry = AskEntry | LessonEntry;
 
-| Order | key | Sanskrit | Label | Tint | Kārikā ref |
-|---|---|---|---|---|---|
-| 1 | jagrat | Jāgrat | Waking | `#C7A87E` | Kārikā 1.1 |
-| 2 | svapna | Svapna | The story | `#A98BA8` | Kārikā 2.1 |
-| 3 | sushupti | Suṣupti | Underneath | `#7E9AA8` | Kārikā 1.2 |
-| 4 | turiya | Turīya | The witness | `#3F4F52` | Kārikā 1.10 |
+type AskEntry = {
+  kind: "ask"; id: number; when: string; question: string;
+  levels: Level[];          // always 4, fixed order
+  practice: string;
+};
+type Level = { name: string; sanskrit: string; tint: string;
+               heading: string; body: string; verseRef: string };
 
-Devanagari + translation for each come from the handoff; see [CR-1] — proofread
-before launch. Keep this map and the backend's state definitions in sync (a
-shared `packages/shared` module if we use a monorepo).
+type LessonEntry = {
+  kind: "lesson"; id: number; when: string;
+  lessonId: string;         // e.g. "1-07"
+  lessonTitle: string; verseRef: string;
+  prompt: string; response: string;   // one entry per lesson; editing updates it
+};
 
-### 2.4 Answer flow (FR-3, FR-7–FR-13)
-1. Trim input; empty → no-op.
-2. `phase = "thinking"`, start the status-line interval.
-3. `POST /v1/answer { question }`.
-4. On `kind: "crisis"`: show the support screen (§2.6). Save nothing, schedule
-   nothing; `phase = "idle"` once the user leaves the screen (FR-26, FR-27).
-5. On `kind: "reflection"`: validate shape client-side too; build the `Entry` by
-   merging returned `levels`/`practice` (and `story` in v1.1) with the verse map;
-   prepend to `journal`; persist; `phase = "answer"`. In v1.1, schedule the
-   follow-up notification (§2.7).
-6. On any failure: use the built-in `fallback(question)` text (ported verbatim
-   from the prototype); build and save the entry the same way; `phase = "answer"`.
-7. Stop the interval in every case. The Answer screen always shows the
-   attribution line (FR-30) and the help link (FR-28).
+type PathProgress = {
+  pathId: "karika-ch1";
+  contentVersion: string;   // lets corrected lessons keep progress
+  completed: { lessonId: string; at: number }[];
+};
+```
 
-### 2.5 Design system (NFR-6)
-Encode the handoff's tokens once (colors, fonts — Newsreader / Karla / Noto Serif
-Devanagari, radii, type scale, the input-card shadow) and build components from
-them. Gate `breathe` / `fadeup` / `driftglow` animations on reduce-motion (NFR-5).
+### Lessons
+- **Source**: one file per lesson in `content/path/karika-ch1/`. Each holds:
+  - the verse(s): Devanagari, IAST transliteration, translation, reference and translation source;
+  - the explanation;
+  - the related state;
+  - the "live it today" prompt.
+- **Checked and bundled at build time.** A schema in `packages/shared` rejects missing fields or
+  broken order. Lessons ship inside the app, so they work offline and are never generated.
+- **Canonical text and commentary stay separate.** Verse and translation are canonical; the
+  explanation and prompt are our commentary. They are never mixed (constitution, Principle III).
+- **Changes go through pull requests** reviewed for accuracy.
+- **Unlock rule**: the next lesson opens once the previous one is done *and* the phone's calendar
+  day has moved on. No streaks, no missed-day state.
+- **Ask ↔ Learn links**: a fixed map from verse reference to lesson. An Ask verse links to its
+  lesson only once the person has reached it.
 
-### 2.6 Support screen & helplines (DEC-8, FR-26/FR-28)
-- One screen, reached two ways: a `crisis` response, or the "Need to talk to
-  someone?" link on Answer and Journal.
-- The helpline list is **bundled in the app** (works offline), chosen by device
-  locale, with an international directory as the fallback. Starting list — **every
-  entry must be verified before launch (CR-4):**
+### The four Ask states (fixed in the app)
+Verses are app constants, never fetched or generated, so citations can't be invented.
 
-  | Region | Resource |
+| # | State | Label | Colour | Verse ref (from handoff) |
+|---|---|---|---|---|
+| 1 | Jāgrat | Waking | `#C7A87E` | Kārikā 1.1 |
+| 2 | Svapna | The story | `#A98BA8` | Kārikā 2.1 |
+| 3 | Suṣupti | Underneath | `#7E9AA8` | Kārikā 1.2 |
+| 4 | Turīya | The witness | `#3F4F52` | Kārikā 1.10 |
+
+⚠️ **Check before launch**: the Devanagari given for 1.1 and 1.2 looks like the two halves of
+**Kārikā 1.3** in standard editions. Confirm against the chosen edition. Devanagari and
+translations are in `design/README.md`.
+
+### Ask flow
+1. Ignore empty input.
+2. First time only: show the consent screen. If declined, stop.
+3. Show the thinking state.
+4. Call `POST /v1/answer`.
+5. Handle the response:
+   - `crisis` → show the support screen. Save nothing.
+   - `reflection` → merge the text with the four fixed states, save it to the Journal, show it.
+   - Any error → show the built-in fallback reflection (ported from the prototype) and save that.
+6. Every answer shows the attribution line (FR-034) and the help link.
+
+### Support screen and helplines
+- **How people reach it**: three ways —
+  - a `crisis` reply from Ask;
+  - the on-device check on a lesson response;
+  - the "Need to talk to someone?" link on every tab.
+- **Bundled in the app**, so it works offline. Stored per region (`AU` in v1), so a new country
+  adds data, not screens.
+- **Verify every number before launch and every 90 days after.**
+
+  | Service | Contact |
   |---|---|
-  | United States, Canada | 988 Suicide & Crisis Lifeline — call or text 988 |
-  | United Kingdom, Ireland | Samaritans — 116 123 |
-  | India | Tele-MANAS — 14416 |
-  | Elsewhere | findahelpline.com (international directory) |
+  | Emergency | 000 |
+  | Lifeline | 13 11 14 (also text and chat) |
+  | Kids Helpline | 1800 55 1800 |
+  | Beyond Blue | 1300 22 4636 |
+  | Overseas | findahelpline.com |
 
-- Tone matches the app: warm, brief, no verse, no four-states framing.
+### Crisis check on lesson responses
+Lesson responses never leave the phone, so this check runs on the device:
+- It matches words and phrases from shared lists in `packages/shared`.
+- It handles negation and common idioms ("this job is killing me").
+- It leans toward showing help when unsure.
+- If it matches, the response is still saved and the support screen opens.
 
-### 2.7 Follow-up notifications (v1.1, FR-31–FR-35)
-- Local notifications via `expo-notifications`, scheduled on the device 3 days
-  after an answer. No server push, no push token, nothing leaves the device.
-- Payload carries only the entry `id`; the visible text is generic and never
-  includes journal content (FR-32).
-- Cancel the scheduled notification when the user adds a follow-up themselves, or
-  when follow-ups are turned off in settings.
-- Permission is requested after the first answer, never at launch (FR-34).
+The server uses the **same lists** as its first gate, so both paths agree.
 
-### 2.8 Pattern mirror (v1.1, FR-36–FR-39)
-- Group journal entries by `story.key`, count, sort descending; show the section
-  once 5+ entries carry a label. Pure on-device computation over the local
-  journal.
-- The taxonomy (keys + display names) lives in `packages/shared`, so the backend
-  schema and the client grouping always agree (CR-5).
+### Daily reminder
+- A local notification scheduled on the phone. There's no push server.
+- Off by default. Permission is asked for only when the person turns it on.
+- Generic text only, e.g. "Today's lesson is ready."
+- Skipped if today's lesson was opened or no new lesson is available.
 
----
+### Consent screen
+- **Shown once**, before the first question is sent.
+- **Says**:
+  - the AI provider's name (Anthropic);
+  - that only the question text is sent;
+  - that it may be processed outside Australia and isn't stored;
+  - that everything else stays on the phone.
+- **Choice** is saved in `turiya_settings_v1` and can be changed in settings.
+- **Purpose**: meets Australian privacy expectations and Apple Guideline 5.1.2(i).
 
-## 3. Backend (thin TypeScript service, DEC-4)
+## 3. The server (TypeScript, Vercel AI SDK, DEC-4)
 
-### 3.1 Responsibilities
-- Hold the LLM key (NFR-3).
-- Turn a question into a grounded, schema-valid four-state answer.
-- Stay stateless with respect to users — no per-user storage, no auth in v1.
+Holds the AI key and turns a question into a safe, grounded reflection. It is stateless: no
+accounts, no stored questions.
 
-### 3.2 Endpoints (versioned, NFR-7)
-- `POST /v1/answer`
-  - **Request:** `{ "question": string }`
-  - **Response (200)** is one of two shapes, discriminated by `kind`:
-    - `{ "kind": "reflection", "levels": [{ "heading": string, "body": string }, ×4],
-      "practice": string }` — in v1.1 also `"story": { "key": string,
-      "phrase": string }`.
-    - `{ "kind": "crisis" }` — no reflection was generated (FR-25).
-  - **On screen/model/validation/safety-check failure:** return a 4xx/5xx with a
-    small error body; the client falls back (it does **not** depend on the server
-    for the fallback text).
-  - Clients must ignore unknown fields, so v1.1's `story` doesn't break v1 builds.
-- `GET /v1/health` — liveness for deploys.
+### API (versioned under `/v1`)
 
-The response intentionally carries only model-generated text. Verses/tints/order
-are merged on the client from §2.3, so the contract can't be polluted by the
-model.
+**`POST /v1/answer`** — request: `{ "question": string }`. The response is one of:
 
-### 3.3 Answer pipeline
-1. **Crisis screen** (DEC-8, FR-25). A fast classifier call (`generateObject`
-   with a small schema, e.g. `{ crisis: boolean, category }`) on the question. If
-   `crisis`, return `{ kind: "crisis" }` immediately and increment the anonymous
-   counter. Tuned for recall (NFR-11). To save latency it can run in parallel with
-   step 2, discarding the retrieval result when it flags.
-2. **Embed** the question and **retrieve** top-k relevant Kārikā passages from
-   pgvector (the corpus is small, so k is small and latency is low).
-3. **Generate** with `generateObject` (Vercel AI SDK), passing:
-   - the system prompt (below),
-   - the retrieved passages as grounding context,
-   - a **Zod schema** that enforces `{ levels: [{heading, body}].length == 4,
-     practice }` (plus `story` in v1.1, with `key` constrained to the taxonomy
-     enum).
-4. **Output safety check** (FR-29). A fast classifier call over the generated
-   text against the FR-29 rules. Fail → error → client fallback.
-5. **Validate** against the schema; on invalid output, surface an error so the
-   client falls back (FR-13). `max_tokens ≈ 1400` (NFR-9).
+```json
+{ "kind": "reflection",
+  "levels": [ { "heading": "…", "body": "…" }, …4 ],
+  "practice": "…" }
+```
+```json
+{ "kind": "crisis" }
+```
 
-The crisis test set (NFR-11) runs against steps 1 and 4 in CI whenever the
-prompts or model IDs change.
+- On any failure, return an error. The app has its own fallback.
+- The reply carries only generated text. Verses, order and colours come from the app, so the AI
+  can't change them.
+- Clients must ignore unknown fields, so later additions don't break older apps.
 
-### 3.4 System prompt (from the handoff; grounding added)
-> You are a warm, plain-spoken friend grounded in Gauḍapāda's Māṇḍūkya Kārikā
-> (the commentary on the Māṇḍūkya Upaniṣad). You never use jargon without
-> explaining it, never moralize, never say 'as an AI'. Answer the person's
-> everyday problem through the four states of consciousness: jagrat (waking — the
-> bare observable facts), svapna (dream — the story/projection they are running on
-> top of the facts), sushupti (deep sleep — the rest and wholeness that remains
-> when the problem is absent), turiya (the witness that is aware of all three and
-> is untouched). Be concrete about THEIR specific situation, never generic. 45–70
-> words per level. heading: a short plain-English line, max 8 words. practice: one
-> small concrete thing to do today, max 25 words.
+**`GET /v1/health`** — liveness check.
 
-With RAG (DEC-7), the retrieved Kārikā passages are supplied as context and the
-prompt instructs the model to ground its reading of each state in them. Output
-shape is enforced by the schema, so we drop the prototype's "reply with ONLY
-JSON / regex the first `{…}`" instructions.
+### Answer pipeline
+1. **Crisis check**:
+   - First, the shared word and phrase lists.
+   - Then a fast model check (Claude Haiku), tuned to flag when unsure.
+   - If either flags: return `crisis` and add 1 to the anonymous daily count.
+2. **Find passages**: hybrid search over the Kārikā corpus — vector similarity *plus* keyword match.
+   The constitution requires hybrid search, so a question that names "turīya" always finds the
+   turīya verses.
+3. **Write the reflection**: `generateObject` with the system prompt, the passages and a Zod schema
+   that enforces exactly 4 levels plus a practice line. `max_tokens` ≈ 1400.
+4. **Safety check** (fast model): reject any reflection that:
+   - endorses violence or self-harm;
+   - gives medical or therapy directions;
+   - demeans any caste, gender or group;
+   - speaks as a deity or guru.
+5. Return the reflection or an error.
 
-### 3.5 Model & provider (DEC-6)
-- Provider: Anthropic via `@ai-sdk/anthropic` (no training on API inputs).
-- Default model: `claude-sonnet-5-5`; `claude-opus-5-5` for higher quality,
-  `claude-haiku-5-5` for lowest cost. Set via env/config, never hard-coded.
-- Safety classifiers (crisis screen, output check): `claude-haiku-5-5` by default
-  — fast and cheap. Configured separately from the answer model.
+**Limits** (enforced by the schema and the prompt):
 
----
+| Part | Limit |
+|---|---|
+| Body | 45–70 words per state |
+| Heading | 8 words or fewer |
+| Practice | 25 words or fewer |
 
-## 4. Data model (Postgres + pgvector, DEC-5)
+### System prompt (from the handoff)
+> You are a warm, plain-spoken friend grounded in Gauḍapāda's Māṇḍūkya Kārikā (the commentary on
+> the Māṇḍūkya Upaniṣad). You never use jargon without explaining it, never moralize, never say 'as
+> an AI'. Answer the person's everyday problem through the four states of consciousness: jagrat
+> (waking — the bare observable facts), svapna (dream — the story/projection they are running on
+> top of the facts), sushupti (deep sleep — the rest and wholeness that remains when the problem is
+> absent), turiya (the witness that is aware of all three and is untouched). Be concrete about
+> THEIR specific situation, never generic. 45–70 words per level. heading: a short plain-English
+> line, max 8 words. practice: one small concrete thing to do today, max 25 words.
 
-Holds only non-personal content.
+The retrieved passages are added as context, with an instruction to ground each state in them.
+
+### Models (DEC-6)
+- **Reflection**: `claude-sonnet-5-5`. Use `claude-opus-5-5` for higher quality or
+  `claude-haiku-5-5` for lower cost.
+- **Safety checks**: `claude-haiku-5-5`.
+- **Model IDs** are set in config, never hard-coded.
+
+### Testing the AI (constitution, Principle VII)
+- **Golden eval set**: 30–40 realistic situations across the supported themes. Each has the
+  expected state(s), the expected verse(s) and a pass/fail check that no verdict or advice was
+  given.
+- **Crisis test set**: crisis and non-crisis wording for both Ask and lesson responses, including
+  idioms like "this job is killing me". Missing a real crisis fails; a false alarm is acceptable.
+- Both sets run in CI on every prompt, model or content change. A regression blocks release.
+
+## 4. Database (Postgres + pgvector, DEC-5)
+
+Holds only shared content and anonymous counts. No table refers to a person.
 
 ```sql
--- the commentary corpus, chunked for retrieval
+-- Kārikā text, chunked for search
 CREATE TABLE karika_passage (
   id          BIGSERIAL PRIMARY KEY,
-  chapter     INT  NOT NULL,          -- Kārikā prakaraṇa / chapter
-  verse       INT,                    -- verse number if applicable
-  state_key   TEXT,                   -- optional tag: jagrat|svapna|sushupti|turiya
+  chapter     INT  NOT NULL,
+  verse       INT,
+  state_key   TEXT,              -- jagrat | svapna | sushupti | turiya
   devanagari  TEXT,
-  translation TEXT NOT NULL,          -- licensed translation/commentary prose
-  source      TEXT NOT NULL,          -- provenance of the text (CR-2)
-  embedding   VECTOR(1536)            -- dim matches the embeddings model
+  translation TEXT NOT NULL,
+  source      TEXT NOT NULL,     -- where the translation came from
+  embedding   VECTOR(1536),
+  search_text TSVECTOR           -- for keyword search
 );
 CREATE INDEX ON karika_passage USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON karika_passage USING gin (search_text);
 
--- the fixed display verses + ordering (single source of truth with the client)
-CREATE TABLE state_verse (
-  state_key   TEXT PRIMARY KEY,       -- jagrat|svapna|sushupti|turiya
-  ord         INT  NOT NULL,
-  sanskrit    TEXT NOT NULL,
-  label       TEXT NOT NULL,
-  tint        TEXT NOT NULL,
-  verse_ref   TEXT NOT NULL,
-  devanagari  TEXT NOT NULL,
-  translation TEXT NOT NULL
-);
-
--- optional, anonymous, no PII, no problem text
+-- anonymous daily counts only
 CREATE TABLE daily_counter (
   day                DATE PRIMARY KEY,
   answers            INT NOT NULL DEFAULT 0,
-  crisis_routed      INT NOT NULL DEFAULT 0,   -- FR-27: count only, never text
-  safety_check_fails INT NOT NULL DEFAULT 0    -- FR-29: watch for prompt drift
+  crisis_routed      INT NOT NULL DEFAULT 0,
+  safety_check_fails INT NOT NULL DEFAULT 0
 );
 ```
 
-No table references a user. There is no `user`, `session`, or `journal` table by
-design (DEC-1).
+**Seeding**: a script loads the corpus, embeds it and fills `search_text`. Chapter 1 verses come
+from the same `content/path/` files the app bundles, so Learn and Ask never disagree on the text.
 
-**Seeding.** A one-off script loads the corpus from the licensed source (CR-2),
-chunks and embeds it, and populates `state_verse` from the proofread verse map
-(CR-1). Embeddings are computed once at seed time.
+## 5. Everything else
 
----
+- **Secrets**: the AI key and model IDs live in server environment variables only.
+- **Logs**: never contain question or reflection text. Crisis routing is a count only.
+- **Versions**: API under `/v1`; storage keys end in `_v1`; database migrations are tracked.
+- **Repo layout**:
 
-## 5. Cross-cutting
+  | Folder | Holds |
+  |---|---|
+  | `apps/mobile` | The React Native app |
+  | `apps/api` | The server |
+  | `packages/shared` | Schemas, the four states, crisis word lists |
+  | `content/` | Reviewed lessons |
+  | `db/` | Migrations and seed script |
 
-- **Config/secrets:** LLM key and model ID via environment variables on the
-  backend only.
-- **Observability:** minimal request logging that **excludes** question/answer
-  text (NFR-1), and records crisis routing only as a count (FR-27). If/when we want tracing, that's a reason to revisit Mastra (DEC-4).
-- **Versioning:** API under `/v1`; storage key suffixed `_v1`; DB migrations
-  tracked.
-- **Monorepo (suggested):** `apps/mobile` (RN), `apps/api` (backend),
-  `packages/shared` (the state/verse constants and the answer schema shared by
-  both), `db/` (migrations + seed).
-
----
-
-## 6. v2 extension points (not built now)
-
-- Swap the thin pipeline for a **Mastra workflow** (multi-step practice, Śaṅkara
-  layer, evals, tracing) — additive because Mastra sits on the same AI SDK.
-- Add a **verse library** screen backed by `karika_passage`.
-- **Local-first encrypted sync** for the journal if users ask for it (DEC-1),
-  keeping plaintext off the server.
+- **Built to extend**:
+  - more Paths are new `content/path/` folders;
+  - new regions are new helpline data;
+  - Mastra can wrap the pipeline later without a rewrite (DEC-4).

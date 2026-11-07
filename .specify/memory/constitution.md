@@ -1,12 +1,20 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 → 1.1.0
-- Rationale: Added a new non-negotiable principle (Do No Harm, Carry No Negativity). MINOR bump:
-  new principle added, no existing principle removed or redefined. Subsequent principles
-  renumbered III–VII; internal cross-references and governance reviewer list updated to match.
+- Version change: 1.1.0 → 1.2.0
+- Rationale: The product now centres on learning the Māṇḍūkya Upaniṣad through Gauḍapāda's Kārikā
+  (a daily lesson Path), with reflection on everyday problems kept alongside (spec 001, DEC-11).
+  MINOR bump: the purpose statement is broadened, and guidance is extended to lesson content
+  without removing or redefining any principle:
+  - the preamble describes learning as well as reflection;
+  - Principle I now also governs lessons;
+  - Principle III classifies lesson explanations as applied commentary that MUST be reviewed by
+    someone grounded in the tradition before release. Previously this was a SHOULD, under
+    Development Workflow, for applied commentary in general.
 - History:
   - 1.0.0 (2026-10-17): Initial ratification from the unfilled template scaffold.
   - 1.1.0 (2026-10-17): Added Principle II (Do No Harm, Carry No Negativity).
+  - 1.2.0 (2026-11-06): Learning added to the product's purpose; lessons covered by Principles I
+    and III.
 - Principles (current):
   1. Reflection, Not Prescription
   2. Do No Harm, Carry No Negativity
@@ -26,10 +34,10 @@ Sync Impact Report
 
 # Turiya Constitution
 
-Turiya is a mobile application that helps people reflect on everyday problems and questions
-through the Māṇḍūkya Upanishad's four states of consciousness, primarily grounded in
-Gauḍapāda's Māṇḍūkya Kārikā. It is a contemplative, reflective tool — not therapy, counseling,
-or advice. This constitution defines the non-negotiable principles that govern how the product
+Turiya is a mobile application that helps people learn the Māṇḍūkya Upanishad through
+Gauḍapāda's Māṇḍūkya Kārikā, one short lesson at a time, and reflect on everyday problems and
+questions through its four states of consciousness. It is a contemplative learning and
+reflective tool — not therapy, counseling, or advice. This constitution defines the non-negotiable principles that govern how the product
 is designed, built, and evolved.
 
 ## Core Principles
@@ -41,7 +49,8 @@ a witnessing (turīya) stance; it MUST NOT issue verdicts, diagnoses, or prescri
 Output MUST NOT tell a person what to do about a relationship, decision, or feeling
 (e.g., "leave them", "you are right"), and MUST NOT frame itself as therapy, counseling, or
 treatment. The single daily "one thing to try" practice line is a small concrete reflective
-exercise, never a directive to resolve the person's problem.
+exercise, never a directive to resolve the person's problem. Lessons teach what the text says and
+invite reflection; their explanations and "live it today" prompts are held to the same rule.
 
 **Rationale**: The witness stance is the core mechanism of the product, not a theme. It is also
 the boundary that keeps Turiya out of regulated "AI health/relationship advice" territory. A
@@ -73,7 +82,10 @@ can never present interpretation as scripture. Verse text and citations shown to
 be hard-coded from a verified source and MUST NEVER be model-generated. Every canonical entry
 MUST carry its translation source for attribution and license tracking; translations MUST be
 public-domain or properly licensed before shipping. Devanagari, transliteration, and references
-MUST be proof-read against a Sanskrit source before any public release.
+MUST be proof-read against a Sanskrit source before any public release. Lesson explanations and
+prompts are applied commentary: they MUST be kept separate from the canonical text, MUST NOT be
+model-generated at the time a person reads them, and MUST be reviewed by someone grounded in the
+tradition before release.
 
 **Rationale**: Citations that hallucinate destroy trust in a product whose authority rests on a
 1,500-year-old text. Separating original commentary (which carries the product value and no
@@ -172,4 +184,4 @@ non-negativity rule (II), source separation and citation integrity (III), safety
 privacy defaults (VI). Complexity or scope beyond the current version boundary MUST be explicitly
 justified or rejected.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-17 | **Last Amended**: 2026-10-17
+**Version**: 1.2.0 | **Ratified**: 2026-10-17 | **Last Amended**: 2026-11-06
