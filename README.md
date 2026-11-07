@@ -1,62 +1,40 @@
 # Turiya — learn the Māṇḍūkya Upaniṣad
 
-A calm mobile app for **learning the Māṇḍūkya Upaniṣad through Gauḍapāda's
-Māṇḍūkya Kārikā**, one short lesson a day, and for living what it teaches. When
-something is weighing on you, **Ask** looks at it through the Upaniṣad's **four
-states of consciousness**, with one verse attached per state. Lessons, your
-responses and your reflections are kept in a private, device-only **Journal**.
+A calm mobile app for learning the **Māṇḍūkya Upaniṣad through Gauḍapāda's Kārikā**, one short
+lesson a day, and for applying it to everyday life.
 
-> **Status:** planning / pre-implementation. This repository holds the v1 spec,
-> requirements, architecture and plan. No application code yet.
+- **Learn**: about 30 daily lessons through Kārikā chapter 1. Each lesson has a verse, a
+  plain-words explanation and a small reflection for your day. Works offline.
+- **Ask**: describe what's weighing on you and get a reflection through the four states of
+  consciousness, with a fixed verse for each.
+- **Journal**: your lesson notes and reflections, kept only on your phone.
 
-## What v1 is
+v1 launches in **Australia only**. **Status**: planning — no application code yet.
 
-Three tabs — **Learn**, **Ask** and **Journal**:
-- **Learn** is the centre. It's a Path of about 30 daily lessons through chapter 1
-  of the Kārikā: the twelve mantras with Gauḍapāda's twenty-nine kārikās.
-  - Each lesson has the verse, a plain-language explanation, and a "live it
-    today" prompt.
-  - One new lesson a day, no streaks, fully offline.
-- **Ask** answers an everyday problem with a four-state reading (jāgrat → svapna →
-  suṣupti → turīya) plus one small practice. It links to the lessons for its
-  verses.
-- **Journal** keeps lesson responses and Ask reflections on your device.
+## Principles
 
-Crisis safety is built in from day one: crisis language gets helplines, not a
-reflection. v1 launches in **Australia only**; India is next.
+- **Private**: your notes and Journal never leave your phone. Only an Ask question is sent, after
+  you agree, and it isn't stored.
+- **Faithful**: verses and lessons are proofread and reviewed, never written by AI.
+- **Safe**: crisis wording leads to real support services, and help is one tap away.
+- **Calm**: no advice, no verdicts, no streaks.
 
-**v1.1** follows soon after launch: follow-up check-ins on past questions and a
-"pattern mirror" of recurring stories in the Journal, both entirely on the
-device.
+## Docs — where to look
 
-## Guiding choices
-
-- **Private by construction** — lessons, responses and the Journal never leave
-  your device. Only an Ask question is sent, after you agree, and the server
-  never stores it.
-- **Faithful to the text** — lessons are fixed, proofread and reviewed by someone
-  grounded in the tradition, never generated. Ask answers are grounded in
-  retrieved passages of Gauḍapāda's Kārikā (RAG).
-- **No model training** — the LLM provider's API tier does not train on inputs.
-- **React Native (iOS + Android)** client; a thin, extensible **TypeScript API**
-  over **Postgres + pgvector**, needed only for Ask.
-
-## Docs
-
-| Doc | What's in it |
+| Question | Read |
 |---|---|
-| [specs/001-turiya-ask-journal/spec.md](specs/001-turiya-ask-journal/spec.md) | The product spec (source of truth): user stories, requirements, success criteria |
-| [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | Detailed requirements, content and design dependencies, acceptance criteria |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, lesson content pipeline, on-device data, the answer pipeline |
-| [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) | Content and design tracks, milestones M0–M8 (v1) and M9 (v1.1), risks |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | The key decisions (DEC-1…DEC-11) and what would change them |
-| [docs/MARKET_VALIDATION.md](docs/MARKET_VALIDATION.md) | Demand, competitors, audience, feature ranking, risks |
-| [design/](design/) | The original design handoff for Ask and Journal (reference only) |
+| What does v1 do? | [Spec](specs/001-turiya-ask-journal/spec.md) — the source of truth |
+| How is it built? | [Architecture](docs/ARCHITECTURE.md) |
+| In what order do we build it? | [Implementation plan](docs/IMPLEMENTATION_PLAN.md) |
+| Why was it decided this way? | [Decisions](docs/DECISIONS.md) |
+| What comes after v1? | [Roadmap](docs/ROADMAP.md) |
+| Is there a market? | [Market validation](docs/MARKET_VALIDATION.md) |
+| What are the project's rules? | [Constitution](.specify/memory/constitution.md) |
+| What does Ask look like? | [Design handoff](design/README.md) |
 
-## Open questions (see DECISIONS.md → Open questions)
+## Needs a person before launch
 
-- Translation source for Kārikā chapter 1 (+ licensing) — on the critical path.
-- Who writes the lesson explanations, and who reviews them.
-- Confirm the LLM model (default: Claude Sonnet 5.5).
-- Expo vs bare React Native (default: Expo).
-- Analytics in v1 (default: none).
+- A translation of Kārikā chapter 1, and its licence.
+- Someone to write the ~30 lesson explanations, and someone grounded in the tradition to review them.
+- Designs for Learn, the reminder setting and the consent screen.
+- Checking the Australian helpline numbers, and two Ask verse references that look wrong.

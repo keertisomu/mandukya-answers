@@ -1,7 +1,7 @@
-# Specification Quality Checklist: Turiya — Learn, Ask & Journal (v1)
+# Specification Quality Checklist: Turiya v1 — Learn, Ask & Journal
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-10-17
+**Created**: 2026-10-17 · **Last validated**: 2026-11-07
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -31,29 +31,13 @@
 
 ## Notes
 
-- Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`.
-- All items pass. The spec deliberately treats the constitutional safety/tone/privacy guarantees
-  (crisis gate, no-verdict/no-harm, warm non-negative tone, device-only privacy) as first-class
-  functional requirements (FR-022–FR-027) and success criteria (SC-003–SC-007), since they govern
-  every reflection and journal entry.
-- The spec notes *that* reflections are produced via the project's own backend and *that* device
-  privacy is preserved (an assumption reconciling the design handoff with the constitution), but
-  states no stack, API, or storage technology — kept at the WHAT/WHY level.
-- **Re-validated 2026-10-24** after restricting v1 to Australia (FR-028–FR-032, SC-010–SC-012,
-  updated FR-021, edge cases and assumptions). All items still pass: the new requirements are
-  testable (storefront availability, named resources, a 90-day verification cadence, notice shown
-  before the first submission), and region-specific details (phone numbers, Privacy Act) are kept
-  as content and compliance facts, not implementation. The phone numbers are listed in Assumptions
-  and must be verified before release (FR-030).
-- **Re-validated 2026-11-06** after refocusing v1 on learning (new User Story 1 "Learn the
-  Upaniṣad one lesson a day" and User Story 5 "daily reminder"; FR-033–FR-045; SC-013–SC-017;
-  Journal, navigation, safety and privacy requirements extended to lessons). All items still pass:
-  - The Path's scope is bounded: Kārikā chapter 1, about 30 lessons, one new lesson a day.
-  - Unlock, offline, consent and reminder behaviour are testable.
-  - Success criteria are measurable and technology-agnostic: first-use completion, 3–5 minute
-    reading time, 100% content review, offline use, and store-reported day-30 retention ≥ 12%.
-  - No [NEEDS CLARIFICATION] markers. Reasonable defaults (chapter 1 first, daily pace, no
-    skipping ahead, free v1) are recorded in Assumptions.
-  - Dependencies are named: lesson content and review, and Learn designs.
-- Spec section of note: the spec keeps earlier requirement IDs stable and numbers new ones from
-  FR-033/SC-013, so the FR list is not in numeric order. This is intentional.
+- All items pass.
+- History:
+  - 2026-10-17: first validated.
+  - 2026-10-24: re-validated after the Australia-only change.
+  - 2026-11-06: re-validated after the learning refocus.
+  - 2026-11-07: re-validated after a readability rewrite. Requirement IDs were renumbered in reading
+    order (FR-001–FR-040, SC-001–SC-017).
+- Crisis detection is described by outcome only (show support when unsure; on-device for lesson
+  responses). How it works is in `docs/ARCHITECTURE.md`.
+- Phone numbers and laws in Assumptions are content and compliance facts, not implementation.
