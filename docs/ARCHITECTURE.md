@@ -44,33 +44,12 @@ storage fails.
 | `turiya_path_v1` | Path progress |
 | `turiya_settings_v1` | Reminder time, consent choice |
 
-```ts
-type Entry = AskEntry | LessonEntry;
-
-type AskEntry = {
-  kind: "ask"; id: number; when: string; question: string;
-  levels: Level[];          // always 4, fixed order
-  practice: string;
-};
-type Level = { name: string; sanskrit: string; tint: string;
-               heading: string; body: string; verseRef: string };
-
-type LessonEntry = {
-  kind: "lesson"; id: number; when: string;
-  lessonId: string;         // e.g. "1-07"
-  lessonTitle: string; verseRef: string;
-  prompt: string; response: string;   // one entry per lesson; editing updates it
-};
-
-type PathProgress = {
-  pathId: "karika-ch1";
-  contentVersion: string;   // lets corrected lessons keep progress
-  completed: { lessonId: string; at: number }[];
-};
-```
+Shapes, rules and state changes are in
+[data-model.md](../specs/001-turiya-ask-journal/data-model.md).
 
 ### Lessons
-- **Source**: one file per lesson in `content/path/karika-ch1/`. Each holds:
+- **Source**: one Markdown file per lesson in `content/path/karika-ch1/` (format:
+  [contracts/lesson-file.md](../specs/001-turiya-ask-journal/contracts/lesson-file.md)). Each holds:
   - the verse(s): Devanagari, IAST transliteration, pronunciation guide, translation, reference
     and translation source;
   - the explanation;
@@ -163,34 +142,26 @@ accounts, no stored questions.
 
 ### API (versioned under `/v1`)
 
-**`POST /v1/answer`** — request: `{ "question": string }`. The response is one of:
+- **`POST /v1/answer`**: takes a question and returns either a `reflection` (four
+  heading/body pairs plus a practice line) or `crisis`.
+- **`GET /v1/health`**: liveness check.
 
-```json
-{ "kind": "reflection",
-  "levels": [ { "heading": "…", "body": "…" }, …4 ],
-  "practice": "…" }
-```
-```json
-{ "kind": "crisis" }
-```
-
-- On any failure, return an error. The app has its own fallback.
-- The reply carries only generated text. Verses, order and colours come from the app, so the AI
-  can't change them.
-- Clients must ignore unknown fields, so later additions don't break older apps.
-
-**`GET /v1/health`** — liveness check.
+The full contract, including field rules, errors and privacy guarantees, is in
+[contracts/answer-api.md](../specs/001-turiya-ask-journal/contracts/answer-api.md). The reply
+carries only generated text; verses, order and colours come from the app.
 
 ### Answer pipeline
 1. **Crisis check**:
    - First, the shared word and phrase lists.
    - Then a fast model check (Claude Haiku), tuned to flag when unsure.
    - If either flags: return `crisis` and add 1 to the anonymous daily count.
-2. **Find passages**: hybrid search over the Kārikā corpus — vector similarity *plus* keyword match.
-   The constitution requires hybrid search, so a question that names "turīya" always finds the
-   turīya verses.
-3. **Write the reflection**: `generateObject` with the system prompt, the passages and a Zod schema
-   that enforces exactly 4 levels plus a practice line. `max_tokens` ≈ 1400.
+2. **Find passages**: hybrid search over the Kārikā corpus — vector similarity *plus* keyword match,
+   merged by rank. The constitution requires hybrid search, so a question that names "turīya"
+   always finds the turīya verses. The question's embedding is computed **on our server** with a
+   small open model (`bge-small-en-v1.5`), so no second company sees it.
+3. **Write the reflection**: AI SDK 6 `generateText` with `Output.object`, given the system
+   prompt, the passages and a Zod schema that enforces exactly 4 levels plus a practice line.
+   `max_tokens` ≈ 1400.
 4. **Safety check** (fast model): reject any reflection that:
    - endorses violence or self-harm;
    - gives medical or therapy directions;
@@ -243,30 +214,12 @@ The retrieved passages are added as context, with an instruction to ground each 
 
 Holds only shared content and anonymous counts. No table refers to a person.
 
-```sql
--- Kārikā text, chunked for search
-CREATE TABLE karika_passage (
-  id          BIGSERIAL PRIMARY KEY,
-  chapter     INT  NOT NULL,
-  verse       INT,
-  state_key   TEXT,              -- jagrat | svapna | sushupti | turiya
-  devanagari  TEXT,
-  translation TEXT NOT NULL,
-  source      TEXT NOT NULL,     -- where the translation came from
-  embedding   VECTOR(1536),
-  search_text TSVECTOR           -- for keyword search
-);
-CREATE INDEX ON karika_passage USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX ON karika_passage USING gin (search_text);
+| Table | Holds |
+|---|---|
+| `karika_passage` | Kārikā text, translation and source, a 384-dimension embedding and a keyword index |
+| `daily_counter` | Anonymous daily counts: answers, crisis routings, failed safety checks |
 
--- anonymous daily counts only
-CREATE TABLE daily_counter (
-  day                DATE PRIMARY KEY,
-  answers            INT NOT NULL DEFAULT 0,
-  crisis_routed      INT NOT NULL DEFAULT 0,
-  safety_check_fails INT NOT NULL DEFAULT 0
-);
-```
+The full schema is in [data-model.md](../specs/001-turiya-ask-journal/data-model.md).
 
 **Seeding**: a script loads the corpus, embeds it and fills `search_text`. Chapter 1 verses come
 from the same `content/path/` files the app bundles, so Learn and Ask never disagree on the text.

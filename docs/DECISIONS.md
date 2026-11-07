@@ -59,7 +59,8 @@ pgvector.
 **Why**:
 - **Small corpus**: the Kārikā is small and doesn't change, so a full agent framework isn't needed
   yet.
-- **Shape is enforced**: `generateObject` with a schema guarantees the four-state answer format.
+- **Shape is enforced**: structured output with a schema (AI SDK 6 `generateText` +
+  `Output.object`) guarantees the four-state answer format.
 - **One database**: pgvector keeps search inside the Postgres we already have.
 
 **Alternative**: Mastra, which is free, open source and self-hostable. It adds workflows, evals and
@@ -96,6 +97,9 @@ four displayed verses are fixed in the app.
 
 **Why**: the product's premise is Gauḍapāda's commentary, not the model's loose recall. Fixed verses
 mean citations can't be invented.
+
+**Privacy**: search embeddings are computed on our own server with a small open model, so Anthropic
+is the only outside company that sees a question (research R2 in the plan).
 
 **Cost**: the text needs a licensed translation and proofreading. This is the same work as the
 lesson content (DEC-11).

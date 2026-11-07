@@ -25,7 +25,8 @@ v1 launches in **Australia only**. **Status**: planning — no application code 
 | Question | Read |
 |---|---|
 | What does v1 do? | [Spec](specs/001-turiya-ask-journal/spec.md) — the source of truth |
-| How is it built? | [Architecture](docs/ARCHITECTURE.md) |
+| How is it built? | [Architecture](docs/ARCHITECTURE.md), then the detailed v1 plan: [plan](specs/001-turiya-ask-journal/plan.md), [data model](specs/001-turiya-ask-journal/data-model.md), [API and lesson-file contracts](specs/001-turiya-ask-journal/contracts/), [research](specs/001-turiya-ask-journal/research.md) |
+| How do I run and test it? | [Quickstart](specs/001-turiya-ask-journal/quickstart.md) |
 | In what order do we build it? | [Implementation plan](docs/IMPLEMENTATION_PLAN.md) |
 | Why was it decided this way? | [Decisions](docs/DECISIONS.md) |
 | What comes after v1? | [Roadmap](docs/ROADMAP.md) |
