@@ -54,7 +54,12 @@ Connect and Play Console. No in-app analytics.
 - Other countries, each with its own spec.
 - Śaṅkara's commentary.
 - A library of verses not yet taught.
-- Audio: verses read aloud, guided reflection.
+- **Audio of each Sanskrit verse**, so beginners can learn to recite it:
+  - recorded by a trained chanter (not text-to-speech, which gets Sanskrit stress and long vowels
+    wrong);
+  - at a slow learning pace and at natural pace;
+  - ask the lesson reviewer to recommend a chanter early, even though audio comes later.
+- Guided reflection audio.
 - An opt-in encrypted backup to the person's own iCloud or Google Drive, so a lost phone doesn't
   lose the Journal. It needs no account with us.
 

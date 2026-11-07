@@ -1,10 +1,11 @@
 # Turiya — learn the Māṇḍūkya Upaniṣad
 
 A calm mobile app for learning the **Māṇḍūkya Upaniṣad through Gauḍapāda's Kārikā**, one short
-lesson a day, and for applying it to everyday life.
+lesson at a time, and for applying it to everyday life.
 
-- **Learn**: about 30 daily lessons through Kārikā chapter 1. Each lesson has a verse, a
-  plain-words explanation and a small reflection for your day. Works offline.
+- **Learn**: about 30 lessons through Kārikā chapter 1, at your own pace. Each lesson has a verse
+  with an easy pronunciation guide, a plain-words explanation and a small reflection for your day.
+  Works offline.
 - **Ask**: describe what's weighing on you and get a reflection through the four states of
   consciousness, with a fixed verse for each.
 - **Journal**: your lesson notes and reflections, kept only on your phone.

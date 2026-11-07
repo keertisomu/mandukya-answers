@@ -38,6 +38,8 @@
   - 2026-11-06: re-validated after the learning refocus.
   - 2026-11-07: re-validated after a readability rewrite. Requirement IDs were renumbered in reading
     order (FR-001–FR-040, SC-001–SC-017).
+  - 2026-11-07: re-validated after making lessons self-paced (FR-006, FR-009) and adding an easy
+    pronunciation guide to every verse (FR-002). All items still pass.
 - Crisis detection is described by outcome only (show support when unsure; on-device for lesson
   responses). How it works is in `docs/ARCHITECTURE.md`.
 - Phone numbers and laws in Assumptions are content and compliance facts, not implementation.

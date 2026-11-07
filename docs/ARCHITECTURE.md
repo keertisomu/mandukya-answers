@@ -71,7 +71,8 @@ type PathProgress = {
 
 ### Lessons
 - **Source**: one file per lesson in `content/path/karika-ch1/`. Each holds:
-  - the verse(s): Devanagari, IAST transliteration, translation, reference and translation source;
+  - the verse(s): Devanagari, IAST transliteration, pronunciation guide, translation, reference
+    and translation source;
   - the explanation;
   - the related state;
   - the "live it today" prompt.
@@ -80,8 +81,11 @@ type PathProgress = {
 - **Canonical text and commentary stay separate.** Verse and translation are canonical; the
   explanation and prompt are our commentary. They are never mixed (constitution, Principle III).
 - **Changes go through pull requests** reviewed for accuracy.
-- **Unlock rule**: the next lesson opens once the previous one is done *and* the phone's calendar
-  day has moved on. No streaks, no missed-day state.
+- **Pronunciation guide**: one simple respelling scheme for every verse. Syllables are split by
+  hyphens and long sounds doubled, e.g. *MAAN-doo-kya*. The scheme is written down in
+  `content/README.md`, so every lesson reads the same way.
+- **Order rule**: the next lesson opens as soon as the previous one is done. No daily limit, no
+  streaks, no missed-day state.
 - **Ask ↔ Learn links**: a fixed map from verse reference to lesson. An Ask verse links to its
   lesson only once the person has reached it.
 
@@ -139,8 +143,8 @@ The server uses the **same lists** as its first gate, so both paths agree.
 ### Daily reminder
 - A local notification scheduled on the phone. There's no push server.
 - Off by default. Permission is asked for only when the person turns it on.
-- Generic text only, e.g. "Today's lesson is ready."
-- Skipped if today's lesson was opened or no new lesson is available.
+- Generic text only, e.g. "Your next lesson is ready."
+- Skipped on days the person has already done a lesson, and once the Path is finished.
 
 ### Consent screen
 - **Shown once**, before the first question is sent.

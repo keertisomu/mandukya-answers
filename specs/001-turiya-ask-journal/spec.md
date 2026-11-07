@@ -4,15 +4,16 @@
 
 **Input**: The design handoff (`design/README.md`, `design/Turiya.dc.html`), then two scope
 changes: launch in Australia only (2026-10-24, DEC-10) and centre v1 on learning the Upaniṣad
-(2026-11-06, DEC-11).
+(2026-11-06, DEC-11). Refined 2026-11-07: lessons are self-paced, and each verse gets an easy
+pronunciation guide.
 
 ## Overview
 
 Turiya is a calm mobile app for **learning the Māṇḍūkya Upaniṣad through Gauḍapāda's Māṇḍūkya
-Kārikā**, one short lesson a day, and for applying it to everyday life.
+Kārikā**, one short lesson at a time, and for applying it to everyday life.
 
-- **Learn** (the home screen): a Path of daily lessons. Each lesson teaches one verse in plain words
-  and ends with a small reflection for the person's own day.
+- **Learn** (the home screen): a Path of short lessons, taken at the person's own pace. Each lesson
+  teaches one verse in plain words and ends with a small reflection for the person's own day.
 - **Ask**: the person describes something weighing on them and gets a reflection through the four
   states of consciousness — waking, dream, deep sleep and the witness — with one fixed verse per
   state.
@@ -27,30 +28,32 @@ taught, streaks, community, accounts, cross-device sync. Later plans are in `doc
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Learn the Upaniṣad one lesson a day (Priority: P1)
+### User Story 1 - Learn the Upaniṣad one lesson at a time (Priority: P1)
 
-The person opens the app to today's lesson. It shows one verse — in Devanagari, with a
-transliteration, an English translation and its reference — then a plain-language explanation of
-what Gauḍapāda says, the state of consciousness it concerns, and a "live it today" prompt. They can
-write a few lines in reply, which go to their Journal. The next lesson opens the following day.
+The person opens the app to their next lesson. It shows one verse — in Devanagari, with a
+transliteration, an easy pronunciation guide for saying it aloud, an English translation and its
+reference — then a plain-language explanation of what Gauḍapāda says, the state of consciousness it
+concerns, and a "live it today" prompt. They can write a few lines in reply, which go to their
+Journal. When they finish, they can go straight on to the next lesson or come back another day.
 
 **Why this priority**: Learning is the centre of the product and the main reason to come back each
 day. It works on its own, even without Ask.
 
-**Independent Test**: Complete lesson 1 and write a response. Confirm the response is in the Journal
-and lesson 2 is locked until tomorrow. The next day, open lesson 2 and confirm progress shows
-"2 of 30".
+**Independent Test**: Complete lesson 1 and write a response. Confirm the response is in the
+Journal, continue straight to lesson 2, and confirm progress shows "2 of 30" and lesson 3 can't be
+opened yet.
 
 **Acceptance Scenarios**:
 
 1. **Given** a first launch, **When** the app opens, **Then** the first lesson is shown.
 2. **Given** an open lesson, **When** the person reads it, **Then** they see the verse (Devanagari,
-   transliteration, translation, reference, translation source), the explanation, the related
-   state where there is one, and the prompt.
+   transliteration, pronunciation guide, translation, reference, translation source), the
+   explanation, the related state where there is one, and the prompt.
 3. **Given** a lesson, **When** the person writes and saves a response, **Then** it appears in the
    Journal with the lesson title and verse reference.
-4. **Given** a lesson completed today, **When** the person looks for the next one, **Then** it shows
-   as available tomorrow, and the completed lesson can still be re-read.
+4. **Given** a lesson just completed, **When** the person finishes it, **Then** they can go straight on
+   to the next lesson or stop, with a gentle line such as "The next lesson is ready whenever you
+   are." Completed lessons can still be re-read.
 5. **Given** several days away, **When** the person returns, **Then** they continue from the next
    lesson with no message about missed days.
 6. **Given** the final lesson is completed, **When** the person finishes it, **Then** they see a gentle
@@ -151,8 +154,8 @@ lesson is ready. It is off unless they turn it on.
 
 **Why this priority**: Reminders help retention, but the Path works without them.
 
-**Independent Test**: Turn the reminder on, confirm it arrives at the chosen time on a day with a
-new lesson and shows no journal content, then turn it off and confirm it stops.
+**Independent Test**: Turn the reminder on, confirm it arrives at the chosen time on a day with no
+lesson done yet and shows no journal content, then turn it off and confirm it stops.
 
 **Acceptance Scenarios**:
 
@@ -160,8 +163,8 @@ new lesson and shows no journal content, then turn it off and confirm it stops.
    no notification permission is asked for.
 2. **Given** the person turns reminders on, **When** they pick a time, **Then** permission is asked for
    at that moment.
-3. **Given** today's lesson was already opened, **When** the reminder time comes, **Then** no reminder is
-   sent.
+3. **Given** the person has already done a lesson today, **When** the reminder time comes, **Then** no
+   reminder is sent.
 
 ---
 
@@ -172,7 +175,7 @@ new lesson and shows no journal content, then turn it off and confirm it stops.
 - **Crisis question in Ask**: no reflection is prepared, so nothing is saved to the Journal.
 - **Invalid or incomplete reflection**: the built-in reflection is shown instead.
 - **No connection**: Learn and Journal work fully; Ask shows the built-in reflection.
-- **Device clock moved forward**: lessons unlock early. This is accepted, not prevented.
+- **Several lessons in one sitting**: allowed. Nothing encourages or discourages it.
 - **App reinstalled or phone replaced**: progress and the Journal are lost, because they live only on
   the device. The privacy information says so.
 - **Storage unavailable**: the app still works; progress restarts at lesson 1 and the Journal shows
@@ -192,25 +195,27 @@ new lesson and shows no journal content, then turn it off and confirm it stops.
 
 - **FR-001**: The Path MUST cover chapter 1 of the Kārikā (Āgama Prakaraṇa) — the 12 mantras of the
   Upaniṣad with Gauḍapāda's 29 kārikās — in textual order, in about 30 lessons.
-- **FR-002**: Each lesson MUST show its verse(s) in Devanagari, a transliteration, an English
-  translation, the reference and the translation's source.
+- **FR-002**: Each lesson MUST show its verse(s) in Devanagari, a standard transliteration, an easy
+  pronunciation guide a beginner can read aloud (syllables split, long sounds shown plainly, e.g.
+  "MAAN-doo-kya"), an English translation, the reference and the translation's source.
 - **FR-003**: Each lesson MUST include a plain-language explanation (verse and explanation readable
   in 3–5 minutes), the related state where there is one, and a "live it today" prompt.
 - **FR-004**: All lesson content MUST be written, proofread and reviewed before release. It MUST NOT
   be generated when the person reads it.
 - **FR-005**: The person MUST be able to write an optional response to the prompt. It is saved to
   the Journal and never leaves the device.
-- **FR-006**: One new lesson MUST become available per calendar day, after the previous one is
-  completed. Missed days MUST NOT reset progress or produce any message. There is no skipping
-  ahead.
+- **FR-006**: Lessons MUST open in order. After completing a lesson, the person MUST be able to go
+  straight on to the next one or stop; there is no daily limit and no skipping ahead. When they
+  stop, a gentle line MUST say the next lesson is ready whenever they are. Time away MUST NOT reset
+  progress or produce any message about missed days.
 - **FR-007**: Learn MUST show progress (e.g. "Lesson 7 of 30") and let the person re-read completed
   lessons. Finishing the last lesson MUST lead to a completion moment with the option to re-read or
   start again.
 - **FR-008**: Learn MUST work fully without a network connection.
 - **FR-009**: The person MUST be able to turn on an optional daily reminder at a time they choose. It
-  is off by default; permission is asked for only when they turn it on; no reminder is sent if
-  today's lesson was opened or no new lesson is available; reminder text MUST NOT include journal
-  content; it can be changed or turned off at any time.
+  is off by default; permission is asked for only when they turn it on; no reminder is sent on a
+  day the person has already done a lesson, or once they have finished the Path; reminder text MUST
+  NOT include journal content; it can be changed or turned off at any time.
 
 **Ask**
 
@@ -284,10 +289,11 @@ new lesson and shows no journal content, then turn it off and confirm it stops.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Lesson**: a verse (or a mantra with its kārikās) — Devanagari, transliteration, translation,
-  reference, source — plus an explanation, the related state and a prompt. Fixed, reviewed content.
+- **Lesson**: a verse (or a mantra with its kārikās) — Devanagari, transliteration, pronunciation
+  guide, translation, reference, source — plus an explanation, the related state and a prompt.
+  Fixed, reviewed content.
 - **Path**: the ordered lessons for chapter 1. The same for everyone.
-- **Path progress**: which lessons are done and when the next one opens. Device only.
+- **Path progress**: which lessons are done, and when. Device only.
 - **Lesson response**: what the person wrote for a lesson, with a timestamp. Device only.
 - **Question**: what the person asked in Ask. Sent once to prepare a reflection; saved on the device.
 - **State**: one of the four fixed states, with its Sanskrit name, English label, colour and verse.
@@ -304,13 +310,13 @@ new lesson and shows no journal content, then turn it off and confirm it stops.
 
 - **SC-001**: In first-use testing, at least 90% of people finish lesson 1 without help, and the median
   time for a lesson is 3–5 minutes.
-- **SC-002**: Before release, 100% of verses are proofread against a Sanskrit source, 100% of
-  explanations are reviewed by someone grounded in the tradition, and every lesson names its
-  translation source.
+- **SC-002**: Before release, 100% of verses and pronunciation guides are proofread against a
+  Sanskrit source, 100% of explanations are reviewed by someone grounded in the tradition, and
+  every lesson names its translation source.
 - **SC-003**: 100% of Learn and Journal works without a connection.
 - **SC-004**: Day-30 retention reported by the app stores is at least 12% in the first 60 days
   (meditation apps typically see 6–8%).
-- **SC-005**: In first-use testing, most people say they would come back for tomorrow's lesson.
+- **SC-005**: In first-use testing, most people say they would come back for the next lesson.
 
 **Ask**
 
@@ -339,8 +345,12 @@ new lesson and shows no journal content, then turn it off and confirm it stops.
 
 - **Why chapter 1 first**: it holds all 12 mantras of the Upaniṣad with Gauḍapāda's commentary, so
   finishing it means having studied the whole Upaniṣad through his eyes. About 41 verses fit about
-  30 lessons — roughly a month.
-- **Pace**: one lesson a day keeps the app calm and builds a habit. Completed lessons can be re-read.
+  30 lessons — roughly a month at a lesson a day.
+- **Pace**: people go at their own pace so keen learners aren't held back. A lesson a day is
+  suggested, and supported by the optional reminder, but not enforced. Lessons stay in order so the
+  text is read as written.
+- **Pronunciation guide**: one simple, consistent respelling scheme for all verses, checked by the
+  Sanskrit proofreader. Audio of the verses comes later (`docs/ROADMAP.md`).
 - **Lesson content is the main dependency**: a licensed or public-domain translation, proofread
   Sanskrit, explanations written for the app, and review by someone grounded in the tradition.
 - **Design**: the approved design covers Ask and Journal. Learn, the reminder setting and the consent
