@@ -221,9 +221,16 @@ The retrieved passages are added as context, with an instruction to ground each 
 - **Model IDs** are set in config, never hard-coded.
 
 ### Testing the AI (constitution, Principle VII)
-- **Golden eval set**: 30–40 realistic situations across the supported themes. Each has the
-  expected state(s), the expected verse(s) and a pass/fail check that no verdict or advice was
-  given.
+- **Golden eval set**: 30–40 realistic situations, about 5 per theme. Each has the expected
+  state(s), the expected verse(s) and a pass/fail check that no verdict or advice was given.
+  Starting themes:
+  - relationship conflict;
+  - anger;
+  - grief;
+  - decision paralysis;
+  - work stress;
+  - comparison and envy;
+  - loneliness.
 - **Crisis test set**: crisis and non-crisis wording for both Ask and lesson responses, including
   idioms like "this job is killing me". Missing a real crisis fails; a false alarm is acceptable.
 - Both sets run in CI on every prompt, model or content change. A regression blocks release.

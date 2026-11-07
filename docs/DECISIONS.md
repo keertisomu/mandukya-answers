@@ -183,7 +183,7 @@ reviewed in time. The fallback is a shorter first Path, not dropping learning.
 
 | Question | Default if not decided |
 |---|---|
-| Which translation of chapter 1, and its licence? | Research public-domain options first. This is on the critical path. |
+| Which translation of chapter 1, and its licence? | Research public-domain options first. This is on the critical path. For the 12 mantras, Hume's *Thirteen Principal Upanishads* (1921) is a likely public-domain choice: Hume died in 1940, so it should be free in Australia too, but confirm. It does **not** include Gauḍapāda's Kārikā, which needs its own translation. Newer translations are usually still in copyright, even though the text is ancient. |
 | Who writes the lesson explanations, and who reviews them? | Needs a person. Blocks release. |
 | Which model for reflections? | `claude-sonnet-5-5` |
 | Expo or bare React Native? | Expo |
