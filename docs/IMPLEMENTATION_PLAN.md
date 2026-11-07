@@ -16,7 +16,7 @@ The order of work for v1. What to build is in the
 | Step | Work |
 |---|---|
 | C1 Translation | Choose and license (or confirm public domain) an English translation of Kārikā chapter 1. Record the source. |
-| C2 Text | Devanagari and IAST for the 12 mantras and 29 kārikās, proofread against a Sanskrit source. Also correct the four Ask verse references (see ARCHITECTURE). |
+| C2 Text | Devanagari, IAST and an easy pronunciation guide for the 12 mantras and 29 kārikās, proofread against a Sanskrit source. Also correct the four Ask verse references (see ARCHITECTURE). |
 | C3 Lessons | Group about 41 verses into about 30 lessons. Write each explanation (3–5 minutes to read) and its "live it today" prompt, in the app's warm, non-advising voice. |
 | C4 Review | Someone grounded in the tradition reviews every lesson. Fixes go in as pull requests to `content/`. |
 | C5 Helplines | Verify the Australian support services. Repeat every 90 days. |
@@ -33,7 +33,7 @@ setting, the consent screen and the three-tab bar, in the style of the existing 
 |---|---|---|
 | M0 | **Setup**: monorepo (`apps/mobile`, `apps/api`, `packages/shared`, `content/`, `db/`), TypeScript, lint, tests; shared schemas (answer, lesson) and crisis word lists; a CI check that every lesson file is valid | Install, typecheck, lint and content check pass |
 | M1 | **App shell**: Expo app opening to Learn; design tokens and base components; three tabs; reduced-motion support | All tabs navigable; Ask matches the handoff |
-| M2 | **Learn, offline** (FR-001–009): lessons bundled; lesson screen; progress and daily unlock; responses to the Journal; support screen and help link on every tab; on-device crisis check; daily reminder | Lessons work day by day offline; responses reach the Journal; help is one tap away (SC-003, SC-012) |
+| M2 | **Learn, offline** (FR-001–009): lessons bundled; lesson screen; progress and in-order unlock; responses to the Journal; support screen and help link on every tab; on-device crisis check; daily reminder | Lessons work in order, offline; responses reach the Journal; help is one tap away (SC-003, SC-012) |
 | M3 | **Ask on the fallback** (FR-010–017, FR-033): Ask, thinking and answer screens; Ask entries in the Journal; Learn ↔ Ask links; consent screen (FR-036) | Ask works end-to-end with the built-in reflection; no question is sent without consent (SC-011, SC-014) |
 | M4 | **Server**: `/v1/answer` and `/v1/health`; crisis check (word lists, then model); output safety check; crisis test set in CI | Real reflections; failures fall back; crisis test set passes (SC-007, SC-010) |
 | M5 | **Database**: Postgres + pgvector; migrations; seed the corpus (chapter 1 from `content/`) with embeddings and keyword index | Hybrid search returns sensible passages for sample questions |
@@ -69,6 +69,6 @@ setting, the consent screen and the three-tab bar, in the style of the existing 
 | AI drifts into advice | Schema checks, the safety check, the golden eval set in CI, and the app's fallback. |
 | Missed crisis | Word lists on both paths, the model check for Ask, the test set in CI, and help on every tab. |
 | Too many false crisis alarms | Acceptable by design. Watch the anonymous count after prompt changes. |
-| Notification fatigue | Reminder off by default, at most one a day, skipped once the lesson is opened. |
+| Notification fatigue | Reminder off by default, at most one a day, skipped on days a lesson was already done. |
 
 After launch: v1.1 and beyond are in [ROADMAP.md](./ROADMAP.md).

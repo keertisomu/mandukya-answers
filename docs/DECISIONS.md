@@ -119,7 +119,8 @@ count.
 ## DEC-9 — Retention through daily practice, not gamification
 
 **Decision**:
-- **v1**: the daily lesson Path is the main reason to return, with an optional reminder (DEC-11).
+- **v1**: the lesson Path is the main reason to return. A lesson a day is suggested and helped by an
+  optional reminder, but people can go at their own pace (DEC-11).
 - **v1.1**: follow-up check-ins and the pattern mirror deepen Ask (see ROADMAP).
 - **Not used**: streaks, community and open-ended chat.
 
@@ -150,7 +151,7 @@ community is one of its largest overseas-born communities.
 ## DEC-11 — v1 centres on learning; Ask applies it
 
 **Decision**:
-- **Learn is the home tab**: a Path of about 30 daily lessons through chapter 1 of the Kārikā (the 12
+- **Learn is the home tab**: a Path of about 30 short lessons through chapter 1 of the Kārikā (the 12
   mantras with 29 kārikās).
 - **Lesson content is fixed and reviewed**, never generated.
 - **Ask stays** as the second tab and links to the lessons.
