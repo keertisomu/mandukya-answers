@@ -1,7 +1,7 @@
-# Specification Quality Checklist: Turiya v1 — Learn, Ask & Journal
+# Specification Quality Checklist: Turiya v1 — Learn the Māṇḍūkya
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-10-17 · **Last validated**: 2026-11-07
+**Created**: 2026-10-17 · **Last validated**: 2026-11-20
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -32,14 +32,14 @@
 ## Notes
 
 - All items pass.
-- History:
-  - 2026-10-17: first validated.
-  - 2026-10-24: re-validated after the Australia-only change.
-  - 2026-11-06: re-validated after the learning refocus.
-  - 2026-11-07: re-validated after a readability rewrite. Requirement IDs were renumbered in reading
-    order (FR-001–FR-040, SC-001–SC-017).
-  - 2026-11-07: re-validated after making lessons self-paced (FR-006, FR-009) and adding an easy
-    pronunciation guide to every verse (FR-002). All items still pass.
-- Crisis detection is described by outcome only (show support when unsure; on-device for lesson
-  responses). How it works is in `docs/ARCHITECTURE.md`.
-- Phone numbers and laws in Assumptions are content and compliance facts, not implementation.
+- **2026-11-20 rewrite**:
+  - v1 is now learning only (DEC-12), and Ask moves to v2.
+  - Lessons are phrase by phrase, modelled on the shared study of mantra 7.
+  - Saved lessons are added, so people can re-read key verses daily.
+  - Requirement IDs restart at FR-001–FR-031 and SC-001–SC-013.
+  - The feature folder is renamed from `001-turiya-ask-journal` to `001-turiya-learn`.
+- Earlier validations: 2026-10-17, 2026-10-24, 2026-11-06 and 2026-11-07 (see git history).
+- Crisis checking is described by outcome only (on the phone, leaning toward showing support). How
+  it works is in `docs/ARCHITECTURE.md`.
+- "No server, AI or network in v1" is stated as a product promise (privacy and offline use), not as
+  a technical choice.

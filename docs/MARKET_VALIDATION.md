@@ -1,7 +1,8 @@
 # Market validation
 
-Research done in October 2026, before two direction changes: v1 now centres on learning (DEC-11)
-and launches in Australia only (DEC-10). The findings still hold.
+Research done in October 2026, when the app was planned around Ask. Since then, v1 has become
+**learning only**, with Ask moving to v2 (DEC-12), and it launches in Australia only (DEC-10). The
+findings still hold. Ask-related risks below now apply from v2.
 
 > **How reliable is this?** The research tool couldn't open the source pages, so claims weren't
 > checked one by one. Figures come from search summaries of the sources below, and several are
@@ -76,7 +77,7 @@ better [16]). v1 chose Australia as a more careful first step (DEC-10).
 | Rank | Feature | Evidence | Where it went |
 |---|---|---|---|
 | 1 | Daily practice + gentle reminders | +109% week-1 retention at Headspace (vendor case study) [20] | v1: daily Path + reminder |
-| 2 | Structured depth (a guided path through the text) | Deeper content retains better; payers want programs (weak sources) [15][21] | v1: chapter 1 Path; v2: chapters 2–4 |
+| 2 | Structured depth (a guided path through the text) | Deeper content retains better; payers want programs (weak sources) [15][21] | v1: chapter 1 Path; later: chapters 2–4 |
 | 3 | Encrypted backup | Privacy builds trust; payers won't accept losing a journal | Later (ROADMAP) |
 | 4 | Audio | Waking Up's paid value is audio [19] | Later (ROADMAP) |
 | 5 | Streaks | No evidence; clashes with a calm feel | Not planned |
@@ -84,7 +85,7 @@ better [16]). v1 chose Australia as a more careful first step (DEC-10).
 
 ## 6. Risks
 
-| Risk | Evidence | Answer in v1 |
+| Risk | Evidence | How we handle it |
 |---|---|---|
 | Harmful or distorted answers | Gita bots condoned violence [5][12]; "Father Justin" AI lost its priest title after backlash [22][23] | No persona, grounding, output safety check, attribution line (DEC-7, DEC-8) |
 | Misquoted scripture | YouVersion's CEO estimates AI misquotes the Bible 15–60% of the time (his figures) [24] | Fixed, proofread verses and lessons (DEC-11) |

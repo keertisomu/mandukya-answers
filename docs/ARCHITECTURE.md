@@ -1,105 +1,84 @@
 # Architecture — v1
 
-How v1 is built. **What** it does is in the
-[spec](../specs/001-turiya-ask-journal/spec.md) (`FR-`/`SC-` IDs); **why** each choice was made is
-in [DECISIONS.md](./DECISIONS.md) (`DEC-` IDs).
+How v1 is built. **What** it does is in the [spec](../specs/001-turiya-learn/spec.md) (`FR-`/`SC-`
+IDs); **why** each choice was made is in [DECISIONS.md](./DECISIONS.md) (`DEC-` IDs). The detailed
+design is in the spec folder: [plan](../specs/001-turiya-learn/plan.md),
+[data model](../specs/001-turiya-learn/data-model.md),
+[lesson file format](../specs/001-turiya-learn/contracts/lesson-file.md).
 
 ## 1. The big picture
 
 ```
-Phone (React Native app)
-  ├─ Learn ............ lessons are bundled in the app; works offline
-  ├─ Journal, progress  stored on the phone only; never sent anywhere
-  └─ Ask ──HTTPS──▶ Our server (TypeScript)
-                      1. crisis check
-                      2. find relevant Kārikā passages ──▶ Postgres + pgvector
-                      3. write the reflection ───────────▶ Anthropic (Claude)
-                      4. safety-check it, then reply
+Phone (React Native app) — no server, no network
+  ├─ Learn ...... ~32 lessons, bundled in the app at build time
+  │               saved lessons at the top
+  ├─ Journal .... replies to lesson prompts
+  └─ Storage .... progress, saved, journal, settings — on the phone only (MMKV)
+
+content/ (reviewed lesson files) ──build check──▶ bundled into the app
 ```
 
 Three rules shape everything:
 
-- **Only Ask needs the server.** Learn and Journal work with no network.
-- **Only the Ask question leaves the phone**, after the person agrees (FR-036). The server uses it
-  once and stores nothing (DEC-1).
-- **No AI-written scripture.** Verses and lessons are fixed, reviewed content. AI writes only the
-  Ask reflection text.
+- **Nothing leaves the phone.** No server, no accounts, no analytics, no over-the-air updates
+  (DEC-1, DEC-12).
+- **No generated text.** Every lesson is written, proofread and reviewed before release.
+- **Everything works offline**, including fonts and the support screen.
+
+Ask, the AI reflection feature, comes in v2 and adds a server. Its design is in
+[ASK_V2_DESIGN.md](./ASK_V2_DESIGN.md).
 
 ## 2. The app (React Native + Expo, DEC-2)
 
 ### Screens
-- **Tabs**: Learn (opens first), Ask, Journal.
-- **Ask** has three states: idle → thinking → answer.
-- **Shared**: the support screen and the consent screen.
-- **Designs**: Ask and Journal follow the design handoff (`design/`). Learn, the reminder setting and
-  the consent screen still need designs.
+- **Tabs**: Learn (opens first) and Journal.
+- **Learn home**: saved lessons at the top, then "continue" (the next lesson) and progress.
+- **Lesson**: phrases one after another, under part headings where a verse has parts. A verse's
+  last part ends with the full verse, summary and prompt.
+- **Other screens**: a journal entry, the support screen and settings (the reminder).
+- **Designs**: the visual style (colours, type, calm feel) comes from the handoff in `design/`. The
+  Learn screens, lesson layout, Saved list and settings need new designs in that style.
 
 ### Data on the phone (MMKV, DEC-3)
-All stored as JSON on the device only. Every read and write is wrapped so the app still works if
-storage fails.
 
 | Key | Holds |
 |---|---|
-| `turiya_journal_v1` | Journal entries, newest first |
-| `turiya_path_v1` | Path progress |
-| `turiya_settings_v1` | Reminder time, consent choice |
+| `turiya_progress_v1` | Completed lessons |
+| `turiya_saved_v1` | Saved lessons |
+| `turiya_journal_v1` | Replies to lesson prompts |
+| `turiya_settings_v1` | Reminder on/off and time |
 
-Shapes, rules and state changes are in
-[data-model.md](../specs/001-turiya-ask-journal/data-model.md).
+Every read and write is wrapped, so the app still works if storage fails. Shapes and state changes
+are in the [data model](../specs/001-turiya-learn/data-model.md).
 
 ### Lessons
-- **Source**: one Markdown file per lesson in `content/path/karika-ch1/` (format:
-  [contracts/lesson-file.md](../specs/001-turiya-ask-journal/contracts/lesson-file.md)). Each holds:
-  - the verse(s): Devanagari, IAST transliteration, pronunciation guide, translation, reference
-    and translation source;
-  - the explanation;
-  - the related state;
-  - the "live it today" prompt.
-- **Checked and bundled at build time.** A schema in `packages/shared` rejects missing fields or
-  broken order. Lessons ship inside the app, so they work offline and are never generated.
-- **Canonical text and commentary stay separate.** Verse and translation are canonical; the
-  explanation and prompt are our commentary. They are never mixed (constitution, Principle III).
-- **Changes go through pull requests** reviewed for accuracy.
-- **Pronunciation guide**: one simple respelling scheme for every verse. Syllables are split by
-  hyphens and long sounds doubled, e.g. *MAAN-doo-kya*. The scheme is written down in
-  `content/README.md`, so every lesson reads the same way.
+- **Source**: one Markdown file per lesson in `content/path/karika-ch1/`, in the
+  [lesson file format](../specs/001-turiya-learn/contracts/lesson-file.md).
+- **Phrase by phrase**: each phrase has Devanagari, IAST, an easy pronunciation guide, a meaning
+  and a short note.
+  - Long verses (such as mantra 7) span several lessons, one per part.
+  - A verse's last part adds the full verse, summary, related state and prompt.
+- **Checked at build time**: a Zod schema in `packages/shared` rejects missing fields, gaps in
+  order or a missing ending. A release build also fails if any lesson isn't reviewed.
+- **Bundled**: notes and summaries become simple text blocks, rendered with the app's own
+  components.
+- **Canonical text and our commentary stay in separate fields** (constitution, Principle III).
+- **Pronunciation guide**: one respelling scheme, documented in `content/README.md`, e.g.
+  *naan-tah-prag-yam*.
 - **Order rule**: the next lesson opens as soon as the previous one is done. No daily limit, no
-  streaks, no missed-day state.
-- **Ask ↔ Learn links**: a fixed map from verse reference to lesson. An Ask verse links to its
-  lesson only once the person has reached it.
+  streaks.
+- **Changes** go through pull requests, reviewed for accuracy.
 
-### The four Ask states (fixed in the app)
-Verses are app constants, never fetched or generated, so citations can't be invented.
-
-| # | State | Label | Colour | Verse ref (from handoff) |
-|---|---|---|---|---|
-| 1 | Jāgrat | Waking | `#C7A87E` | Kārikā 1.1 |
-| 2 | Svapna | The story | `#A98BA8` | Kārikā 2.1 |
-| 3 | Suṣupti | Underneath | `#7E9AA8` | Kārikā 1.2 |
-| 4 | Turīya | The witness | `#3F4F52` | Kārikā 1.10 |
-
-⚠️ **Check before launch**: the Devanagari given for 1.1 and 1.2 looks like the two halves of
-**Kārikā 1.3** in standard editions. Confirm against the chosen edition. Devanagari and
-translations are in `design/README.md`.
-
-### Ask flow
-1. Ignore empty input.
-2. First time only: show the consent screen. If declined, stop.
-3. Show the thinking state.
-4. Call `POST /v1/answer`.
-5. Handle the response:
-   - `crisis` → show the support screen. Save nothing.
-   - `reflection` → merge the text with the four fixed states, save it to the Journal, show it.
-   - Any error → show the built-in fallback reflection (ported from the prototype) and save that.
-6. Every answer shows the attribution line (FR-034) and the help link.
+### Saved lessons
+A list of lesson IDs on the phone, newest first, shown at the top of Learn. A saved lesson opens in
+two taps or fewer.
 
 ### Support screen and helplines
-- **How people reach it**: three ways —
-  - a `crisis` reply from Ask;
-  - the on-device check on a lesson response;
-  - the "Need to talk to someone?" link on every tab.
-- **Bundled in the app**, so it works offline. Stored per region (`AU` in v1), so a new country
-  adds data, not screens.
+- **How people reach it**:
+  - the crisis check on a journal reply;
+  - the "Need to talk to someone?" link on both tabs.
+- **Bundled in the app**, so it works offline. Stored per region (`AU` in v1), so a new country adds
+  data, not screens.
 - **Verify every number before launch and every 90 days after.**
 
   | Service | Contact |
@@ -110,136 +89,36 @@ translations are in `design/README.md`.
   | Beyond Blue | 1300 22 4636 |
   | Overseas | findahelpline.com |
 
-### Crisis check on lesson responses
-Lesson responses never leave the phone, so this check runs on the device:
-- It matches words and phrases from shared lists in `packages/shared`.
-- It handles negation and common idioms ("this job is killing me").
-- It leans toward showing help when unsure.
-- If it matches, the response is still saved and the support screen opens.
-
-The server uses the **same lists** as its first gate, so both paths agree.
+### Crisis check on journal replies
+- **Runs on the phone**, matching word and phrase lists from `packages/shared`.
+- **Handles** negation and common idioms ("this job is killing me").
+- **Leans toward showing help** when unsure.
+- **On a match**, the reply is still saved and the support screen opens.
+- **Tested** by a crisis test set in CI. In v2, the same lists become Ask's first gate.
 
 ### Daily reminder
-- A local notification scheduled on the phone. There's no push server.
-- Off by default. Permission is asked for only when the person turns it on.
-- Generic text only, e.g. "Your next lesson is ready."
-- Skipped on days the person has already done a lesson, and once the Path is finished.
+- **Local notifications** (`expo-notifications`) for the next 7 days at the chosen time, with no
+  push server.
+- **Today's reminder is cancelled** once a lesson is read; the week is topped up each time the app
+  opens.
+- **Off by default.** Permission is asked for only when the person turns it on.
+- **Generic text** only, e.g. "A quiet moment to read?"
 
-### Consent screen
-- **Shown once**, before the first question is sent.
-- **Says**:
-  - the AI provider's name (Anthropic);
-  - that only the question text is sent;
-  - that it may be processed outside Australia and isn't stored;
-  - that everything else stays on the phone.
-- **Choice** is saved in `turiya_settings_v1` and can be changed in settings.
-- **Purpose**: meets Australian privacy expectations and Apple Guideline 5.1.2(i).
+## 3. Everything else
 
-## 3. The server (TypeScript, Vercel AI SDK, DEC-4)
-
-Holds the AI key and turns a question into a safe, grounded reflection. It is stateless: no
-accounts, no stored questions.
-
-### API (versioned under `/v1`)
-
-- **`POST /v1/answer`**: takes a question and returns either a `reflection` (four
-  heading/body pairs plus a practice line) or `crisis`.
-- **`GET /v1/health`**: liveness check.
-
-The full contract, including field rules, errors and privacy guarantees, is in
-[contracts/answer-api.md](../specs/001-turiya-ask-journal/contracts/answer-api.md). The reply
-carries only generated text; verses, order and colours come from the app.
-
-### Answer pipeline
-1. **Crisis check**:
-   - First, the shared word and phrase lists.
-   - Then a fast model check (Claude Haiku), tuned to flag when unsure.
-   - If either flags: return `crisis` and add 1 to the anonymous daily count.
-2. **Find passages**: hybrid search over the Kārikā corpus — vector similarity *plus* keyword match,
-   merged by rank. The constitution requires hybrid search, so a question that names "turīya"
-   always finds the turīya verses. The question's embedding is computed **on our server** with a
-   small open model (`bge-small-en-v1.5`), so no second company sees it.
-3. **Write the reflection**: AI SDK 6 `generateText` with `Output.object`, given the system
-   prompt, the passages and a Zod schema that enforces exactly 4 levels plus a practice line.
-   `max_tokens` ≈ 1400.
-4. **Safety check** (fast model): reject any reflection that:
-   - endorses violence or self-harm;
-   - gives medical or therapy directions;
-   - demeans any caste, gender or group;
-   - speaks as a deity or guru.
-5. Return the reflection or an error.
-
-**Limits** (enforced by the schema and the prompt):
-
-| Part | Limit |
-|---|---|
-| Body | 45–70 words per state |
-| Heading | 8 words or fewer |
-| Practice | 25 words or fewer |
-
-### System prompt (from the handoff)
-> You are a warm, plain-spoken friend grounded in Gauḍapāda's Māṇḍūkya Kārikā (the commentary on
-> the Māṇḍūkya Upaniṣad). You never use jargon without explaining it, never moralize, never say 'as
-> an AI'. Answer the person's everyday problem through the four states of consciousness: jagrat
-> (waking — the bare observable facts), svapna (dream — the story/projection they are running on
-> top of the facts), sushupti (deep sleep — the rest and wholeness that remains when the problem is
-> absent), turiya (the witness that is aware of all three and is untouched). Be concrete about
-> THEIR specific situation, never generic. 45–70 words per level. heading: a short plain-English
-> line, max 8 words. practice: one small concrete thing to do today, max 25 words.
-
-The retrieved passages are added as context, with an instruction to ground each state in them.
-
-### Models (DEC-6)
-- **Reflection**: `claude-sonnet-5-5`. Use `claude-opus-5-5` for higher quality or
-  `claude-haiku-5-5` for lower cost.
-- **Safety checks**: `claude-haiku-5-5`.
-- **Model IDs** are set in config, never hard-coded.
-
-### Testing the AI (constitution, Principle VII)
-- **Golden eval set**: 30–40 realistic situations, about 5 per theme. Each has the expected
-  state(s), the expected verse(s) and a pass/fail check that no verdict or advice was given.
-  Starting themes:
-  - relationship conflict;
-  - anger;
-  - grief;
-  - decision paralysis;
-  - work stress;
-  - comparison and envy;
-  - loneliness.
-- **Crisis test set**: crisis and non-crisis wording for both Ask and lesson responses, including
-  idioms like "this job is killing me". Missing a real crisis fails; a false alarm is acceptable.
-- Both sets run in CI on every prompt, model or content change. A regression blocks release.
-
-## 4. Database (Postgres + pgvector, DEC-5)
-
-Holds only shared content and anonymous counts. No table refers to a person.
-
-| Table | Holds |
-|---|---|
-| `karika_passage` | Kārikā text, translation and source, a 384-dimension embedding and a keyword index |
-| `daily_counter` | Anonymous daily counts: answers, crisis routings, failed safety checks |
-
-The full schema is in [data-model.md](../specs/001-turiya-ask-journal/data-model.md).
-
-**Seeding**: a script loads the corpus, embeds it and fills `search_text`. Chapter 1 verses come
-from the same `content/path/` files the app bundles, so Learn and Ask never disagree on the text.
-
-## 5. Everything else
-
-- **Secrets**: the AI key and model IDs live in server environment variables only.
-- **Logs**: never contain question or reflection text. Crisis routing is a count only.
-- **Versions**: API under `/v1`; storage keys end in `_v1`; database migrations are tracked.
+- **No network code.** No analytics, crash-reporting or `expo-updates`. Crash reports come only from
+  App Store Connect and Play Console. The App Store privacy label is **"Data Not Collected"**.
+- **Fonts**: Newsreader, Karla and Noto Serif Devanagari are bundled, so Sanskrit renders offline.
+- **Versions**: storage keys end in `_v1`, and lesson IDs stay stable across content fixes.
 - **Repo layout**:
 
   | Folder | Holds |
   |---|---|
   | `apps/mobile` | The React Native app |
-  | `apps/api` | The server |
-  | `packages/shared` | Schemas, the four states, crisis word lists |
-  | `content/` | Reviewed lessons |
-  | `db/` | Migrations and seed script |
+  | `packages/shared` | Lesson schema, crisis word lists, support services, content build |
+  | `content/` | Reviewed lesson files and the pronunciation scheme |
 
 - **Built to extend**:
-  - more Paths are new `content/path/` folders;
+  - more Paths (chapters 2–4) are new `content/path/` folders;
   - new regions are new helpline data;
-  - Mastra can wrap the pipeline later without a rewrite (DEC-4).
+  - v2 adds `apps/api`, `db/` and `evals/` for Ask, without moving anything.
