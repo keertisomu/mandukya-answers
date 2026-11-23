@@ -1,74 +1,76 @@
 # Implementation plan — v1
 
-The order of work for v1. What to build is in the
-[spec](../specs/001-turiya-ask-journal/spec.md); how is in [ARCHITECTURE.md](./ARCHITECTURE.md).
+The order of work for v1. What to build is in the [spec](../specs/001-turiya-learn/spec.md); how is
+in [ARCHITECTURE.md](./ARCHITECTURE.md) and the [plan](../specs/001-turiya-learn/plan.md).
 
 ## The approach in three lines
 
-1. **Content is the critical path, not code.** Writing and reviewing about 30 lessons takes longest,
-   so it starts on day one.
-2. **Build Learn first.** It needs no server and is the core of the product.
-3. **Then Ask**: first on the built-in fallback, then the real server, safety checks and RAG.
+1. **Content is the critical path, not code.** Writing and reviewing about 32 phrase-by-phrase
+   lessons takes longest, so it starts on day one.
+2. **The app is simple.** There's no server, AI or network, just a well-made offline reader with a
+   journal.
+3. **Build with real lessons early.** Finish mantra 7 first; it's the heart of the text and the
+   hardest lesson to lay out.
 
 ## Parallel tracks (start with M0)
 
 ### Content — gates release
 | Step | Work |
 |---|---|
-| C1 Translation | Choose and license (or confirm public domain) an English translation of Kārikā chapter 1. Record the source. |
-| C2 Text | Devanagari, IAST and an easy pronunciation guide for the 12 mantras and 29 kārikās, proofread against a Sanskrit source. Also correct the four Ask verse references (see ARCHITECTURE). |
-| C3 Lessons | Group about 41 verses into about 30 lessons. Write each explanation (3–5 minutes to read) and its "live it today" prompt, in the app's warm, non-advising voice. |
+| C1 Translation | Choose and license (or confirm public domain) an English translation of Kārikā chapter 1 for the full-verse text. Record the source. |
+| C2 Sanskrit | Devanagari, IAST and pronunciation for every phrase and full verse (12 mantras, 29 kārikās), proofread against a Sanskrit source. Write the pronunciation scheme in `content/README.md`. |
+| C3 Lessons | Split each verse into phrases. Write each phrase's meaning and note, then each verse's summary and prompt, in our own words. Split long verses into parts (mantra 7 into 3). |
 | C4 Review | Someone grounded in the tradition reviews every lesson. Fixes go in as pull requests to `content/`. |
 | C5 Helplines | Verify the Australian support services. Repeat every 90 days. |
 
-Finish 2–3 lessons end-to-end early. They become the real test content and set the tone.
+**Order**: mantra 7 first (lessons for all 3 parts), then mantras 1–6, then the rest in order.
 
 ### Design — needed before M2 finishes
-Designs for Learn (today's lesson, progress, completed lessons, completion moment), the reminder
-setting, the consent screen and the three-tab bar, in the style of the existing handoff.
+Designs in the existing visual style for:
+- the Learn home (Saved, continue, progress);
+- the lesson layout (phrase cards, part headings, the verse ending);
+- the Journal;
+- the support screen;
+- settings (reminder);
+- the two-tab bar.
 
 ## Milestones
 
 | # | Milestone | Done when |
 |---|---|---|
-| M0 | **Setup**: monorepo (`apps/mobile`, `apps/api`, `packages/shared`, `content/`, `db/`), TypeScript, lint, tests; shared schemas (answer, lesson) and crisis word lists; a CI check that every lesson file is valid | Install, typecheck, lint and content check pass |
-| M1 | **App shell**: Expo app opening to Learn; design tokens and base components; three tabs; reduced-motion support | All tabs navigable; Ask matches the handoff |
-| M2 | **Learn, offline** (FR-001–009): lessons bundled; lesson screen; progress and in-order unlock; responses to the Journal; support screen and help link on every tab; on-device crisis check; daily reminder | Lessons work in order, offline; responses reach the Journal; help is one tap away (SC-003, SC-012) |
-| M3 | **Ask on the fallback** (FR-010–017, FR-033): Ask, thinking and answer screens; Ask entries in the Journal; Learn ↔ Ask links; consent screen (FR-036) | Ask works end-to-end with the built-in reflection; no question is sent without consent (SC-011, SC-014) |
-| M4 | **Server**: `/v1/answer` and `/v1/health`; crisis check (word lists, then model); output safety check; crisis test set in CI | Real reflections; failures fall back; crisis test set passes (SC-007, SC-010) |
-| M5 | **Database**: Postgres + pgvector; migrations; seed the corpus (chapter 1 from `content/`) with embeddings and keyword index | Hybrid search returns sensible passages for sample questions |
-| M6 | **Grounded answers**: hybrid retrieval in the pipeline; build the golden eval set (30–40 situations) and run it in CI | Answers reflect Gauḍapāda; golden eval passes (SC-008) |
-| M7 | **Privacy and polish**: confirm nothing leaves the phone except consented questions; no text in logs; swap in the reviewed lessons; accessibility pass | All success criteria in the spec pass (SC-001–SC-017) |
-| M8 | **Release**: see the checklist below | Builds submitted; server live |
+| M0 | **Setup**: monorepo (`apps/mobile`, `packages/shared`, `content/`), TypeScript, lint, tests; lesson schema and content build; crisis word lists; CI | Install, typecheck, lint and `content:check` pass |
+| M1 | **App shell**: Expo development build opening to Learn; design tokens, bundled fonts; two tabs; reduced-motion support | Both tabs navigable offline |
+| M2 | **Lessons** (FR-001–FR-008): lesson screen with phrases, parts and verse ending; progress and in-order unlock; completion moment | Mantra 7 reads well across its 3 parts, offline (SC-009) |
+| M3 | **Saved and Journal** (FR-009–FR-014): save/unsave and the Saved list; replies and Journal screens | A saved lesson opens in 2 taps or fewer; replies persist (SC-004, SC-008) |
+| M4 | **Safety and reminder** (FR-022–FR-024): crisis matcher on replies; support screen; help link; crisis test set in CI; daily reminder | Crisis wording always shows support; the reminder skips days with reading (SC-007) |
+| M5 | **Polish and privacy**: swap in the reviewed lessons; accessibility pass; confirm no network calls (traffic inspection) | All quickstart scenarios pass (SC-001–SC-013, except store checks) |
+| M6 | **Release**: see the checklist below | Builds submitted |
 
-### Release checklist (M8)
+### Release checklist (M6)
 - **Store listing**:
-  - presented as learning the Upaniṣad;
-  - includes the attribution line;
+  - presented as learning the Māṇḍūkya Upaniṣad through Gauḍapāda;
   - makes no therapy or medical claims.
 - **Apple App Store**:
-  - privacy label: question text collected, not linked to the person, not used for tracking;
+  - privacy label: **Data Not Collected**;
   - age questionnaire answered honestly, then 18+ chosen.
-- **Australian storefronts only**: check both stores exclude every other country (FR-038).
-- **Privacy policy**:
-  - names Anthropic as the AI provider;
-  - covers processing outside Australia;
-  - has had a legal review.
-- **Build**: with Expo SDK 54 or later (Xcode 26 / iOS 26 SDK), as Apple requires since April 2026.
-- **Server**: live during app review. Review notes explain the crisis flow.
-- **Order**: iOS first, if review capacity is limited.
+- **Australian storefronts only**: check both stores exclude every other country (FR-029).
+- **Privacy policy**: short, explaining that everything stays on the phone and that deleting the
+  app deletes it.
+- **Build**: with Expo SDK 58 or later (Xcode 26 / iOS 26 SDK).
+- **Content**: every lesson reviewed (`content:check --release`), and every helpline verified in
+  the last 90 days.
 
 ## Risks
 
 | Risk | What we do |
 |---|---|
-| Lessons take longer than planned | Start on day one. If needed, launch a shorter first Path (the 12 mantras with key kārikās) rather than delay. |
+| Lessons take longer than planned | Start on day one with mantra 7. If needed, launch with the 12 mantras and their key kārikās, and add the rest in updates. |
 | No qualified reviewer | Line one up at M0, e.g. through Vedanta societies or teachers in Australia. |
-| Translation licensing | Start early and keep a public-domain fallback in mind. |
-| Sanskrit errors | Proofread before launch. Lessons are files, so fixes are quick. |
-| AI drifts into advice | Schema checks, the safety check, the golden eval set in CI, and the app's fallback. |
-| Missed crisis | Word lists on both paths, the model check for Ask, the test set in CI, and help on every tab. |
-| Too many false crisis alarms | Acceptable by design. Watch the anonymous count after prompt changes. |
-| Notification fatigue | Reminder off by default, at most one a day, skipped on days a lesson was already done. |
+| Copyright: meanings drift too close to modern commentaries | Writing guidance (lesson-file contract); reviewer checks; never paste from copyrighted translations. |
+| Translation licensing | Start early and keep a public-domain fallback. |
+| Sanskrit or pronunciation errors | Proofread before launch. Lessons are files, so fixes ship in the next update. |
+| Missed crisis wording | Reviewed word lists, the crisis test set in CI, and help on every tab. |
+| Too many false alarms | Acceptable by design; tune the idiom allow-list. |
+| Notification fatigue | Reminder off by default, at most one a day, skipped on reading days. |
 
-After launch: v1.1 and beyond are in [ROADMAP.md](./ROADMAP.md).
+After launch: Ask (v2) and later plans are in [ROADMAP.md](./ROADMAP.md).
