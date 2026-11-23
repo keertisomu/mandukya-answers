@@ -31,7 +31,7 @@ v1 runs **entirely on your phone** — no account, no server, no AI, no network.
 | How is it built? | [Architecture](docs/ARCHITECTURE.md), then the detailed [plan](specs/001-turiya-learn/plan.md), [data model](specs/001-turiya-learn/data-model.md), [research](specs/001-turiya-learn/research.md) |
 | How are lessons written? | [Lesson file format](specs/001-turiya-learn/contracts/lesson-file.md) |
 | How do I run and test it? | [Quickstart](specs/001-turiya-learn/quickstart.md) |
-| In what order do we build it? | [Implementation plan](docs/IMPLEMENTATION_PLAN.md) |
+| In what order do we build it? | [Implementation plan](docs/IMPLEMENTATION_PLAN.md), then the [task list](specs/001-turiya-learn/tasks.md) (77 tasks) |
 | Why was it decided this way? | [Decisions](docs/DECISIONS.md) |
 | What comes after v1? | [Roadmap](docs/ROADMAP.md) and the [Ask v2 design](docs/ASK_V2_DESIGN.md) |
 | Is there a market? | [Market validation](docs/MARKET_VALIDATION.md) |
