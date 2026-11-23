@@ -12,7 +12,7 @@ requirements. v1 has **no server**, so data lives in two places:
 
 ## 1. Bundled content (read-only)
 
-Built from `content/path/karika-ch1/*.md` (format: [contracts/lesson-file.md](./contracts/lesson-file.md)).
+Built from `content/path/mandukya/*.md` (format: [contracts/lesson-file.md](./contracts/lesson-file.md)).
 
 ### Lesson
 | Field | Type | Rules |
@@ -20,10 +20,11 @@ Built from `content/path/karika-ch1/*.md` (format: [contracts/lesson-file.md](./
 | `id` | string, e.g. `"07b"` | Unique |
 | `order` | integer | 1…N, no gaps; sets the Path order (FR-001, FR-007) |
 | `title` | string | Required |
-| `verse` | string, e.g. `"Māṇḍūkya 7"` | The verse this lesson teaches |
-| `part` | `{ n, of, heading }` | Required when a verse spans several lessons (FR-003, FR-004) |
-| `phrases[]` | Phrase | At least 1, in the verse's order (FR-002) |
-| `ending` | Ending | **Required on the verse's last part only** (FR-005) |
+| `mantra` | integer 1–12 | The mantra this lesson teaches (FR-001) |
+| `part` | `{ n, of, heading }` | Required when a mantra spans several lessons (FR-002, FR-003) |
+| `phrases[]` | Phrase | At least 1, in the mantra's order (FR-002) |
+| `karikas[]` | Kārikā | On the mantra's last part only; may be empty (FR-004) |
+| `ending` | Ending | **Required on the mantra's last part only** (FR-005) |
 | `reviewedBy`, `reviewedOn` | string, date | Required for a release build (FR-006, SC-003) |
 
 ### Phrase
@@ -35,17 +36,28 @@ Built from `content/path/karika-ch1/*.md` (format: [contracts/lesson-file.md](./
 | `meaning` | Required; a few words |
 | `note` | Required; a short plain-words explanation (our own commentary) |
 
-### Ending (last part of a verse)
+### Kārikā (Gauḍapāda's verse on the mantra)
 | Field | Rules |
 |---|---|
-| `fullVerse` | Devanagari, IAST, pronunciation, translation, `ref` and `source` — all required |
+| `ref` | `"Kārikā 1.1"` … `"Kārikā 1.29"` |
+| `devanagari`, `iast`, `pronunciation` | Required |
+| `translation`, `source` | Required; public-domain or permitted translation |
+| `note` | Required; plain words on how it helps understand the mantra (our own commentary) |
+| `featured` | `true` for the one or two shown under "What Gauḍapāda says"; the rest go under "More from Gauḍapāda" (FR-004) |
+
+### Ending (last part of a mantra)
+| Field | Rules |
+|---|---|
+| `fullMantra` | Devanagari, IAST, pronunciation, translation, `ref` and `source` — all required |
 | `summary` | Required; a few plain sentences |
 | `state` | Optional: `jagrat` \| `svapna` \| `sushupti` \| `turiya` |
 | `prompt` | Required; a small reflection for the day, never advice about the person's life (FR-025) |
 
 **Build checks**:
-- no gaps in `order`;
-- every multi-part verse has exactly one `ending`, on its last part;
+- no gaps in `order`, and mantras 1–12 all present, in order;
+- every mantra has exactly one `ending`, on its last part;
+- **every kārikā 1.1–1.29 appears exactly once** across the Path (FR-004, SC-003);
+- a mantra with kārikās has one or two marked `featured`;
 - `part.n` runs 1…`of`;
 - every required field is present;
 - a release build fails if `reviewedBy` is missing.
@@ -70,7 +82,7 @@ Every read and write is wrapped. If storage fails, the app shows empty states an
 
 ```ts
 type Progress = {
-  pathId: "karika-ch1";
+  pathId: "mandukya";
   contentVersion: string;                          // lesson IDs are kept stable across content fixes
   completed: { lessonId: string; at: string }[];  // in order, no gaps
   lastReadOn?: string;                             // local date; used by the reminder (FR-022)
@@ -90,7 +102,7 @@ type JournalEntry = {
 type Settings = { reminder: { on: boolean; time?: "HH:mm" } };
 ```
 
-- Lesson titles, verses and prompts are **not** copied into the Journal. They are looked up from the
+- Lesson titles, mantras and prompts are **not** copied into the Journal. They are looked up from the
   bundled content, so a proofreading fix shows everywhere.
 - Relative times are worked out at display time (FR-020).
 

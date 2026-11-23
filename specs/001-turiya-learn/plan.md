@@ -7,8 +7,8 @@
 ## Summary
 
 A React Native (Expo) app with two tabs:
-- **Learn**: about 32 self-paced, phrase-by-phrase lessons through Kārikā chapter 1, plus the
-  person's saved lessons.
+- **Learn**: about 15 self-paced, phrase-by-phrase lessons on the Upaniṣad's 12 mantras, each with
+  Gauḍapāda's kārikās on that mantra (all 29 from chapter 1), plus the person's saved lessons.
 - **Journal**: the person's replies to lesson prompts.
 
 **There is no server, no AI and no network use.**
@@ -51,7 +51,7 @@ the iOS 26 SDK or later.
 - Australian storefronts only.
 
 **Scale/Scope**:
-- About 32 lessons (41 verses, around 150–200 phrases).
+- About 15 lessons: 12 mantras (around 60–80 phrases) and 29 kārikās.
 - 2 tabs and about 6 screens: Learn, lesson, Journal, journal entry, support, settings.
 - A bundle of lesson content under 1 MB.
 
@@ -65,14 +65,14 @@ All unknowns are resolved in [research.md](./research.md). None remain.
 |---|---|---|
 | I. Reflection, not prescription | Lessons teach the text. Prompts are small reflections, reviewed, never advice about the person's life | ✅ |
 | II. Do no harm, no negativity | Warm-tone writing rules for every lesson and screen; review before release | ✅ |
-| III. Textual integrity | Sanskrit, meanings and verses are fixed, proofread and reviewed, never generated. Canonical verse text sits in separate fields from our notes and summaries. Every verse names its translation source. Copyrighted commentaries aren't quoted | ✅ |
+| III. Textual integrity | Sanskrit, meanings, mantras and kārikās are fixed, proofread and reviewed, never generated. Canonical text (mantras, kārikās) sits in separate fields from our notes and summaries; the build checks all 29 kārikās are present. Every verse names its translation source. Copyrighted commentaries aren't quoted | ✅ |
 | IV. Safety is a hard gate | Crisis check in code on every saved reply (on the phone), and help one tap away. There's no generation in v1, so the pre- and post-generation gates and the fallback start with Ask | ✅ (gates for generation deferred, see below) |
 | V. Calm, faithful experience | Design tokens from the approved style; 44px targets; reduced motion; Ask and later features not built early | ✅ |
 | VI. Privacy by default | Everything on the phone; no accounts, server, analytics or OTA updates; App Store label "Data Not Collected" | ✅ |
 | VII. Evidence-based quality gates | The golden eval set tests generated responses, so it starts with Ask (v2). In v1, quality is gated by proofreading and tradition review (SC-003), plus the crisis test set in CI | ✅ (deferred, see below) |
 | Tech: React Native client | Expo / React Native | ✅ |
 | Tech: server API on PostgreSQL; hybrid retrieval; LLM via backend | Not needed in v1: no server, search or AI. Designed for v2 in `docs/ASK_V2_DESIGN.md` | ✅ (deferred) |
-| Tech: canonical and commentary layers | Separate fields in lesson files (`fullVerse`, `phrases[].devanagari/iast` vs `note`, `summary`) | ✅ |
+| Tech: canonical and commentary layers | Separate fields in lesson files (`fullMantra`, `karikas[].translation`, `phrases[].devanagari/iast` vs `note`, `summary`) | ✅ |
 
 ### Deferred to v2 (recorded as the constitution requires)
 
@@ -125,7 +125,7 @@ packages/
                                  # AU support services, content build script
 content/
 ├── README.md                    # Pronunciation scheme, writing guide
-└── path/karika-ch1/             # ~32 lesson files (contracts/lesson-file.md)
+└── path/mandukya/               # ~15 lesson files (contracts/lesson-file.md)
 ```
 
 **Structure Decision**: a pnpm monorepo with one app, one shared package and top-level `content/`.
