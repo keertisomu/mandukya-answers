@@ -1,11 +1,12 @@
 # Turiya — learn the Māṇḍūkya Upaniṣad
 
-A calm mobile app for learning the **Māṇḍūkya Upaniṣad through Gauḍapāda's Kārikā**, one short
-lesson at a time.
+A calm mobile app for learning the **Māṇḍūkya Upaniṣad**, mantra by mantra, with **Gauḍapāda's
+Kārikā** — its oldest commentary — to help understand each one.
 
-- **Learn**: about 32 lessons through Kārikā chapter 1, phrase by phrase. Each phrase has its
-  Sanskrit, an easy pronunciation guide, its meaning and a plain-words note. Each verse ends with
-  the full text, a short summary and a small reflection for your day.
+- **Learn**: about 15 lessons on the Upaniṣad's 12 mantras, phrase by phrase. Each phrase has its
+  Sanskrit, an easy pronunciation guide, its meaning and a plain-words note. Then "What Gauḍapāda
+  says": his kārikās on that mantra, with notes. Each mantra ends with the full text, a short
+  summary and a small reflection for your day.
 - **Saved**: keep the verses that matter to you — mantra 7, say — at the top, and re-read them each
   morning.
 - **Journal**: your replies to each lesson, kept only on your phone.
@@ -39,9 +40,9 @@ v1 runs **entirely on your phone** — no account, no server, no AI, no network.
 
 ## Needs a person before launch
 
-- A translation of Kārikā chapter 1 for the full verses, and its licence.
-- Authors for the phrase meanings and notes (in our own words), and someone grounded in the
-  tradition to review them.
+- Translations of the 12 mantras and of Kārikā chapter 1, and their licences.
+- Authors for the phrase meanings and the kārikā notes (in our own words), and someone grounded
+  in the tradition to review them.
 - Proofreading of all Sanskrit and pronunciation guides.
 - Designs for Learn, the lesson layout, Saved and settings.
 - Verifying the Australian helpline numbers.

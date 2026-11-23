@@ -1,7 +1,7 @@
 # Specification Quality Checklist: Turiya v1 — Learn the Māṇḍūkya
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-10-17 · **Last validated**: 2026-11-20
+**Created**: 2026-10-17 · **Last validated**: 2026-11-23
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -38,6 +38,9 @@
   - Saved lessons are added, so people can re-read key verses daily.
   - Requirement IDs restart at FR-001–FR-031 and SC-001–SC-013.
   - The feature folder is renamed from `001-turiya-ask-journal` to `001-turiya-learn`.
+- **2026-11-23 update**: the Path teaches the 12 mantras, with all 29 chapter 1 kārikās inside the
+  lessons for the mantras they explain (FR-001, FR-004, SC-003). Part headings folded into FR-002,
+  and long-mantra splitting is now FR-003; all other IDs unchanged. All items still pass.
 - Earlier validations: 2026-10-17, 2026-10-24, 2026-11-06 and 2026-11-07 (see git history).
 - Crisis checking is described by outcome only (on the phone, leaning toward showing support). How
   it works is in `docs/ARCHITECTURE.md`.

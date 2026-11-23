@@ -15,7 +15,7 @@ the app.
 
 ```bash
 pnpm install
-pnpm content:check            # every lesson file is valid (contracts/lesson-file.md)
+pnpm content:check            # every lesson file is valid; all 12 mantras and 29 kārikās present
 pnpm --filter mobile ios      # or: android
 ```
 
@@ -36,9 +36,9 @@ Details are in [data-model.md](./data-model.md) and
 | # | Do this | Expect | Proves |
 |---|---|---|---|
 | 1 | Fresh install, **airplane mode on**, open the app | Lesson 1 opens | FR-001, FR-015, FR-017, SC-009 |
-| 2 | Read lesson 1 | Each phrase shows Devanagari, IAST, pronunciation, meaning and note, in order | FR-002 |
-| 3 | Reach the end of a verse's last lesson | Full verse with translation and source, summary, related state, prompt | FR-005 |
-| 4 | Read mantra 7 | It spans several lessons with part headings; the full verse comes at the end | FR-003, FR-004 |
+| 2 | Read lesson 1 | Each phrase shows Devanagari, IAST, pronunciation, meaning and note, in order | FR-001, FR-002 |
+| 3 | Reach the end of a mantra's last lesson | "What Gauḍapāda says" (where it has kārikās), then the full mantra with translation and source, summary, related state, prompt | FR-004, FR-005 |
+| 4 | Read mantra 7 | It spans several lessons with part headings. The last part features 1–2 of kārikās 1.10–1.18; "More from Gauḍapāda" shows the rest; the full mantra comes at the end | FR-002–FR-004 |
 | 5 | Finish a lesson, tap "next" | The next lesson opens straight away; the one after is locked; progress updates | FR-007, FR-008 |
 | 6 | Finish a lesson, close the app, reopen days later | Next lesson ready; no missed-day message | FR-007 |
 | 7 | Save a lesson, force-quit, reopen | It's in Saved at the top of Learn; opens in 2 taps or fewer | FR-009, FR-010, SC-004 |

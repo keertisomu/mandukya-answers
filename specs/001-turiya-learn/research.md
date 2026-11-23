@@ -45,18 +45,28 @@ to [docs/ASK_V2_DESIGN.md](../../docs/ASK_V2_DESIGN.md). These are already decid
   - Mistakes fail the build, not the app.
 - **Alternatives**:
   - JSON files: hard for non-developers to edit;
-  - a headless CMS: another service and login, which is overkill for about 32 lessons;
+  - a headless CMS: another service and login, which is overkill for about 15 lessons;
   - rendering Markdown at runtime: a heavier dependency, harder to style.
 
-## R4 — Phrase-by-phrase lessons
+## R4 — Phrase-by-phrase lessons on the mantras, with Gauḍapāda inside
 
-- **Decision**: each lesson holds an ordered list of **phrases**, optionally under a part heading.
-  Long verses span several lessons, linked by `verse` and `part`. The full verse, summary and prompt
-  come in the verse's last part.
-- **Why**: this follows the format the product owner reads every morning: mantra 7 in 19 phrases,
-  under three headings. Splitting long verses keeps each lesson to about 3–5 minutes.
-- **Alternatives**: whole-verse lessons, which are too dense for mantra 7 and lose the line-by-line
-  understanding.
+- **Decision**: lessons follow the **12 mantras**. Each lesson holds an ordered list of
+  **phrases**, optionally under a part heading. Long mantras span several lessons, linked by
+  `mantra` and `part`. The mantra's last part also carries:
+  - **Gauḍapāda's kārikās** on it, one or two `featured`, the rest under "More from Gauḍapāda";
+  - the full mantra, summary and prompt.
+
+  The build checks that all 29 kārikās of chapter 1 appear exactly once.
+- **Why**:
+  - The Upaniṣad is the subject and the Kārikā is the guide, so kārikās sit with the mantra they
+    explain rather than as lessons of their own.
+  - This follows the format the product owner reads every morning: mantra 7 in 19 phrases, under
+    three headings.
+  - Featuring one or two kārikās keeps lessons to about 3–5 minutes without leaving any out.
+- **Alternatives**:
+  - a lesson per kārikā, which makes the Kārikā a second subject;
+  - only selected kārikās, which is shorter but incomplete;
+  - whole-mantra lessons, which are too dense for mantra 7.
 
 ## R5 — Pronunciation guide scheme
 

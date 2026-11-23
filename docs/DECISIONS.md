@@ -189,7 +189,9 @@ reviewed in time. The fallback is a shorter first Path, not dropping learning.
 ## DEC-12 — v1 is learning only; Ask moves to v2
 
 **Decision**: v1 teaches the text and nothing else.
-- **Lessons**: phrase-by-phrase lessons through Kārikā chapter 1.
+- **Lessons**: phrase-by-phrase lessons on the Upaniṣad's 12 mantras. Gauḍapāda's kārikās appear
+  inside the lesson for the mantra they explain — all 29 from chapter 1, one or two featured, the
+  rest under "More from Gauḍapāda". The Upaniṣad is the subject; the Kārikā is the guide.
 - **Saved lessons**: kept at the top of Learn, for daily re-reading.
 - **Journal**: replies to lesson prompts.
 - **Ask moves to v2**, and its design is kept in [ASK_V2_DESIGN.md](./ASK_V2_DESIGN.md).
@@ -223,7 +225,7 @@ teachers' commentaries are still in copyright.
 
 | Question | Default if not decided |
 |---|---|
-| Which translation of chapter 1, and its licence? | Research public-domain options first. This is on the critical path. For the 12 mantras, Hume's *Thirteen Principal Upanishads* (1921) is a likely public-domain choice: Hume died in 1940, so it should be free in Australia too, but confirm. It does **not** include Gauḍapāda's Kārikā, which needs its own translation. Newer translations are usually still in copyright, even though the text is ancient. |
+| Which translations of the 12 mantras and of Kārikā chapter 1, and their licences? | Research public-domain options first. This is on the critical path. For the 12 mantras, Hume's *Thirteen Principal Upanishads* (1921) is a likely public-domain choice: Hume died in 1940, so it should be free in Australia too, but confirm. It does **not** include Gauḍapāda's Kārikā, which needs its own translation. Newer translations are usually still in copyright, even though the text is ancient. |
 | Who writes the lesson meanings and notes, and who reviews them? | Needs a person. Blocks release. |
 | Ask (v2) or India first? | Not decided. |
 | Which model for Ask reflections (v2)? | `claude-sonnet-5-5`, or the cheapest model that passes the golden eval |

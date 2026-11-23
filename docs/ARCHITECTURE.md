@@ -10,7 +10,8 @@ design is in the spec folder: [plan](../specs/001-turiya-learn/plan.md),
 
 ```
 Phone (React Native app) — no server, no network
-  ├─ Learn ...... ~32 lessons, bundled in the app at build time
+  ├─ Learn ...... ~15 lessons on the 12 mantras, with Gauḍapāda's kārikās,
+  │               bundled in the app at build time
   │               saved lessons at the top
   ├─ Journal .... replies to lesson prompts
   └─ Storage .... progress, saved, journal, settings — on the phone only (MMKV)
@@ -33,8 +34,9 @@ Ask, the AI reflection feature, comes in v2 and adds a server. Its design is in
 ### Screens
 - **Tabs**: Learn (opens first) and Journal.
 - **Learn home**: saved lessons at the top, then "continue" (the next lesson) and progress.
-- **Lesson**: phrases one after another, under part headings where a verse has parts. A verse's
-  last part ends with the full verse, summary and prompt.
+- **Lesson**: the mantra's phrases one after another, under part headings where it has parts. A
+  mantra's last part then shows "What Gauḍapāda says" (1–2 featured kārikās, the rest under an
+  expandable "More from Gauḍapāda"), the full mantra, summary and prompt.
 - **Other screens**: a journal entry, the support screen and settings (the reminder).
 - **Designs**: the visual style (colours, type, calm feel) comes from the handoff in `design/`. The
   Learn screens, lesson layout, Saved list and settings need new designs in that style.
@@ -52,14 +54,15 @@ Every read and write is wrapped, so the app still works if storage fails. Shapes
 are in the [data model](../specs/001-turiya-learn/data-model.md).
 
 ### Lessons
-- **Source**: one Markdown file per lesson in `content/path/karika-ch1/`, in the
+- **Source**: one Markdown file per lesson in `content/path/mandukya/`, in the
   [lesson file format](../specs/001-turiya-learn/contracts/lesson-file.md).
 - **Phrase by phrase**: each phrase has Devanagari, IAST, an easy pronunciation guide, a meaning
   and a short note.
-  - Long verses (such as mantra 7) span several lessons, one per part.
-  - A verse's last part adds the full verse, summary, related state and prompt.
+  - Long mantras (such as mantra 7) span several lessons, one per part.
+  - A mantra's last part adds Gauḍapāda's kārikās on it, then the full mantra, summary, related
+    state and prompt.
 - **Checked at build time**: a Zod schema in `packages/shared` rejects missing fields, gaps in
-  order or a missing ending. A release build also fails if any lesson isn't reviewed.
+  order, a missing ending, or a kārikā (1.1–1.29) that is missing or appears twice. A release build also fails if any lesson isn't reviewed.
 - **Bundled**: notes and summaries become simple text blocks, rendered with the app's own
   components.
 - **Canonical text and our commentary stay in separate fields** (constitution, Principle III).

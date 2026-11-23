@@ -4,24 +4,28 @@
 
 **Input**:
 - The original design handoff (`design/`).
-- Scope changes since: Australia only (2026-10-24, DEC-10); learning first (2026-11-06, DEC-11);
-  **v1 is learning only, and Ask moves to v2** (2026-11-20, DEC-12).
+- Scope changes since:
+  - Australia only (2026-10-24, DEC-10);
+  - learning first (2026-11-06, DEC-11);
+  - **v1 is learning only, and Ask moves to v2** (2026-11-20, DEC-12);
+  - **the Path teaches the Upaniṣad's 12 mantras, with Gauḍapāda's kārikās inside each lesson to
+    explain them** (2026-11-23).
 - The lesson format is modelled on a phrase-by-phrase study of Māṇḍūkya mantra 7 shared by the
   product owner.
 
 ## Overview
 
-Turiya is a calm mobile app for **learning the Māṇḍūkya Upaniṣad through Gauḍapāda's Māṇḍūkya
-Kārikā**.
+Turiya is a calm mobile app for **learning the Māṇḍūkya Upaniṣad**, mantra by mantra, with
+**Gauḍapāda's Māṇḍūkya Kārikā** — the oldest commentary on it — to help understand each one.
 
-A person reads one short lesson at a time, at their own pace. Each lesson takes a verse **phrase by
-phrase**:
-- what each phrase says;
-- how to pronounce it;
-- what it means as Gauḍapāda reads it;
-- then the whole verse, and a small reflection for the day.
+A person reads one short lesson at a time, at their own pace. Each lesson takes a mantra **phrase by
+phrase**, then turns to Gauḍapāda:
+- what each phrase says, how to pronounce it, and what it means;
+- **What Gauḍapāda says**: his kārikās on that mantra, with a plain note on how each one makes it
+  clearer;
+- the whole mantra, and a small reflection for the day.
 
-They can save the lessons that matter most to them — mantra 7, for example, which clears away
+People can save the lessons that matter most to them — mantra 7, for example, which clears away
 wrong ideas about consciousness — and return to them every morning.
 
 - **Learn** (the home screen): the Path of lessons, plus the person's saved lessons.
@@ -37,7 +41,7 @@ writes ever leaves their phone.
 
 **Not in v1**:
 - **Ask** — reflections on everyday problems, planned for v2 (`docs/ASK_V2_DESIGN.md`);
-- Kārikā chapters 2–4;
+- Kārikā chapters 2–4, which are independent treatises rather than commentary on the mantras;
 - Śaṅkara's commentary;
 - audio;
 - streaks, community, accounts, sync.
@@ -46,59 +50,72 @@ Later plans are in `docs/ROADMAP.md`.
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Learn a verse phrase by phrase (Priority: P1)
+### User Story 1 - Learn a mantra phrase by phrase, with Gauḍapāda's help (Priority: P1)
 
-The person opens the app to their next lesson. The verse is broken into short phrases. For each
+The person opens the app to their next lesson. The mantra is broken into short phrases. For each
 phrase they see:
 - the Sanskrit;
 - an easy pronunciation guide;
 - its meaning;
 - a short plain-words note on what it points to.
 
-Phrases are grouped under simple headings where a verse has natural parts. The lesson ends with the
-whole verse — in Devanagari, transliteration, pronunciation and translation — then a short summary
-in plain words, and a "live it today" prompt. When they finish, they can go straight on to the next
-lesson or stop for the day.
+Phrases are grouped under simple headings where a mantra has natural parts.
+
+Then comes **What Gauḍapāda says**: the one or two of his kārikās that most help with this mantra,
+each with a plain note on what it adds. The rest of his kārikās on the mantra are a tap away, under
+"More from Gauḍapāda".
+
+The lesson ends with the whole mantra — in Devanagari, transliteration, pronunciation and
+translation — then a short summary in plain words, and a "live it today" prompt. When they finish,
+they can go straight on to the next lesson or stop for the day.
 
 **Why this priority**: this is the product. On its own it delivers the core value: understanding
-the text, line by line.
+the Upaniṣad, line by line, through its oldest commentary.
 
 **Independent Test**: Open lesson 1 and read every phrase. Confirm each shows Sanskrit,
-pronunciation, meaning and note, followed by the full verse, summary and prompt. Finish the lesson,
-continue straight to lesson 2, and confirm progress shows "2 of N".
+pronunciation, meaning and note. Then confirm the Gauḍapāda section (where the mantra has kārikās),
+the full mantra, the summary and the prompt. Finish the lesson, continue straight to lesson 2, and
+confirm progress shows "2 of N".
 
 **Acceptance Scenarios**:
 
-1. **Given** a first launch, **When** the app opens, **Then** lesson 1 is shown.
+1. **Given** a first launch, **When** the app opens, **Then** lesson 1 (mantra 1) is shown.
 2. **Given** a lesson, **When** the person reads it, **Then** each phrase shows its Devanagari,
-   transliteration, pronunciation guide, meaning and note, in the verse's order.
-3. **Given** the end of a lesson, **When** the person reaches it, **Then** they see the full verse
-   (Devanagari, transliteration, pronunciation, translation, reference, translation source), a short
-   plain-words summary, the related state of consciousness where there is one, and a "live it today"
-   prompt.
-4. **Given** a long verse such as mantra 7, **When** the person studies it, **Then** it is spread over
-   several lessons, one for each natural part, with the full verse at the end of the last part.
-5. **Given** a finished lesson, **When** the person completes it, **Then** they can go straight on or
+   transliteration, pronunciation guide, meaning and note, in the mantra's order.
+3. **Given** a mantra that Gauḍapāda comments on, **When** the person reaches "What Gauḍapāda says",
+   **Then** they see the most helpful kārikā(s). Each shows Devanagari, transliteration,
+   pronunciation, translation, source and a plain note on how it clarifies the mantra.
+4. **Given** that section, **When** the person taps "More from Gauḍapāda", **Then** every other kārikā
+   on that mantra is shown the same way. It's collapsed by default and not needed to finish the
+   lesson.
+5. **Given** the end of a mantra's last lesson, **When** the person reaches it, **Then** they see the
+   full mantra (Devanagari, transliteration, pronunciation, translation, reference, translation
+   source), a short plain-words summary, the related state of consciousness where there is one,
+   and a "live it today" prompt.
+6. **Given** a long mantra such as mantra 7, **When** the person studies it, **Then** it is spread
+   over several lessons, one for each natural part. The full mantra comes at the end of the last
+   part.
+7. **Given** a finished lesson, **When** the person completes it, **Then** they can go straight on or
    stop, with a gentle line such as "The next lesson is ready whenever you are."
-6. **Given** time away, **When** the person returns, **Then** they continue from their next lesson,
+8. **Given** time away, **When** the person returns, **Then** they continue from their next lesson,
    with no message about missed days.
-7. **Given** the last lesson is finished, **When** the person completes it, **Then** they see a gentle
+9. **Given** the last lesson is finished, **When** the person completes it, **Then** they see a gentle
    completion moment and can re-read any lesson or start the Path again.
-8. **Given** no network connection, **When** the person uses the app, **Then** everything works.
+10. **Given** no network connection, **When** the person uses the app, **Then** everything works.
 
 ---
 
-### User Story 2 - Return to the verses that matter (Priority: P1)
+### User Story 2 - Return to the mantras that matter (Priority: P1)
 
 The person saves lessons they want to keep coming back to, such as mantra 7. Their saved lessons
 sit at the top of the Learn screen, so each morning they can open one straight away and read it
 again.
 
-**Why this priority**: re-reading a key verse daily is how this text is actually studied. It is a
+**Why this priority**: re-reading a key mantra daily is how this text is actually studied. It is a
 main reason to open the app every day, even after the Path is finished.
 
-**Independent Test**: Save lesson 7 (or any completed lesson), close the app, reopen it, and open
-the saved lesson from the Learn screen in no more than two taps.
+**Independent Test**: Save a mantra 7 lesson (or any completed lesson), close the app, reopen it,
+and open the saved lesson from the Learn screen in no more than two taps.
 
 **Acceptance Scenarios**:
 
@@ -114,7 +131,7 @@ the saved lesson from the Learn screen in no more than two taps.
 ### User Story 3 - Keep a private journal of reflections (Priority: P1)
 
 Each lesson ends with a small prompt. The person can write a few lines in reply. Their replies are
-kept in a Journal, newest first, so they can look back on what each verse stirred in them. The
+kept in a Journal, newest first, so they can look back on what each mantra stirred in them. The
 Journal never leaves their phone.
 
 **Why this priority**: writing turns reading into practice. The Journal is where a person sees
@@ -127,7 +144,7 @@ restart.
 **Acceptance Scenarios**:
 
 1. **Given** a lesson prompt, **When** the person writes a reply and saves it, **Then** it appears in
-   the Journal with the lesson title, verse reference and time.
+   the Journal with the lesson title, mantra reference and time.
 2. **Given** no entries, **When** the person opens the Journal, **Then** a gentle empty state invites
    them to begin a lesson.
 3. **Given** an entry, **When** the person opens it, **Then** they see their reply and the prompt, with
@@ -189,8 +206,11 @@ reading done and shows no journal content, then turn it off and confirm it stops
 
 ### Edge Cases
 
+- **A mantra with no kārikā of its own** (e.g. mantras 1–5, which Gauḍapāda discusses together
+  later): the Gauḍapāda section is left out, or points ahead to where he discusses it.
 - **Empty reply**: the lesson can be completed without writing; nothing goes to the Journal.
 - **Long reply**: accepted and handled without visible errors.
+- **Skipping "More from Gauḍapāda"**: allowed; the lesson still counts as finished.
 - **Several lessons in one sitting**: allowed; nothing encourages or discourages it.
 - **Saving a lesson not yet reached**: not possible. Only completed lessons, or the one being read,
   can be saved.
@@ -211,25 +231,42 @@ reading done and shows no journal content, then turn it off and confirm it stops
 
 **Lessons**
 
-- **FR-001**: The Path MUST cover chapter 1 of the Kārikā (Āgama Prakaraṇa) — the 12 mantras of the
-  Upaniṣad with Gauḍapāda's 29 kārikās — in textual order.
-- **FR-002**: Each lesson MUST present its verse **phrase by phrase**. Each phrase shows Devanagari, a
-  standard transliteration, an easy pronunciation guide (syllables split, long sounds shown plainly,
-  e.g. "MAAN-doo-kya"), its meaning and a short plain-words note.
-- **FR-003**: Where a verse has natural parts, its phrases MUST be grouped under short headings
-  (e.g. mantra 7: "Not the knower", "Not the known", "What it is").
-- **FR-004**: A verse too long for one sitting MUST be spread over several lessons, one per part. A
-  lesson should take about 3–5 minutes to read.
-- **FR-005**: Each verse MUST end with the full verse (Devanagari, transliteration, pronunciation,
-  English translation, reference and the translation's source), a short plain-words summary, the
-  related state of consciousness where there is one, and a "live it today" prompt.
+- **FR-001**: The Path MUST teach the **12 mantras of the Māṇḍūkya Upaniṣad**, in order.
+- **FR-002**: Each lesson MUST present its mantra **phrase by phrase**. Each phrase shows:
+  - Devanagari;
+  - a standard transliteration;
+  - an easy pronunciation guide (syllables split, long sounds shown plainly, e.g. "MAAN-doo-kya");
+  - its meaning;
+  - a short plain-words note.
+
+  Where a mantra has natural parts, its phrases MUST be grouped under short headings (e.g. mantra
+  7: "Not the knower", "Not the known", "What it is").
+- **FR-003**: A mantra too long for one sitting MUST be spread over several lessons, one per part.
+  A lesson should take about 3–5 minutes to read, not counting "More from Gauḍapāda".
+- **FR-004**: **All 29 kārikās of Gauḍapāda's chapter 1 (Āgama Prakaraṇa) MUST appear in the Path**,
+  each with the mantra it explains — normally the one it follows in the text (e.g. kārikās
+  1.10–1.18 with mantra 7). Each kārikā shows:
+  - Devanagari;
+  - a transliteration;
+  - a pronunciation guide;
+  - an English translation and its source;
+  - a plain note on how it helps understand the mantra.
+
+  The one or two most helpful kārikās appear under **What Gauḍapāda says**; the rest are under an
+  expandable **More from Gauḍapāda**, collapsed by default.
+- **FR-005**: Each mantra MUST end with:
+  - the full mantra (Devanagari, transliteration, pronunciation, English translation, reference and
+    the translation's source);
+  - a short plain-words summary;
+  - the related state of consciousness, where there is one;
+  - a "live it today" prompt.
 - **FR-006**: All lesson content MUST be written, proofread and reviewed before release, and MUST
   NOT be generated when the person reads it.
 - **FR-007**: Lessons MUST open in order. After a lesson, the person MUST be able to go straight on or
   stop; there is no daily limit and no skipping ahead. When they stop, a gentle line MUST say the
   next lesson is ready whenever they are. Time away MUST NOT reset progress or bring any message
   about missed days.
-- **FR-008**: Learn MUST show progress (e.g. "Lesson 7 of 32") and let the person re-read any
+- **FR-008**: Learn MUST show progress (e.g. "Lesson 7 of 15") and let the person re-read any
   completed lesson. Finishing the last lesson MUST lead to a completion moment with the option to
   re-read or start again.
 
@@ -243,7 +280,7 @@ reading done and shows no journal content, then turn it off and confirm it stops
 **Journal**
 
 - **FR-011**: The person MUST be able to write an optional reply to a lesson's prompt. Replies are
-  saved to the Journal with the lesson title, verse reference and time.
+  saved to the Journal with the lesson title, mantra reference and time.
 - **FR-012**: The Journal MUST list replies newest first, with a relative time and the lesson title,
   and show a gentle empty state when there are none.
 - **FR-013**: Opening an entry MUST show the reply and the prompt, with a link to the lesson.
@@ -272,8 +309,8 @@ reading done and shows no journal content, then turn it off and confirm it stops
 - **FR-024**: Support services MUST be one tap away from Learn and Journal, and work offline.
 - **FR-025**: No text in the app MUST give a verdict, diagnosis or advice about the person's life, or
   imply harm to anyone. All text MUST be warm and steadying, never negative.
-- **FR-026**: The app MUST present itself as teaching drawing on Gauḍapāda's Kārikā — not as therapy,
-  counselling, treatment or religious authority.
+- **FR-026**: The app MUST present itself as teaching the Upaniṣad with the help of Gauḍapāda's
+  Kārikā — not as therapy, counselling, treatment or religious authority.
 
 **Privacy**
 
@@ -291,12 +328,16 @@ reading done and shows no journal content, then turn it off and confirm it stops
 
 ### Key Entities *(include if feature involves data)*
 
-- **Path**: the ordered lessons for Kārikā chapter 1. The same for everyone.
-- **Lesson**: one part of a verse, with its phrases; the lesson that ends a verse also carries the
-  full verse, summary, related state and prompt. Fixed, reviewed content.
-- **Phrase**: a piece of a verse — Devanagari, transliteration, pronunciation, meaning, note.
-- **Verse**: a mantra or kārikā — Devanagari, transliteration, pronunciation, translation, reference
-  and translation source.
+- **Path**: the ordered lessons for the 12 mantras. The same for everyone.
+- **Lesson**: one mantra, or one part of a long mantra, with its phrases. The lesson that ends a
+  mantra also carries its kārikās, the full mantra, summary, related state and prompt. Fixed,
+  reviewed content.
+- **Phrase**: a piece of a mantra — Devanagari, transliteration, pronunciation, meaning, note.
+- **Mantra**: one of the Upaniṣad's 12 verses — Devanagari, transliteration, pronunciation,
+  translation, reference and translation source.
+- **Kārikā**: one of Gauḍapāda's 29 verses on the mantras — Devanagari, transliteration,
+  pronunciation, translation, source and a note — attached to the mantra it explains, and marked as
+  shown in the lesson or under "More from Gauḍapāda".
 - **Progress**: which lessons are done, and when. Phone only.
 - **Saved lesson**: a lesson the person keeps handy. Phone only.
 - **Journal reply**: what the person wrote for a lesson, with the time. Phone only.
@@ -312,10 +353,13 @@ reading done and shows no journal content, then turn it off and confirm it stops
 - **SC-001**: In first-use testing, at least 90% of people finish lesson 1 without help, and the
   median lesson takes 3–5 minutes.
 - **SC-002**: In first-use testing, most people can explain in their own words what at least one
-  phrase of the lesson means.
-- **SC-003**: Before release, 100% of Sanskrit, transliterations and pronunciation guides are
-  proofread against a Sanskrit source; 100% of meanings, notes and summaries are reviewed by
-  someone grounded in the tradition; and every verse names its translation source.
+  phrase of the lesson means, and how Gauḍapāda's kārikā helped.
+- **SC-003**: Before release, all of the following hold:
+  - all 12 mantras and all 29 kārikās are in the Path;
+  - 100% of Sanskrit, transliterations and pronunciation guides are proofread against a Sanskrit
+    source;
+  - 100% of meanings, notes and summaries are reviewed by someone grounded in the tradition;
+  - every mantra and kārikā names its translation source.
 
 **Coming back**
 
@@ -339,23 +383,32 @@ reading done and shows no journal content, then turn it off and confirm it stops
 
 ## Assumptions
 
-- **Why chapter 1 first**: it holds all 12 mantras of the Upaniṣad with Gauḍapāda's commentary, so
-  finishing it means having studied the whole Upaniṣad through his eyes.
-- **About 32 lessons**: 41 verses. Some short verses share a lesson; long ones (like mantra 7, with
-  about 19 phrases) span two or three. That's roughly a month at a lesson a day.
+- **The Upaniṣad is the subject; the Kārikā is the guide.**
+  - Chapter 1 of Gauḍapāda's Kārikā (Āgama Prakaraṇa) comments directly on the mantras, and its
+    kārikās follow the mantras they explain: 1.1–1.9 after mantra 6, 1.10–1.18 after mantra 7,
+    1.19–1.23 after mantra 11, and 1.24–1.29 after mantra 12.
+  - Authors may attach a kārikā to an earlier mantra it illuminates better, as long as all 29
+    appear exactly once.
+  - Chapters 2–4 are independent treatises and come later (ROADMAP).
+- **About 15 lessons**: the 12 mantras, with long ones (like mantra 7, about 19 phrases) spread over
+  two or three lessons. That's roughly two to three weeks at a lesson a day.
 - **Pace**: people go at their own pace. A lesson a day is suggested, helped by the reminder, but not
   enforced. Lessons stay in order so the text is read as written.
 - **Meanings and notes are written for this app.** Modern translations and teachers' commentaries
   (e.g. Gambhirananda, Nikhilananda, Chinmayananda, Sarvapriyananda) are mostly still in copyright.
   They can guide the authors, but they can't be quoted without permission.
-- **Translation**: the full-verse translation comes from a public-domain source or one used with
-  permission (see open questions in `docs/DECISIONS.md`).
-- **Lesson content is the main dependency**: phrase breakdowns, meanings, notes, summaries and
-  prompts for about 41 verses, reviewed by someone grounded in the tradition.
+- **Translations**: full mantras and kārikās use a public-domain translation, or one used with
+  permission. The mantras and the Kārikā may need different sources (see the open questions in
+  `docs/DECISIONS.md`).
+- **Lesson content is the main dependency**:
+  - phrase breakdowns, meanings, notes, summaries and prompts for the 12 mantras;
+  - notes for all 29 kārikās;
+  - review by someone grounded in the tradition.
 - **Pronunciation guide**: one simple, consistent respelling scheme, checked by the Sanskrit
   proofreader. Audio comes later.
 - **Design**: the approved visual style (colours, type, calm feel) from `design/` applies. The Learn
-  screens, lesson layout, Saved list and reminder setting need new designs in that style.
+  screens, lesson layout (including the Gauḍapāda section), Saved list and reminder setting need
+  new designs in that style.
 - **v1 is free.**
 - **One phone**: no accounts and no sync.
 - **No server in v1**: crisis checking of replies uses word and phrase lists on the phone, and leans
