@@ -7,7 +7,7 @@ description: "Task list for Turiya v1 — Learn the Māṇḍūkya"
 **Input**: design documents in `specs/001-turiya-learn/`:
 - [spec.md](./spec.md) (user stories, FR/SC);
 - [plan.md](./plan.md) (stack, structure);
-- [research.md](./research.md) (decisions R1–R10);
+- [research.md](./research.md) (decisions R1–R12);
 - [data-model.md](./data-model.md);
 - [contracts/lesson-file.md](./contracts/lesson-file.md);
 - [quickstart.md](./quickstart.md) (validation scenarios).
@@ -46,6 +46,7 @@ else.
 - [ ] T001 Create the pnpm monorepo root with workspaces `apps/*` and `packages/*`.
   - Files: `package.json` (scripts `typecheck`, `lint`, `test`, `content:check`, `test:crisis`, `e2e`), `pnpm-workspace.yaml`, `tsconfig.base.json` (strict) and `.nvmrc` (Node 24).
 - [ ] T002 Scaffold the Expo app in `apps/mobile/` with Expo SDK 58 (or the latest stable), TypeScript and Expo Router.
+  - Also add `expo-localization` (device region for the support list, research R12).
   - Use the tabs template, trimmed to nothing.
   - Add `react-native-mmkv`, `expo-notifications` and `@expo-google-fonts/{newsreader,karla,noto-serif-devanagari}`.
   - Do **not** add `expo-updates` or any analytics or crash SDK (research R8).
@@ -82,7 +83,7 @@ story uses.
   - `part.n` out of range;
   - two endings for one mantra;
   - a kārikā appearing twice;
-  - a mantra with kārikās but none `featured`;
+  - a mantra with kārikās that doesn't have exactly one `featured`;
   - in **release** mode: mantras 1–12 not all present, any of Kārikā 1.1–1.29 missing, or `reviewedBy` missing.
 - [ ] T010 Implement the Zod schemas `Phrase`, `Karika`, `Ending` and `Lesson` in `packages/shared/src/content/schema.ts`, exactly as in data-model §1, so that T008 passes.
 - [ ] T011 Implement `validatePath(lessons, { release })` in `packages/shared/src/content/validate.ts`, with the data-model §1 build checks, so that T009 passes.
@@ -108,7 +109,7 @@ story uses.
 - [ ] T017 [P] Load the bundled fonts (Newsreader, Karla, Noto Serif Devanagari) in `apps/mobile/src/theme/fonts.ts`, with no network font loading.
 - [ ] T018 [P] Add `useReducedMotion()` in `apps/mobile/src/theme/motion.ts`. It returns the OS setting, and is used to turn off the `breathe`, `fadeup` and `driftglow` animations (FR-019).
 - [ ] T019 [P] Create the base components in `apps/mobile/src/components/`: `Screen.tsx`, `Card.tsx`, `Button.tsx` (minimum 44px target, FR-018), `SanskritText.tsx` (Noto Serif Devanagari) and `Eyebrow.tsx`.
-- [ ] T020 Create the app shell in `apps/mobile/app/`, with the tabs labelled in Australian English (FR-021):
+- [ ] T020 Create the app shell in `apps/mobile/app/`, with the tabs labelled in English with British/Commonwealth spelling (FR-021):
   - root layout in `apps/mobile/app/_layout.tsx`: load fonts, hide the splash screen;
   - two-tab layout in `apps/mobile/app/(tabs)/_layout.tsx`: Learn, then Journal; the app opens to Learn (FR-015);
   - placeholder screens `apps/mobile/app/(tabs)/learn.tsx` and `apps/mobile/app/(tabs)/journal.tsx`.
@@ -122,7 +123,7 @@ Learn tab; storage tests pass.
 ## Phase 3: User Story 1 — Learn a mantra phrase by phrase, with Gauḍapāda's help (P1) 🎯 MVP
 
 **Goal**: a person can read lessons in order, offline. Each lesson has phrases, the Gauḍapāda
-section (featured kārikās plus "More from Gauḍapāda"), then the full mantra, summary and prompt.
+section (one featured kārikā plus "More from Gauḍapāda", one at a time), then the full mantra, summary and prompt.
 They can continue or stop, and see their progress.
 
 **Independent Test**: quickstart scenarios 1–6. Open lesson 1 offline, read every phrase, check the
@@ -147,8 +148,8 @@ lessons.
 - [ ] T025 [P] [US1] Build `PartHeading` in `apps/mobile/src/features/learn/components/PartHeading.tsx`. It shows "Part n of m · heading" (FR-002, FR-003).
 - [ ] T026 [P] [US1] Build `GaudapadaSection` in `apps/mobile/src/features/learn/components/GaudapadaSection.tsx` (FR-004).
   - A "What Gauḍapāda says" heading.
-  - `featured` kārikās as cards: Devanagari, IAST, pronunciation, translation, source, note.
-  - A "More from Gauḍapāda" expander, collapsed by default, holding the rest.
+  - The **one** `featured` kārikā as a card: Devanagari, IAST, pronunciation, translation, source, note.
+  - A "More from Gauḍapāda" expander, collapsed by default. Opened, it shows the other kārikās **one at a time** ("Kārikā 2 of 9") with Previous and Next. Two kārikās are never on screen together.
   - The section is left out when there are no kārikās.
 - [ ] T027 [P] [US1] Build `MantraEnding` in `apps/mobile/src/features/learn/components/MantraEnding.tsx` (FR-005): the full mantra (all fields and source), the summary, the related state with its tint, and the prompt text.
 - [ ] T028 [US1] Build the lesson screen in `apps/mobile/app/lesson/[id].tsx`, using T024–T027:
@@ -207,7 +208,7 @@ there.
   - editing changes `updatedAt`;
   - newest first by `updatedAt`;
   - survives a reload.
-- [ ] T039 [P] [US3] Write tests for relative times in `apps/mobile/test/relativeTime.test.ts`: "Today · h:mm", "Yesterday · h:mm", "N days ago" within 7 days, then "24 Oct" style, in an Australian locale (FR-020).
+- [ ] T039 [P] [US3] Write tests for relative times in `apps/mobile/test/relativeTime.test.ts`: "Today · h:mm", "Yesterday · h:mm", "N days ago" within 7 days, then "24 Oct" style, in the `en-AU` and `en-IN` locales (FR-020).
 - [ ] T040 [US3] Implement the journal store in `apps/mobile/src/features/journal/journal.ts` (`getForLesson`, `saveReply(lessonId, text)`, `list()`) with `kind: "lesson"` entries (data-model §2), so that T038 passes.
 - [ ] T041 [P] [US3] Implement `formatRelativeTime(date, now)` in `apps/mobile/src/lib/relativeTime.ts`, so that T039 passes.
 - [ ] T042 [US3] Build `ReplyInput` in `apps/mobile/src/features/journal/ReplyInput.tsx`: a multi-line input under the prompt in `MantraEnding`, prefilled with any existing reply, with a "Save to journal" action that calls `saveReply` (FR-011). Add it to `apps/mobile/src/features/learn/components/MantraEnding.tsx`.
@@ -223,12 +224,21 @@ there.
 
 ## Phase 6: User Story 4 — Feel safe, private and never harmed (P1)
 
-**Goal**: a crisis check on journal replies (on the phone), support services one tap away, privacy
-copy, and proof that the app sends nothing. **Required for release.**
+**Goal**:
+- a crisis check on journal replies (on the phone);
+- a small **Support** item in every header, offering **Mental health support** (Australia or India)
+  and **Give feedback** (through the person's own email app);
+- privacy copy;
+- proof that the app sends nothing.
 
-**Independent Test**: quickstart scenarios 12, 13, 16 and 17. Crisis wording in a reply (offline)
-shows the support screen and keeps the reply; help is reachable from both tabs; traffic inspection
-shows no requests.
+**Required for release.**
+
+**Independent Test**: quickstart scenarios 12, 13, 13b, 16 and 17.
+- Crisis wording in a reply (offline) opens mental health support for the phone's region and keeps
+  the reply.
+- Support works from every screen.
+- Feedback opens the email app with no journal text.
+- Traffic inspection shows no requests from the app.
 
 ### Tests for User Story 4 (write first — constitution, Principle IV)
 
@@ -240,32 +250,45 @@ shows no requests.
   - false alarms on `crisis: false` cases are reported but don't fail (research R7).
 - [ ] T048 [P] [US4] Write a test in `packages/shared/test/safety/support-services.test.ts`:
   - the AU list includes 000, Lifeline, a youth service and an anxiety/depression service;
+  - the IN list includes 112, Tele-MANAS and a counselling line;
   - every entry has contact details and hours;
   - it fails if any `lastVerified` is more than 90 days old (FR-030, FR-031).
+- [ ] T049 [P] [US4] Write tests for the feedback email builder in `apps/mobile/test/feedback.test.ts`. Check:
+  - the address and subject "Turiya feedback";
+  - a body holding only the app version, device type and current lesson ID;
+  - no journal text in the body, even when a reply exists for that lesson (FR-032).
 
 ### Implementation for User Story 4
 
-- [ ] T049 [US4] Write the crisis word and phrase lists in `packages/shared/src/safety/crisis-lexicon.ts`: phrases, an idiom allow-list and negation cues, with a header noting expert review is pending.
-- [ ] T050 [US4] Implement `matchesCrisis(text)` in `packages/shared/src/safety/match.ts`, leaning toward a match when unsure, so that T047 passes.
-- [ ] T051 [P] [US4] Add the AU support services in `packages/shared/src/safety/support-services.ts`, so that T048 passes:
-  - 000; Lifeline 13 11 14, also text and chat; Kids Helpline 1800 55 1800; Beyond Blue 1300 22 4636;
-  - an overseas entry for findahelpline.com;
-  - each with `lastVerified`, keyed by region `AU`.
-- [ ] T052 [US4] Build the support screen in `apps/mobile/app/support.tsx`:
-  - a warm, brief heading;
-  - each service with tap-to-call or text, plus hours;
-  - a note that 000 and Australian lines work only in Australia, with the overseas link;
-  - no verse and no lesson content; works offline.
-- [ ] T053 [P] [US4] Build `HelpLink` ("Need to talk to someone?") in `apps/mobile/src/features/safety/HelpLink.tsx`. It opens `/support`. Add it to the headers of `apps/mobile/app/(tabs)/learn.tsx` and `apps/mobile/app/(tabs)/journal.tsx` (FR-024).
-- [ ] T054 [US4] Call `matchesCrisis` when a reply is saved, in `apps/mobile/src/features/journal/ReplyInput.tsx`. On a match, keep the reply and open `/support` (FR-023).
-- [ ] T055 [US4] Build the settings screen in `apps/mobile/app/settings.tsx`, reached from the Learn header, with an "About and privacy" section:
+- [ ] T050 [US4] Write the crisis word and phrase lists in `packages/shared/src/safety/crisis-lexicon.ts`: phrases, an idiom allow-list and negation cues, with a header noting expert review is pending.
+- [ ] T051 [US4] Implement `matchesCrisis(text)` in `packages/shared/src/safety/match.ts`, leaning toward a match when unsure, so that T047 passes.
+- [ ] T052 [P] [US4] Add the support services in `packages/shared/src/safety/support-services.ts`, keyed by region, each with `lastVerified`, so that T048 passes:
+  - **AU**: 000 (emergency); Lifeline 13 11 14, also text and chat; Kids Helpline 1800 55 1800; Beyond Blue 1300 22 4636;
+  - **IN**: 112 (emergency); Tele-MANAS 14416 / 1-800-891-4416; a counselling line such as iCall;
+  - an overseas entry for findahelpline.com.
+- [ ] T053 [P] [US4] Implement region selection in `apps/mobile/src/features/safety/region.ts` (research R12):
+  - use the device region from `expo-localization` when it is `AU` or `IN`;
+  - otherwise use `turiya_settings_v1.supportRegion`, asked once;
+  - `setRegion()` for the switch on the services view.
+- [ ] T054 [US4] Implement the feedback email in `apps/mobile/src/features/safety/feedback.ts`, so that T049 passes (research R11, FR-032):
+  - `buildFeedbackEmail({ version, device, lessonId })` returns a `mailto:` URL with the bundled address and subject "Turiya feedback";
+  - `openFeedback()` calls `Linking.openURL`;
+  - if no email app can open it, return the address so the UI can show it with a copy button.
+- [ ] T055 [US4] Build the Support sheet in `apps/mobile/app/support.tsx`, opened as a bottom sheet (FR-024), with three views:
+  - **Menu**: "Mental health support" and "Give feedback", each with a one-line description.
+  - **Mental health support**: a warm, brief heading; the services for the current region (T053), emergency first, each with selectable contact details (tap to call or text where possible) and hours; a switch between Australia and India; a note that the numbers work only in that country, with the overseas link; works offline; no verse or lesson content.
+  - **Give feedback**: explains that it opens the person's own email app, that nothing is sent until they press send, and that the journal is never included; shows what's filled in; an "Open email" button using T054, falling back to the address with a copy button.
+  - The sheet accepts a `view` parameter so the crisis hook can open **Mental health support** directly.
+- [ ] T056 [P] [US4] Build `SupportItem` (a small, muted "Support" text button, 44px target, labelled "Support: mental health services and feedback") in `apps/mobile/src/features/safety/SupportItem.tsx`. Add it to the header of every screen: `apps/mobile/app/(tabs)/learn.tsx`, `apps/mobile/app/(tabs)/journal.tsx`, `apps/mobile/app/lesson/[id].tsx`, `apps/mobile/app/journal/[id].tsx` and `apps/mobile/app/settings.tsx`. It opens the Support menu.
+- [ ] T057 [US4] Call `matchesCrisis` when a reply is saved, in `apps/mobile/src/features/journal/ReplyInput.tsx`. On a match, keep the reply and open the Support sheet straight at **Mental health support** for the current region, skipping the menu (FR-023).
+- [ ] T058 [US4] Build the settings screen in `apps/mobile/app/settings.tsx`, reached from the Learn header, with an "About and privacy" section:
   - teaching the Upaniṣad with the help of Gauḍapāda's Kārikā, not therapy or religious authority (FR-026);
   - "Everything is saved only on this phone. Deleting the app deletes it." (FR-028);
   - translation sources and credits.
-- [ ] T056 [P] [US4] Add a no-network guard in `scripts/check-no-network.mjs`, run in CI:
+- [ ] T059 [P] [US4] Add a no-network guard in `scripts/check-no-network.mjs`, run in CI:
   - fail if `apps/mobile/package.json` depends on `expo-updates` or any analytics or crash SDK;
   - fail if `apps/mobile/src` or `apps/mobile/app` calls `fetch(`, `XMLHttpRequest` or `WebSocket` (FR-027).
-- [ ] T057 [US4] Add a Maestro flow in `apps/mobile/e2e/safety.yaml` for quickstart scenarios 12–13. Document the manual traffic inspection (scenario 16) in `apps/mobile/e2e/README.md`.
+- [ ] T060 [US4] Add a Maestro flow in `apps/mobile/e2e/safety.yaml` for quickstart scenarios 12, 13 and 13b. Document the manual traffic inspection (scenario 16) in `apps/mobile/e2e/README.md`.
 
 **Checkpoint**: all four P1 stories work. v1 is functionally releasable once content is reviewed.
 
@@ -277,15 +300,15 @@ shows no requests.
 
 **Independent Test**: quickstart scenarios 14–15.
 
-- [ ] T058 [P] [US5] Write tests for the scheduler in `apps/mobile/test/reminders.test.ts`, with `expo-notifications` mocked:
+- [ ] T061 [P] [US5] Write tests for the scheduler in `apps/mobile/test/reminders.test.ts`, with `expo-notifications` mocked:
   - turning on schedules the next 7 days at HH:mm;
   - reading a lesson today cancels today's reminder;
   - opening the app tops up to 7 days;
   - turning off cancels everything;
   - the reminder text contains no journal content.
-- [ ] T059 [US5] Implement the scheduler in `apps/mobile/src/features/reminders/scheduler.ts` (`enable(time)`, `disable()`, `onLessonRead()`, `topUp()`), with the generic text "A quiet moment to read?" (research R6), so that T058 passes.
-- [ ] T060 [US5] Add a reminder toggle and time picker to `apps/mobile/app/settings.tsx`. Ask for notification permission only when the toggle is turned on, and save to `turiya_settings_v1` (FR-022).
-- [ ] T061 [US5] Wire up the reminder calls in `apps/mobile/app/_layout.tsx` and `apps/mobile/app/lesson/[id].tsx`:
+- [ ] T062 [US5] Implement the scheduler in `apps/mobile/src/features/reminders/scheduler.ts` (`enable(time)`, `disable()`, `onLessonRead()`, `topUp()`), with the generic text "A quiet moment to read?" (research R6), so that T061 passes.
+- [ ] T063 [US5] Add a reminder toggle and time picker to `apps/mobile/app/settings.tsx`. Ask for notification permission only when the toggle is turned on, and save to `turiya_settings_v1` (FR-022).
+- [ ] T064 [US5] Wire up the reminder calls in `apps/mobile/app/_layout.tsx` and `apps/mobile/app/lesson/[id].tsx`:
   - `topUp()` on app foreground, in `apps/mobile/app/_layout.tsx`;
   - `onLessonRead()` after `complete()`, in `apps/mobile/app/lesson/[id].tsx`;
   - tapping a notification opens the Learn tab.
@@ -300,20 +323,20 @@ shows no requests.
 grounded in the tradition, through pull requests to `content/`. The tasks can run in parallel with
 Phases 1–7.
 
-- [ ] T062 [P] Write the authors' guide in `content/README.md`:
+- [ ] T065 [P] Write the authors' guide in `content/README.md`:
   - the pronunciation scheme (research R5: hyphenated syllables, doubled long vowels, *h* for aspirates, *jña* → *gya*) with 10 worked examples;
   - the writing guidance from `contracts/lesson-file.md`.
-- [ ] T063 [P] Choose the translations of the 12 mantras and of Kārikā chapter 1, confirm public-domain status or get permission, and record each source and licence in `content/SOURCES.md` (DECISIONS open question).
-- [ ] T064 Write mantra 7 first in `content/path/mandukya/07-…09-*.md`, replacing the T013 drafts. Do the Gauḍapāda section first, since it's the hardest layout.
+- [ ] T066 [P] Choose the translations of the 12 mantras and of Kārikā chapter 1, confirm public-domain status or get permission, and record each source and licence in `content/SOURCES.md` (DECISIONS open question).
+- [ ] T067 Write mantra 7 first in `content/path/mandukya/07-…09-*.md`, replacing the T013 drafts. Do the Gauḍapāda section first, since it's the hardest layout.
   - `content/path/mandukya/07-mantra-7-not-the-knower.md`
   - `content/path/mandukya/08-mantra-7-not-the-known.md`
-  - `content/path/mandukya/09-mantra-7-what-it-is.md`, with kārikās 1.10–1.18 (1–2 featured) and the ending.
-- [ ] T065 Write mantras 1–6 in `content/path/mandukya/01-mantra-1.md` … `06-mantra-6.md`. Kārikās 1.1–1.9 go with mantra 6.
-- [ ] T066 Write mantras 8–12 in `content/path/mandukya/10-mantra-8.md` … `14-mantra-12.md`. Kārikās 1.19–1.23 go with mantra 11, and 1.24–1.29 with mantra 12.
-- [ ] T067 Proofread every Devanagari, IAST and pronunciation field against a Sanskrit source, in all `content/path/mandukya/*.md` (SC-003).
-- [ ] T068 Tradition review of every meaning, note, kārikā note, summary and prompt. Set `reviewedBy` and `reviewedOn` in each `content/path/mandukya/*.md`; `pnpm content:check --release` must pass.
-- [ ] T069 [P] Review the crisis lists and test set with someone experienced in crisis support. Update `packages/shared/src/safety/crisis-lexicon.ts` and `packages/shared/test/safety/crisis-cases.json`, and remove the "pending review" notes.
-- [ ] T070 [P] Verify every support service (number, hours, region) and update `lastVerified` in `packages/shared/src/safety/support-services.ts`. Repeat every 90 days (FR-031).
+  - `content/path/mandukya/09-mantra-7-what-it-is.md`, with kārikās 1.10–1.18 (1.10 featured, the rest one at a time) and the ending.
+- [ ] T068 Write mantras 1–6 in `content/path/mandukya/01-mantra-1.md` … `06-mantra-6.md`. Kārikās 1.1–1.9 go with mantra 6.
+- [ ] T069 Write mantras 8–12 in `content/path/mandukya/10-mantra-8.md` … `14-mantra-12.md`. Kārikās 1.19–1.23 go with mantra 11, and 1.24–1.29 with mantra 12.
+- [ ] T070 Proofread every Devanagari, IAST and pronunciation field against a Sanskrit source, in all `content/path/mandukya/*.md` (SC-003).
+- [ ] T071 Tradition review of every meaning, note, kārikā note, summary and prompt. Set `reviewedBy` and `reviewedOn` in each `content/path/mandukya/*.md`; `pnpm content:check --release` must pass.
+- [ ] T072 [P] Review the crisis lists and test set with someone experienced in crisis support. Update `packages/shared/src/safety/crisis-lexicon.ts` and `packages/shared/test/safety/crisis-cases.json`, and remove the "pending review" notes.
+- [ ] T073 [P] Verify every support service for **Australia and India** (number, hours, region) and update `lastVerified` in `packages/shared/src/safety/support-services.ts`. Repeat every 90 days (FR-031).
 
 ---
 
@@ -322,22 +345,24 @@ Phases 1–7.
 **Purpose**: quality across all stories, and the release checklist (docs/IMPLEMENTATION_PLAN.md →
 M6).
 
-- [ ] T071 [P] Accessibility pass across `apps/mobile/app/` and `apps/mobile/src/`:
+- [ ] T074 [P] Accessibility pass across `apps/mobile/app/` and `apps/mobile/src/`:
   - every touch target is 44px or more;
   - screen-reader labels for Devanagari (read the IAST and meaning);
   - Dynamic Type works;
   - reduced motion is respected.
-- [ ] T072 [P] Performance check: cold start to Learn in under 2 seconds and a lesson in under 1 second on a mid-range Android phone and an iPhone. Record the results in `apps/mobile/e2e/README.md`.
-- [ ] T073 [P] Write the privacy policy in `docs/PRIVACY_POLICY.md`: nothing is collected; everything stays on the phone; deleting the app deletes it; no analytics.
-- [ ] T074 [P] Write the store listing copy in `docs/STORE_LISTING.md`:
+- [ ] T075 [P] Performance check: cold start to Learn in under 2 seconds and a lesson in under 1 second on a mid-range Android phone, a low-cost Android phone (common in India) and an iPhone. Record the results in `apps/mobile/e2e/README.md`.
+- [ ] T076 [P] Write the privacy policy in `docs/PRIVACY_POLICY.md`, covering Australia and India:
+  - nothing is collected; everything stays on the phone; deleting the app deletes it; no analytics;
+  - feedback emails are sent by the person from their own email app, and how we handle them.
+- [ ] T077 [P] Write the store listing copy in `docs/STORE_LISTING.md`:
   - learning the Upaniṣad with Gauḍapāda's Kārikā;
   - no therapy or medical claims;
-  - privacy label **Data Not Collected**;
+  - privacy label **Data Not Collected** (feedback by email should fall under Apple's optional-disclosure rule; confirm);
   - age rating chosen as 18+;
-  - Australia only.
-- [ ] T075 Swap in the reviewed lessons in `content/path/mandukya/`: remove all T013 drafts, run `pnpm content:check --release`, and rebuild.
-- [ ] T076 Run every quickstart scenario (1–17) on iOS and Android, including traffic inspection (scenario 16) and another locale (scenario 17). Record the results in `apps/mobile/e2e/README.md`.
-- [ ] T077 Build production releases with EAS, limit both stores to **Australia**, and submit (SC-013). Follow `docs/IMPLEMENTATION_PLAN.md` → "Release checklist".
+  - Australia and India only.
+- [ ] T078 Swap in the reviewed lessons in `content/path/mandukya/`: remove all T013 drafts, run `pnpm content:check --release`, and rebuild.
+- [ ] T079 Run every quickstart scenario (1–17) on iOS and Android, including traffic inspection (scenario 16) and another locale (scenario 17). Record the results in `apps/mobile/e2e/README.md`.
+- [ ] T080 Build production releases with EAS, limit both stores to **Australia and India**, and submit (SC-013). Follow `docs/IMPLEMENTATION_PLAN.md` → "Release checklist".
 
 ---
 
@@ -350,18 +375,18 @@ M6).
 - **US2 (4)**: after Foundational. It uses the lesson screen and Learn home from US1 (T028, T029).
 - **US3 (5)**: after Foundational. It adds the reply input to `MantraEnding` (T027).
 - **US4 (6)**:
-  - The support screen, help link, settings and no-network guard (T046–T053, T055–T056) need only Foundational.
-  - The reply crisis hook (T054) needs US3 (T042).
-- **US5 (7)**: after Foundational. Its settings toggle needs the settings screen (T055).
-- **Content track (8)**: starts with Setup. T064–T068 need the schema (T010–T012) for `content:check`.
-- **Polish (9)**: after US1–US4 (US5 is optional), and T075 after T068.
+  - Everything except the reply crisis hook needs only Foundational.
+  - The reply crisis hook (T057) needs US3 (T042).
+- **US5 (7)**: after Foundational. Its settings toggle needs the settings screen (T058).
+- **Content track (8)**: starts with Setup. T067–T071 need the schema (T010–T012) for `content:check`.
+- **Polish (9)**: after US1–US4 (US5 is optional), and T078 after T071.
 
 ### Within each story
 Tests first (they should fail), then stores and logic, then components, then screens, then the
 Maestro flow.
 
 ### Release gate
-US1–US4 done, plus T064–T070 (reviewed content, crisis review, verified helplines), plus T071–T077.
+US1–US4 done, plus the content track (reviewed content, crisis review, verified helplines for both countries), plus T074–T080.
 US5 may ship in v1 or follow in an update.
 
 ---
@@ -380,7 +405,7 @@ T024 PhraseCard    T025 PartHeading    T026 GaudapadaSection    T027 MantraEndin
 T046 crisis test set    T047 matcher tests    T048 support-services test
 
 # Content track, alongside all coding:
-T062 authors' guide    T063 translations    T069 crisis review    T070 helplines
+T065 authors' guide    T066 translations    T072 crisis review    T073 helplines
 ```
 
 ---
@@ -398,7 +423,7 @@ T062 authors' guide    T063 translations    T069 crisis review    T070 helplines
 3. Add US5 (Reminder) for v1, or in the first update.
 
 ### Content in parallel
-The content track decides the launch date, not the code. Start T062–T064 on day one. Mantra 7 then
+The content track decides the launch date, not the code. Start T065–T067 on day one. Mantra 7 then
 doubles as the app's real test content.
 
 ---

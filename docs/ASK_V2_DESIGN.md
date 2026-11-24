@@ -35,7 +35,7 @@ what the Learn lessons teach to everyday life.
 ## 2. Safety and consent
 
 - **Crisis check before writing**: first the shared word lists, then a fast model check, leaning
-  toward flagging. If either flags, show the support screen. Nothing is saved, logged or followed
+  toward flagging. If either flags, open mental health support. Nothing is saved, logged or followed
   up.
 - **Output safety check**: reject any reflection that:
   - endorses violence or self-harm;
@@ -45,10 +45,10 @@ what the Learn lessons teach to everyday life.
 - **Attribution on every reflection**: "A reflection drawing on Gauḍapāda's Kārikā — not religious
   authority, therapy, or medical advice."
 - **Consent before the first question**: name the AI provider (Anthropic), say only the question
-  text is sent, that it may be processed outside Australia and isn't stored, and that everything
+  text is sent, that it may be processed outside the person's country and isn't stored, and that everything
   else stays on the phone. Ask doesn't run until the person agrees.
   - Apple App Review Guideline 5.1.2(i) (November 2025) requires this.
-  - It also meets Australian privacy expectations.
+  - It also meets Australian and Indian privacy expectations (Privacy Act 1988; DPDP Act 2023).
   - **Note**: adding Ask changes v1's "nothing leaves the phone" promise. Update the privacy policy
     and the App Store privacy label when it ships.
 
@@ -130,7 +130,7 @@ bundles, so Learn and Ask always agree on the text.
 | Embeddings | `bge-small-en-v1.5` run on our own server (`@huggingface/transformers`, 384 dims) | Anthropic has no embeddings API; a hosted one would show every question to a second company |
 | Search | Vector + full-text, merged by reciprocal rank fusion | The constitution requires hybrid search; it's simple and needs no tuning data |
 | Server | Hono on Node.js 24 LTS | Small, TypeScript-first |
-| Hosting | Sydney region. Candidates: Fly.io `syd` or AWS/Google Cloud Sydney, with Neon Postgres (Sydney, pgvector) | Speed for Australian users. Fly.io Sydney had cross-region incidents in 2026 |
+| Hosting | Sydney region. Candidates: Fly.io `syd` or AWS/Google Cloud Sydney, with Neon Postgres (Sydney, pgvector) | Speed for Australian users. With India in v1, also consider a Mumbai region. Fly.io Sydney had cross-region incidents in 2026 |
 | Models | `claude-sonnet-5-5` to start; use the cheapest model that passes the golden eval. `claude-haiku-5-5` for safety checks | The constitution favours the cost-effective tier |
 
 ## 5. Testing the AI (constitution, Principle VII)

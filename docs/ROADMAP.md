@@ -4,9 +4,8 @@ What comes after v1, in order. v1 itself is defined in the [spec](../specs/001-t
 
 | Version | Theme | Status |
 |---|---|---|
-| **v1** | Learn (chapter 1, phrase by phrase), Saved, Journal — Australia only, fully offline | Specified |
+| **v1** | Learn (12 mantras, phrase by phrase, with Gauḍapāda), Saved, Journal — Australia and India, fully offline | Specified |
 | **v2** | **Ask**: reflections on everyday problems through the four states | Designed ([ASK_V2_DESIGN.md](./ASK_V2_DESIGN.md)) |
-| **Next region** | India | Planned — its order relative to v2 is still open |
 | **Later** | More of the Kārikā, audio, and the ideas below | Not committed |
 
 ## v2 — Ask
@@ -21,12 +20,6 @@ The full design is in [ASK_V2_DESIGN.md](./ASK_V2_DESIGN.md). In short:
   with your consent".
 - **Afterwards**: follow-up check-ins and a pattern mirror deepen Ask (design §6).
 
-## India
-
-- Indian support services, and a review under the Digital Personal Data Protection Act 2023.
-- Possibly Indian languages, for lessons and the app itself.
-- It gets its own spec.
-
 ## Later — ideas, not commitments
 
 - **Paths for Kārikā chapters 2–4** (about 186 more kārikās). These are the natural paid offering.
@@ -40,6 +33,7 @@ The full design is in [ASK_V2_DESIGN.md](./ASK_V2_DESIGN.md). In short:
   publishers give permission.
 - **Daily four-states rhythm**: morning (jāgrat), evening (svapna), bedtime (suṣupti).
 - Śaṅkara's commentary.
+- **Hindi and other Indian languages**, for lessons and the app itself.
 - Other countries, each with its own spec.
 - An opt-in encrypted backup to the person's own iCloud or Google Drive, so a lost phone doesn't
   lose the Journal. It needs no account with us.

@@ -1,7 +1,7 @@
 # Market validation
 
 Research done in October 2026, when the app was planned around Ask. Since then, v1 has become
-**learning only**, with Ask moving to v2 (DEC-12), and it launches in Australia only (DEC-10). The
+**learning only**, with Ask moving to v2 (DEC-12), and it launches in Australia and India (DEC-10). The
 findings still hold. Ask-related risks below now apply from v2.
 
 > **How reliable is this?** The research tool couldn't open the source pages, so claims weren't
@@ -60,7 +60,7 @@ largely draws on Advaita Vedanta [14], so the audience exists.
 | Urban Indian millennials | Huge and quick to adopt, but expect free apps [9] | Medium: later free tier |
 
 The research suggested the US, UK and Canada first, with iOS as the priority (iOS converts ~2×
-better [16]). v1 chose Australia as a more careful first step (DEC-10).
+better [16]). v1 launches in Australia and India: with nothing leaving the phone, a second country costs little (DEC-10).
 
 ## 4. Retention and money
 
@@ -89,7 +89,7 @@ better [16]). v1 chose Australia as a more careful first step (DEC-10).
 |---|---|---|
 | Harmful or distorted answers | Gita bots condoned violence [5][12]; "Father Justin" AI lost its priest title after backlash [22][23] | No persona, grounding, output safety check, attribution line (DEC-7, DEC-8) |
 | Misquoted scripture | YouVersion's CEO estimates AI misquotes the Bible 15–60% of the time (his figures) [24] | Fixed, proofread verses and lessons (DEC-11) |
-| Overlap with mental health | Illinois banned AI therapy (Aug 2025); Nevada and Utah restrict it [25] | Crisis checks, help on every tab, no therapy claims (DEC-8) |
+| Overlap with mental health | Illinois banned AI therapy (Aug 2025); Nevada and Utah restrict it [25] | Crisis checks, Support in every header, no therapy claims (DEC-8) |
 | App Store rejection | One report of repeated rejections under Guideline 1.4.1 (medical advice) [26] | No clinical claims in the app or listing |
 | Privacy distrust | 48% of 25 mental-health apps send data to third-party AI [27] | Device-only data; consent before Ask (DEC-1) |
 | Curiosity churn | Many faith-AI users arrive out of curiosity [23] | Daily Path; an excellent first lesson |

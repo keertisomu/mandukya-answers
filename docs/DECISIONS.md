@@ -13,9 +13,10 @@ Why Turiya is built the way it is. Each entry: the decision, why, what it costs,
 | DEC-7 | Ask answers grounded in the Kārikā (RAG) | Accepted — applies from v2 (Ask) |
 | DEC-8 | Crisis safety is in v1 and blocks launch | Accepted (updated by DEC-12) |
 | DEC-9 | Retention through daily practice, not gamification | Accepted (updated by DEC-12) |
-| DEC-10 | Launch in Australia only; India next | Accepted (updated by DEC-12) |
+| DEC-10 | Launch v1 in Australia and India | Accepted (updated 2026-11-24) |
 | DEC-11 | v1 centres on learning; Ask applies it | Superseded by DEC-12 |
 | DEC-12 | v1 is learning only; Ask moves to v2 | Accepted |
+| DEC-13 | Lesson and Support choices from the prototype | Accepted |
 
 ---
 
@@ -109,7 +110,8 @@ lesson content (DEC-11).
 
 **Decision**:
 - **v1**: journal replies are checked for crisis wording on the phone. If it's found, the reply is
-  kept and Australian support services are shown. Help is one tap away on every tab. The app makes
+  kept and mental health support for the phone's region opens. A small "Support" item in every
+  header keeps it one tap away. The app makes
   no therapy claims and states that it is not religious authority.
 - **v2 (Ask)**: a crisis check before any reflection is written, and an output safety check on every
   reflection (see ASK_V2_DESIGN.md).
@@ -135,24 +137,33 @@ clashes with the teaching.
 
 **Measure**: week-4 and day-30 retention from the app stores.
 
-## DEC-10 — Launch in Australia only; India next
+## DEC-10 — Launch v1 in Australia and India
 
-**Decision**: v1 is offered only in Australian app stores. India is the next region, then other
-countries, each with its own spec. Whether India comes before or after Ask (v2) is still open.
+**Decision**: v1 is offered in the Australian and Indian app stores only. Other countries come
+later, each with its own spec.
 
-**Why**: one market means one set of crisis services, one privacy law (the Privacy Act 1988) and one
-language. That keeps the first release's safety and compliance work manageable. Australia's Indian
-community is one of its largest overseas-born communities.
+**History**: first decided as Australia only (2026-10-24), when v1 included Ask. Each country then
+needed a review of AI data leaving the country, plus its own consent screen. Changed on 2026-11-24.
 
-**Trade-off**: the research pointed to the US, UK and Canada as bigger markets; Bible Chat earns over
-95% of its revenue in the US. Australia is a deliberately careful first step.
+**Why both now**:
+- With no server, AI or network in v1 (DEC-12), a second country adds very little: its own support
+  services, store availability and privacy-policy wording.
+- India is the Upaniṣad's home audience, and the most likely place to find the lesson reviewer and,
+  later, a chanter.
+- Australia's Indian community is one of its largest overseas-born communities.
+
+**Trade-off**: the research pointed to the US, UK and Canada as the biggest paying markets. v1 is
+free, so that matters less now.
 
 **Consequences**:
-- Australian support services, checked every 90 days.
+- Support services for both countries, chosen by the phone's region and switchable, checked every 90
+  days.
+- English with British/Commonwealth spelling, which both countries share. Indian languages come
+  later.
+- Testing on low-cost Android phones.
+- The privacy policy covers both countries. v1 processes no personal data, so the Privacy Act 1988
+  and the DPDP Act 2023 have little to apply to.
 - With v2, a notice and consent before the first Ask, because questions are processed overseas.
-  (v1 sends nothing, so it needs neither.)
-- Australian English.
-- Helplines stored per region.
 
 ## DEC-11 — v1 centres on learning; Ask applies it
 
@@ -190,7 +201,7 @@ reviewed in time. The fallback is a shorter first Path, not dropping learning.
 
 **Decision**: v1 teaches the text and nothing else.
 - **Lessons**: phrase-by-phrase lessons on the Upaniṣad's 12 mantras. Gauḍapāda's kārikās appear
-  inside the lesson for the mantra they explain — all 29 from chapter 1, one or two featured, the
+  inside the lesson for the mantra they explain — all 29 from chapter 1, one featured (DEC-13), the
   rest under "More from Gauḍapāda". The Upaniṣad is the subject; the Kārikā is the guide.
 - **Saved lessons**: kept at the top of Learn, for daily re-reading.
 - **Journal**: replies to lesson prompts.
@@ -219,15 +230,35 @@ teachers' commentaries are still in copyright.
 
 **Revisit if** testing shows people want help applying the text sooner than v2.
 
+## DEC-13 — Lesson and Support choices from the prototype
+
+**Context**: a clickable prototype of a mantra 7 lesson (three layouts) was reviewed on 2026-11-24.
+
+**Decisions**:
+- **One kārikā at a time.** Exactly one featured kārikā per mantra under "What Gauḍapāda says".
+  The rest are under "More from Gauḍapāda", shown one at a time with Previous and Next. Two kārikās
+  side by side felt overwhelming.
+- **"Support" in the header.** A small, muted item on every screen replaces the "Need to talk to
+  someone?" link. It is still one tap away, but quieter on a calm lesson screen.
+- **Support has two options**:
+  - **Mental health support**, for the phone's region (Australia or India);
+  - **Give feedback**, through the person's own email app.
+
+  Turiya itself still sends nothing, so v1 keeps its "nothing leaves the phone" promise.
+
+**Still open**: which of the three lesson layouts to build — A (study page), B (one phrase at a
+time) or C (verse first) — or a mix.
+
 ---
 
 ## Open questions
 
 | Question | Default if not decided |
 |---|---|
-| Which translations of the 12 mantras and of Kārikā chapter 1, and their licences? | Research public-domain options first. This is on the critical path. For the 12 mantras, Hume's *Thirteen Principal Upanishads* (1921) is a likely public-domain choice: Hume died in 1940, so it should be free in Australia too, but confirm. It does **not** include Gauḍapāda's Kārikā, which needs its own translation. Newer translations are usually still in copyright, even though the text is ancient. |
+| Which translations of the 12 mantras and of Kārikā chapter 1, and their licences? | Research public-domain options first. This is on the critical path. For the 12 mantras, Hume's *Thirteen Principal Upanishads* (1921) is a likely public-domain choice: Hume died in 1940, so it should be free in Australia and India too, but confirm. It does **not** include Gauḍapāda's Kārikā, which needs its own translation. Newer translations are usually still in copyright, even though the text is ancient. |
 | Who writes the lesson meanings and notes, and who reviews them? | Needs a person. Blocks release. |
-| Ask (v2) or India first? | Not decided. |
+| Feedback email address? | Needs the product owner. |
+| Lesson layout: A, B, C or a mix? | Not decided (DEC-13). |
 | Which model for Ask reflections (v2)? | `claude-sonnet-5-5`, or the cheapest model that passes the golden eval |
 | Expo or bare React Native? | Expo |
 | Any analytics in v1? | None. v1 sends nothing. |
