@@ -58,7 +58,8 @@ karikas:
       our troubles, but because it was never touched by them.
     featured: true
   - ref: "Kārikā 1.11"
-    # … every kārikā on this mantra (1.10–1.18); the rest have featured: false
+    featured: false
+    # … every other kārikā on this mantra (1.11–1.18), all featured: false
 ending:
   fullMantra:
     ref: "Māṇḍūkya 7"
@@ -92,7 +93,7 @@ ending:
 | `karikas[].devanagari`, `.iast`, `.pronunciation` | Yes | Proofread like the mantra |
 | `karikas[].translation`, `.source` | Yes | Quoted exactly from the chosen translation, with its source |
 | `karikas[].note` | Yes | Our own words: how this kārikā helps understand the mantra |
-| `karikas[].featured` | Yes | `true` for the one or two shown in the lesson; `false` goes under "More from Gauḍapāda" |
+| `karikas[].featured` | Yes | `true` for **exactly one** kārikā per mantra, shown in the lesson; the rest `false`, shown one at a time under "More from Gauḍapāda" |
 | `ending` | Last part only | Exactly one per mantra |
 | `ending.fullMantra.translation` | Yes | Quoted exactly from the chosen public-domain or permitted translation |
 | `ending.fullMantra.source` | Yes | Translator, title, year and licence |
@@ -111,8 +112,8 @@ ending:
 - **Tone**: warm and steady, never negative, preachy or prescriptive (constitution, Principles I
   and II).
 - **No therapy or medical language.**
-- **Australian English.**
+- **British/Commonwealth spelling**, shared by Australia and India.
 - **Kārikā notes**: say what Gauḍapāda adds to the mantra, not just what the kārikā says. Feature
-  the one or two that help a beginner most.
+  the **one** that helps a beginner most; the rest are read one at a time.
 - **Length**: about 3–5 minutes per lesson, not counting "More from Gauḍapāda". If a mantra runs
   longer, split it at its natural parts.

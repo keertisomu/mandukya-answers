@@ -26,7 +26,7 @@ The order of work, the content track and the release checklist are in
 **Language/Version**: TypeScript 5.x
 
 **Primary Dependencies**: Expo SDK 58 (React Native 0.88, New Architecture), Expo Router,
-`react-native-mmkv`, `expo-notifications`, `@expo-google-fonts/*`, Zod. Not included:
+`react-native-mmkv`, `expo-notifications`, `expo-localization`, `@expo-google-fonts/*`, Zod. Not included:
 `expo-updates`, analytics or crash-reporting SDKs (research R8).
 
 **Storage**: MMKV on the phone (JSON). No server storage.
@@ -48,7 +48,7 @@ the iOS 26 SDK or later.
 - The whole app works offline.
 - Nothing about the person leaves the phone.
 - Lessons are never generated.
-- Australian storefronts only.
+- Australian and Indian storefronts only.
 
 **Scale/Scope**:
 - About 15 lessons: 12 mantras (around 60–80 phrases) and 29 kārikās.
@@ -109,20 +109,20 @@ apps/
     │   ├── (tabs)/learn.tsx, journal.tsx
     │   ├── lesson/[id].tsx
     │   ├── journal/[id].tsx
-    │   ├── support.tsx
+    │   ├── support.tsx          # Support sheet: mental health support + feedback
     │   └── settings.tsx
     ├── src/
     │   ├── features/learn/      # Path, progress, unlock rule, lesson + phrase views
     │   ├── features/saved/      # Save/unsave, Saved list
     │   ├── features/journal/    # Replies, list, relative times
-    │   ├── features/safety/     # Support screen, crisis matcher, help link
+    │   ├── features/safety/     # Support sheet, services by region, crisis matcher, feedback email
     │   ├── features/reminders/  # 7-day local scheduling (research R6)
     │   ├── storage/             # MMKV wrapper, versioned keys
     │   └── theme/               # Design tokens, fonts
     └── e2e/                     # Maestro flows (quickstart scenarios)
 packages/
 └── shared/                      # Zod lesson schema, crisis word lists,
-                                 # AU support services, content build script
+                                 # AU + IN support services, content build script
 content/
 ├── README.md                    # Pronunciation scheme, writing guide
 └── path/mandukya/               # ~15 lesson files (contracts/lesson-file.md)

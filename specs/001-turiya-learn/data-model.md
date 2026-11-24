@@ -43,7 +43,7 @@ Built from `content/path/mandukya/*.md` (format: [contracts/lesson-file.md](./co
 | `devanagari`, `iast`, `pronunciation` | Required |
 | `translation`, `source` | Required; public-domain or permitted translation |
 | `note` | Required; plain words on how it helps understand the mantra (our own commentary) |
-| `featured` | `true` for the one or two shown under "What Gauḍapāda says"; the rest go under "More from Gauḍapāda" (FR-004) |
+| `featured` | `true` for exactly one kārikā per mantra, shown under "What Gauḍapāda says"; the rest go under "More from Gauḍapāda", shown one at a time (FR-004) |
 
 ### Ending (last part of a mantra)
 | Field | Rules |
@@ -57,15 +57,22 @@ Built from `content/path/mandukya/*.md` (format: [contracts/lesson-file.md](./co
 - no gaps in `order`, and mantras 1–12 all present, in order;
 - every mantra has exactly one `ending`, on its last part;
 - **every kārikā 1.1–1.29 appears exactly once** across the Path (FR-004, SC-003);
-- a mantra with kārikās has one or two marked `featured`;
+- a mantra with kārikās has exactly one marked `featured`;
 - `part.n` runs 1…`of`;
 - every required field is present;
 - a release build fails if `reviewedBy` is missing.
 
 ### Support service
-`{ region: "AU", name, contacts: { call?, text?, chat?, web? }, hours, lastVerified: date }`.
-At least 000, Lifeline, a youth service and an anxiety/depression service (FR-030). A test fails if
-any `lastVerified` is older than 90 days (FR-031).
+`{ region: "AU" | "IN", name, contacts: { call?, text?, chat?, web? }, hours, emergency?: true, lastVerified: date }`.
+- **Australia**: at least 000, Lifeline, a youth service and an anxiety/depression service.
+- **India**: at least 112, Tele-MANAS and one counselling line.
+
+A test fails if either list is short of these, or if any `lastVerified` is older than 90 days (FR-030,
+FR-031).
+
+### Feedback
+`{ address, subject: "Turiya feedback" }`, bundled. The email body is filled in at the moment of
+sending with the app version, device type and current lesson ID only (FR-032). Nothing is stored.
 
 ---
 
@@ -99,7 +106,10 @@ type JournalEntry = {
   updatedAt: string;       // changes when edited from the lesson (FR-014)
 };
 
-type Settings = { reminder: { on: boolean; time?: "HH:mm" } };
+type Settings = {
+  reminder: { on: boolean; time?: "HH:mm" };
+  supportRegion?: "AU" | "IN";   // set only if the phone's region is neither, or the person switches (FR-030)
+};
 ```
 
 - Lesson titles, mantras and prompts are **not** copied into the Journal. They are looked up from the
@@ -127,9 +137,17 @@ Allowed only for completed lessons, or the lesson being read.
 
 ### Crisis check (FR-023)
 ```
-reply saved ──matches crisis lists──▶ support screen shown (reply kept)
+reply saved ──matches crisis lists──▶ mental health support opens (reply kept)
             └─no match──────────────▶ nothing else happens
 ```
+
+### Support (FR-024, FR-030, FR-032)
+```
+header "Support" ──▶ menu ──"Mental health support"──▶ services for region (switch AU ⇄ IN)
+                         └─"Give feedback"──────────▶ explain ──"Open email"──▶ person's email app
+crisis match on a reply ─────────────────────────────▶ services for region (skips the menu)
+```
+Region: the phone's region if it is AU or IN; otherwise `supportRegion`, asked once.
 
 ### Reminder (FR-022; research R6)
 - **Turned on**: schedule the next 7 days at the chosen time.

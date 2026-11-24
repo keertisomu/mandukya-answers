@@ -7,7 +7,7 @@ to [docs/ASK_V2_DESIGN.md](../../docs/ASK_V2_DESIGN.md). These are already decid
 [docs/DECISIONS.md](../../docs/DECISIONS.md):
 - React Native + Expo (DEC-2);
 - phone-only storage (DEC-1, DEC-3);
-- Australia first (DEC-10);
+- Australia and India for v1 (DEC-10);
 - learning first (DEC-11, DEC-12).
 
 ---
@@ -25,7 +25,7 @@ to [docs/ASK_V2_DESIGN.md](../../docs/ASK_V2_DESIGN.md). These are already decid
 ## R2 — Navigation
 
 - **Decision**: Expo Router with two tabs (Learn, Journal), plus stack screens for a lesson, the
-  support screen and settings.
+  Support sheet (mental health support, feedback) and settings.
 - **Why**: it's Expo's default. File-based routes keep the screen list obvious, and deep links
   (e.g. from the reminder) work out of the box.
 - **Alternatives**: React Navigation set up by hand (more boilerplate for the same result).
@@ -53,7 +53,8 @@ to [docs/ASK_V2_DESIGN.md](../../docs/ASK_V2_DESIGN.md). These are already decid
 - **Decision**: lessons follow the **12 mantras**. Each lesson holds an ordered list of
   **phrases**, optionally under a part heading. Long mantras span several lessons, linked by
   `mantra` and `part`. The mantra's last part also carries:
-  - **Gauḍapāda's kārikās** on it, one or two `featured`, the rest under "More from Gauḍapāda";
+  - **Gauḍapāda's kārikās** on it, exactly one `featured`, the rest under "More from Gauḍapāda",
+    shown one at a time;
   - the full mantra, summary and prompt.
 
   The build checks that all 29 kārikās of chapter 1 appear exactly once.
@@ -62,7 +63,8 @@ to [docs/ASK_V2_DESIGN.md](../../docs/ASK_V2_DESIGN.md). These are already decid
     explain rather than as lessons of their own.
   - This follows the format the product owner reads every morning: mantra 7 in 19 phrases, under
     three headings.
-  - Featuring one or two kārikās keeps lessons to about 3–5 minutes without leaving any out.
+  - Featuring one kārikā, and showing the rest one at a time, keeps lessons to about 3–5 minutes
+    without leaving any out. In the prototype, two kārikās side by side felt overwhelming.
 - **Alternatives**:
   - a lesson per kārikā, which makes the Kārikā a second subject;
   - only selected kārikās, which is shorter but incomplete;
@@ -140,3 +142,27 @@ to [docs/ASK_V2_DESIGN.md](../../docs/ASK_V2_DESIGN.md). These are already decid
   The constitution's golden eval set (Principle VII) tests generated responses, so it starts with
   Ask in v2. In v1, content quality is gated by review (SC-003).
 - **Alternatives**: Detox, which is heavier to set up than Maestro.
+
+## R11 — Feedback without sending anything ourselves
+
+- **Decision**: "Give feedback" opens the person's own email app with `Linking.openURL("mailto:…")`.
+  It's pre-addressed, with the subject "Turiya feedback" and a body holding the app version, device
+  type and current lesson ID. If no email app can open it, the address is shown as selectable text
+  with a copy button.
+- **Why**: Turiya stays free of network code (R8), and the person sees and controls exactly what's
+  sent. Being optional and initiated by the person, it should keep the App Store label "Data Not
+  Collected" under Apple's optional-disclosure rule (confirm at submission).
+- **Alternatives**:
+  - an in-app form posting to a server: needs a server and network code, which breaks the v1
+    promise;
+  - a third-party feedback SDK: sends data, and it's the same problem.
+
+## R12 — Support list by country
+
+- **Decision**: show the services for the phone's region, from `expo-localization` (no network). If
+  the region isn't Australia or India, ask once and save `supportRegion`. A switch on the screen
+  moves between the two lists.
+- **Why**: the right numbers must appear without a network or an account. The device region is the
+  best offline signal, and travellers can switch.
+- **Alternatives**: the store country (not readable offline in a reliable way); asking everyone at
+  first launch (adds friction for most people).

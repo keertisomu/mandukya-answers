@@ -9,7 +9,10 @@
   - learning first (2026-11-06, DEC-11);
   - **v1 is learning only, and Ask moves to v2** (2026-11-20, DEC-12);
   - **the Path teaches the Upaniṣad's 12 mantras, with Gauḍapāda's kārikās inside each lesson to
-    explain them** (2026-11-23).
+    explain them** (2026-11-23);
+  - **from the prototype** (2026-11-24): one featured kārikā per mantra, the rest one at a time; a
+    "Support" item in the header with mental health support and feedback; and **v1 launches in
+    Australia and India**.
 - The lesson format is modelled on a phrase-by-phrase study of Māṇḍūkya mantra 7 shared by the
   product owner.
 
@@ -35,9 +38,9 @@ The app should feel quieting the moment it opens. It teaches; it never advises, 
 negative.
 
 **v1 needs no server, no AI and no network.** Everything ships inside the app, and nothing a person
-writes ever leaves their phone.
+writes in it ever leaves their phone.
 
-**In v1**: Learn and Journal, offered in **Australia only**.
+**In v1**: Learn and Journal, offered in **Australia and India**.
 
 **Not in v1**:
 - **Ask** — reflections on everyday problems, planned for v2 (`docs/ASK_V2_DESIGN.md`);
@@ -61,9 +64,9 @@ phrase they see:
 
 Phrases are grouped under simple headings where a mantra has natural parts.
 
-Then comes **What Gauḍapāda says**: the one or two of his kārikās that most help with this mantra,
-each with a plain note on what it adds. The rest of his kārikās on the mantra are a tap away, under
-"More from Gauḍapāda".
+Then comes **What Gauḍapāda says**: the one kārikā of his that most helps with this mantra, with a
+plain note on what it adds. His other kārikās on the mantra are a tap away, under "More from
+Gauḍapāda", shown one at a time so the person is never facing two verses at once.
 
 The lesson ends with the whole mantra — in Devanagari, transliteration, pronunciation and
 translation — then a short summary in plain words, and a "live it today" prompt. When they finish,
@@ -83,11 +86,11 @@ confirm progress shows "2 of N".
 2. **Given** a lesson, **When** the person reads it, **Then** each phrase shows its Devanagari,
    transliteration, pronunciation guide, meaning and note, in the mantra's order.
 3. **Given** a mantra that Gauḍapāda comments on, **When** the person reaches "What Gauḍapāda says",
-   **Then** they see the most helpful kārikā(s). Each shows Devanagari, transliteration,
-   pronunciation, translation, source and a plain note on how it clarifies the mantra.
-4. **Given** that section, **When** the person taps "More from Gauḍapāda", **Then** every other kārikā
-   on that mantra is shown the same way. It's collapsed by default and not needed to finish the
-   lesson.
+   **Then** they see the one most helpful kārikā, with Devanagari, transliteration, pronunciation,
+   translation, source and a plain note on how it clarifies the mantra.
+4. **Given** that section, **When** the person taps "More from Gauḍapāda", **Then** they can read the
+   other kārikās on that mantra **one at a time** (e.g. "Kārikā 2 of 9"), with Previous and Next.
+   It's collapsed by default and not needed to finish the lesson.
 5. **Given** the end of a mantra's last lesson, **When** the person reaches it, **Then** they see the
    full mantra (Devanagari, transliteration, pronunciation, translation, reference, translation
    source), a short plain-words summary, the related state of consciousness where there is one,
@@ -157,9 +160,11 @@ restart.
 ### User Story 4 - Feel safe, private and never harmed (Priority: P1)
 
 Even a learning app receives people's private thoughts in their journal replies. If someone writes
-something that signals crisis or self-harm, the app gently shows real support services. Help is
-always one tap away. No text in the app gives advice, judges or sounds negative. Nothing the person
-writes ever leaves their phone.
+something that signals crisis or self-harm, the app gently shows real mental health services for
+their country. A small **Support** item in the header is always one tap away; it offers **Mental
+health support** and **Give feedback**. No text in the app gives advice, judges or sounds negative.
+Nothing the person writes in the app ever leaves their phone; feedback goes only if they choose to
+send it from their own email app.
 
 **Why this priority**: these are constitutional guarantees. One harmful line, a misquoted verse or a
 leak of private writing would break the product's promise.
@@ -167,19 +172,23 @@ leak of private writing would break the product's promise.
 **Independent Test**:
 - Write crisis wording as a journal reply while offline, and confirm support services appear and
   nothing is sent.
-- Open help from each tab.
+- Open Support from each screen and try both options.
 - Inspect outbound traffic during normal use and confirm the app sends nothing.
 
 **Acceptance Scenarios**:
 
-1. **Given** a reply that signals crisis or self-harm, **When** saved, **Then** it is kept and
-   Australian support services are shown, including 000 and Lifeline, with nothing sent anywhere.
-2. **Given** any screen, **When** the person wants help, **Then** support services are one tap away,
-   offline too.
+1. **Given** a reply that signals crisis or self-harm, **When** saved, **Then** it is kept and mental
+   health support for the phone's region opens straight away (e.g. 000 and Lifeline in Australia,
+   112 and Tele-MANAS in India), with nothing sent anywhere.
+2. **Given** any screen, **When** the person taps **Support** in the header, **Then** they can choose
+   **Mental health support** or **Give feedback**. Mental health support works offline.
 3. **Given** any text in the app, **When** read, **Then** it teaches and reflects, never advises,
    judges or implies harm, and is never negative.
 4. **Given** normal use, **When** traffic is inspected, **Then** the app sends nothing about the
    person.
+5. **Given** "Give feedback", **When** the person chooses it, **Then** their own email app opens with
+   a message to the Turiya team, filled in with the app version, device and current lesson. Nothing
+   is sent until they press send, and no journal text is included.
 
 ---
 
@@ -220,10 +229,13 @@ reading done and shows no journal content, then turn it off and confirm it stops
   they live only on the phone. The app's privacy information says so.
 - **Storage unavailable**: the app still works; progress restarts at lesson 1, and Saved and the
   Journal show their empty states.
-- **Travelling overseas**: the app keeps working. The support screen notes that 000 and Australian
-  lines only work in Australia, and links to an international helpline directory.
-- **Phone set to another language or region**: the app stays in Australian English with Australian
-  services.
+- **Travelling**: the app keeps working. Mental health support shows the list for the phone's
+  region, notes that the numbers only work in that country, lets the person switch between
+  Australia and India, and links to an international helpline directory.
+- **Phone set to a region other than Australia or India**: mental health support asks once which
+  list to show (Australia or India) and shows the international directory. The app stays in
+  English.
+- **No email app set up**: "Give feedback" shows the feedback address so it can be copied.
 
 ## Requirements *(mandatory)*
 
@@ -252,8 +264,9 @@ reading done and shows no journal content, then turn it off and confirm it stops
   - an English translation and its source;
   - a plain note on how it helps understand the mantra.
 
-  The one or two most helpful kārikās appear under **What Gauḍapāda says**; the rest are under an
-  expandable **More from Gauḍapāda**, collapsed by default.
+  **Exactly one** kārikā per mantra — the most helpful — appears under **What Gauḍapāda says**. The
+  rest are under an expandable **More from Gauḍapāda**, collapsed by default, and shown **one at a
+  time** with Previous and Next. Two kārikās are never shown at once.
 - **FR-005**: Each mantra MUST end with:
   - the full mantra (Devanagari, transliteration, pronunciation, English translation, reference and
     the translation's source);
@@ -296,7 +309,8 @@ reading done and shows no journal content, then turn it off and confirm it stops
 - **FR-019**: Motion MUST be subtle, and reduced or off when the device asks for reduced motion.
 - **FR-020**: Times MUST read "Today · h:mm", "Yesterday · h:mm", "N days ago" within a week, then
   "24 Oct" style.
-- **FR-021**: All copy MUST use Australian English.
+- **FR-021**: All copy MUST be in English with British/Commonwealth spelling, which Australia and India
+  share.
 - **FR-022**: The person MUST be able to turn on an optional daily reminder at a time they choose. It
   is off by default; permission is asked for only when they turn it on; no reminder is sent on a day
   they have already read a lesson; reminder text MUST NOT include journal content; it can be changed
@@ -305,8 +319,10 @@ reading done and shows no journal content, then turn it off and confirm it stops
 **Safety**
 
 - **FR-023**: Journal replies MUST be checked for signs of crisis or self-harm **on the phone**. If
-  found, the reply is kept and support services MUST be shown.
-- **FR-024**: Support services MUST be one tap away from Learn and Journal, and work offline.
+  found, the reply is kept and mental health support MUST open straight away.
+- **FR-024**: Every screen MUST show a small **Support** item in its header. It opens two options:
+  **Mental health support** (FR-030) and **Give feedback** (FR-032). Mental health support MUST work
+  offline.
 - **FR-025**: No text in the app MUST give a verdict, diagnosis or advice about the person's life, or
   imply harm to anyone. All text MUST be warm and steadying, never negative.
 - **FR-026**: The app MUST present itself as teaching the Upaniṣad with the help of Gauḍapāda's
@@ -314,17 +330,32 @@ reading done and shows no journal content, then turn it off and confirm it stops
 
 **Privacy**
 
-- **FR-027**: Nothing a person writes or does MUST leave the phone: no accounts, no server, no
-  analytics, no tracking.
+- **FR-027**: Nothing a person writes or does in the app MUST leave the phone: no accounts, no
+  server, no analytics, no tracking. The app itself MUST never send anything; feedback leaves only
+  if the person sends it from their own email app (FR-032).
 - **FR-028**: The app MUST say that everything is saved only on this phone, and that deleting the app
   deletes it.
 
-**Australia**
+**Australia and India**
 
-- **FR-029**: v1 MUST be offered only in the Australian App Store and Google Play.
-- **FR-030**: Support services MUST be Australian and include at least 000, Lifeline, a service for
-  young people and one for anxiety and depression, each with how to contact it and when.
-- **FR-031**: Every support service MUST be verified before release and every 90 days after.
+- **FR-029**: v1 MUST be offered only in the Australian and Indian App Store and Google Play.
+- **FR-030**: Mental health support MUST show the services for the phone's region, and let the person
+  switch between Australia and India:
+  - **Australia**: at least 000, Lifeline, a service for young people, and one for anxiety and
+    depression;
+  - **India**: at least 112 (emergency), Tele-MANAS (the government's mental health line), and one
+    counselling line.
+
+  Each service shows how to contact it and when, as selectable text. A note says the numbers work
+  only in that country and links to an international helpline directory.
+- **FR-031**: Every service MUST be verified before release and every 90 days after.
+
+**Feedback**
+
+- **FR-032**: "Give feedback" MUST open the person's own email app with a message addressed to the
+  Turiya team, filled in with the app version, device type and current lesson, and nothing else.
+  Turiya MUST NOT send it; no journal text MUST be included. If no email app is available, the
+  feedback address MUST be shown so it can be copied.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -342,7 +373,10 @@ reading done and shows no journal content, then turn it off and confirm it stops
 - **Saved lesson**: a lesson the person keeps handy. Phone only.
 - **Journal reply**: what the person wrote for a lesson, with the time. Phone only.
 - **Reminder setting**: on or off, and a time. Phone only.
-- **Support service**: name, contact methods, hours and the date it was last verified.
+- **Support service**: country (Australia or India), name, contact methods, hours and the date it
+  was last verified.
+- **Feedback message**: the Turiya feedback address, a subject, and the app version, device type and
+  current lesson. Written and sent by the person in their own email app; never stored by Turiya.
 
 ## Success Criteria *(mandatory)*
 
@@ -378,8 +412,9 @@ reading done and shows no journal content, then turn it off and confirm it stops
 **Feel and region**
 
 - **SC-011**: In first-use testing, most people describe the app as calming.
-- **SC-012**: 100% of support screens show Australian services verified in the last 90 days.
-- **SC-013**: v1 can't be found or installed outside Australia.
+- **SC-012**: 100% of mental health support screens show services for the phone's region (Australia
+  or India), verified in the last 90 days.
+- **SC-013**: v1 can't be found or installed outside Australia and India.
 
 ## Assumptions
 
@@ -413,10 +448,22 @@ reading done and shows no journal content, then turn it off and confirm it stops
 - **One phone**: no accounts and no sync.
 - **No server in v1**: crisis checking of replies uses word and phrase lists on the phone, and leans
   toward showing support when unsure.
-- **Australia first** (DEC-10). Ask (v2) and India are the next steps; their order is still open.
-- **Australian support services** (verify before release): 000; Lifeline 13 11 14 (also text and
-  chat); Kids Helpline 1800 55 1800; Beyond Blue 1300 22 4636.
-- **Privacy law**: with nothing leaving the phone, the Privacy Act's overseas-transfer rules don't
-  apply to v1. The privacy policy still explains device-only storage.
+- **Australia and India for v1** (DEC-10). With no server and nothing leaving the phone, a second
+  country adds little: its own support services, store availability and privacy-policy wording.
+  Ask is v2; other countries come later.
+- **Language**: English only in v1. Hindi and other Indian languages are later (ROADMAP).
+- **Support services to verify before release**:
+  - **Australia**: 000; Lifeline 13 11 14 (also text and chat); Kids Helpline 1800 55 1800; Beyond
+    Blue 1300 22 4636.
+  - **India**: 112 (emergency); Tele-MANAS 14416 or 1-800-891-4416 (24/7); a counselling line such
+    as iCall.
+- **Privacy law**: v1 processes no personal data. With nothing leaving the phone, Australia's Privacy
+  Act and India's Digital Personal Data Protection Act 2023 have little to apply to. Feedback emails
+  are covered in the privacy policy. The policy explains device-only storage for both countries.
+- **App Store label**: feedback is optional and sent by the person from their own email app, so it
+  should fall under Apple's optional-disclosure rule and keep "Data Not Collected". Confirm at
+  submission.
+- **Feedback address**: to be decided by the product owner.
+- **Devices**: v1 is tested on low-cost Android phones too, which are common in India.
 - **Audience**: adults (18+). A youth service is still listed because younger people may arrive.
 - **No therapy claims** (FR-026) keep the app clearly outside medical-device rules.
