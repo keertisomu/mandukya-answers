@@ -16,13 +16,20 @@ v1 runs **entirely on your phone** — no account, no server, no AI, no network.
 
 **Status**: planning — no application code yet.
 
-## Principles
+## Commitments, and how they'll be checked
 
-- **Private**: nothing you write ever leaves your phone.
-- **Faithful**: every verse and note is proofread and reviewed, never written by AI.
-- **Safe**: if a journal reply signals crisis, real mental health services for your country appear.
-  A small **Support** item in every header offers mental health support and a way to send feedback.
-- **Calm**: no advice, no verdicts, no streaks.
+Nothing is built yet, so these are **promises the release must meet**, not claims about a finished
+app.
+
+| Commitment | How it will be checked | Status today |
+|---|---|---|
+| **Faithful**: every Sanskrit line, pronunciation, meaning and note is proofread and reviewed, and written by people, not AI | Each lesson file records `reviewedBy` and `reviewedOn`. A release build fails if any lesson lacks them, or if any of the 12 mantras or 29 kārikās is missing (`pnpm content:check --release`). Translation sources and licences are listed in `content/SOURCES.md` (tasks T066–T071) | **Not started.** No lessons written; no proofreader or tradition reviewer yet; translations not chosen. The prototype's Sanskrit and notes are AI-written placeholders and will not ship. |
+| **Private**: nothing you write leaves your phone | No server, accounts or analytics. A CI check fails on network code or tracking SDKs (T059). Outbound traffic is inspected before release (quickstart scenario 16) | Designed; not yet built or tested. |
+| **Safe**: crisis wording in a journal reply opens mental health services for your country; a **Support** item is in every header | A crisis test set runs in CI and every crisis case must match (T046–T047). Helpline numbers are verified before release and every 90 days (T073) | Designed; test set not written; helplines not yet verified. |
+| **Calm**: no advice, no verdicts, no streaks | Writing guidance for authors, tradition review of every lesson, and first-use testing (SC-011) | Designed; not yet tested with people. |
+
+The full rules are in the [constitution](.specify/memory/constitution.md) and the
+[spec](specs/001-turiya-learn/spec.md).
 
 ## Docs — where to look
 
